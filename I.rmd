@@ -80,3 +80,52 @@ Donde $I_A$ es la función indicadora en el conjunto $A$. Para cada $x$ fijo $F_
 El supuesto de independencia no es necesario para este teorema, y esto es fácilmente se observa que la misma conclusión se da cuando la secuencia de variables aleatorias es estrictamente una secuencia estacionaria y ergódica [@GCTHEO].
 
 Con esto en mente agrupar las funciones de densidad empíricas por su cercanía puede mostrar los comportamientos asintóticos de las nubes de puntos.
+
+## Plan de acción
+
+El estudio está proyectado en dos fases. La primera fase es teórica, se trata de observar los alcances teóricos de la propuesta y establecer sus características principales. La segunda fase es aplicada, se establecen directrices para aplicación, se implementa y se evalúa de acuerdo a criterios establecidos.
+
+### Fundamentación y generalizaciión
+
+En el modelamiento de grandes conjuntos de datos se toma cada registro como un punto en un espacio multidimensional. En un conjunto de datos usual todos los puntos presentan la misma importancia, sin embargo existen muchos casos en donde el diseño muestral da a cada punto un peso distinto dentro de la muestra. Formalizar el concepto de nubes de puntos tomando en cuenta los registros y la importancia (peso muestral) de cada uno es un primer paso hacia una tratamiento más general de la información.
+El estudio teórico de las propiedades matemáticas de las nubes de puntos ya formalizadas permite obtener definiciones formales de distancia, unión, equivalencia, dimensión y orden. Creando una estructura consistente y robusta, que permite encontrar comportamientos, inconvenientes y similaridades que posteriormente pueden influir en la construcción de una metodología aplicada.
+
+### Aplicación
+
+A partir de las nociones de orden, dimensión, equivalencia, distancia y unión entre nubes de puntos, se configura un escenario finitodimensional donde resultan propicias las técnicas para analizar la estructura estocástica y generar agrupaciones (e.g. Ward, K-Means, ECSAGO, entre otros). Cada una de ellas con una motivación específica dentro del estudio. La técnica de ACP describe visualmente la colección, mientras Ward, K-Means, y ECSAGO generan clasificaciones, que al ser estocásticas presentan propiedades inferenciales deseadas y comportamiento robusto frente al ruido y a los atípicos.
+El proceso de validación interna se realiza mediante la prueba Kruskall-Wallis y validación cruzada generalizada. El proceso de validación externa se realiza comparando la metodología propuesta con otros métodos que abordan problemas similares vía simulación. La aplicación con datos reales se da en dos direcciones, en política pública se propone una estratificación de municipios a partir de los datos de la prueba Saber 11 del ICFES, y en datos transcriptómicos se propone un método de detección de expresión diferencial utilizando los datos de la librería acde de R.
+
+### Política de datos
+
+El proyecto de investigación hace uso de los datos de los puntajes del examen Saber 11 que el Instituto Colombiano para la Evaluación de la Educación (ICFES) tiene con acceso público. Así mismo la aplicación en datos transcriptómicos se realiza usando datos de la librería acde de R, que son accesibles al público.
+Todo el trabajo de investigación es abierto, reproducible y accesible a través de la plataforma GitHub. La licencia sobre los resultados del estudio, si aplica, es pública tanto para el resultado teórico - metodológico como para el código, toda vez que se busca generar un paquete de R a partir de este último.
+
+### Cronograma
+
+```{r, echo = FALSE}
+library(knitr)
+data.frame(
+  Actividad = c("Revisión bibliográfica", "Escritura del documento", "Fundamentación matemática", "Simulación", "Aplicación ICFES", "Aplicación Genómica", "Paquete R", "Discusión y conclusiones"),
+  Ene = c(1, 1, 1, 0, 1, 0, 1, 0),
+  Feb = c(1, 1, 1, 0, 1, 0, 1, 0),
+  Mar = c(1, 1, 0, 1, 0, 1, 1, 0),
+  Abr = c(1, 1, 0, 1, 0, 1, 1, 0),
+  May = c(1, 1, 0, 0, 0, 0, 1, 1),
+  Jun = c(1, 1, 0, 0, 0, 0, 1, 1)
+) -> a
+kable(a)
+```
+
+### Presupuesto
+
+```{r, echo = FALSE}
+data.frame(
+  Recurso = c("Datos para aplicación", "Acompañamiento y dirección", "Equipos Informáticos",  "software", "Investigación"),
+  Unidad = c("Número de bases de datos", "Horas de asesoría", "Número de equipos", "Licencias de software", "Horas de investigación"),
+  Cantidad = c(2, 128, 1, 1, 384),
+  Responsable = c("Estudiante", "Universidad Nacional de Colombia", "Estudiante", "Estudiante", "Estudiante")
+) -> a
+kable(a)
+```
+
+
