@@ -23,3 +23,19 @@ El presente trabajo recoge una fundamentación matemática al algoritmo EP-Means
 **Con estas bases se obtiene una propuesta metodológica dirigida al problema de comparación no paramétrica de varias poblaciones, ya mencionado. Esta propuesta se evalua desde el punto de vista experimental mediante un estudio de Monte Carlo en dos etapas. La primera consiste en comparar el uso de distintas herramientas y así observar cuales son los parámetros que optimizan el desempeño de la propuesta. La segunda compara otros enfoques y muestra el desempeño de la propuesta en relación con otras técnicas estadísticas diseñadas con objetivos similares.**
 
 **El estudio finaliza con la aplicación de la metodología propuesta en datos reales. Para este fin se dispone de los datos correspondientes a las pruebas Saber11, facilitados para la investigación por el Instituto Colombiano para la Evaluación de la Educación ICFES, y los datos “phytophthora”, de expresión genética presentes en el paquete “acde” de R [@Acosta2015].**
+
+# Objetivos
+## General
+
+Analizar, fundamentar, generalizar e implementar el algoritmo EP-Means de agrupación estocástica.
+
+## Específicos
+
+- Formalizar matemáticamente la definición de nubes de puntos y estudiar sus propiedades (dimensión, orden, unión, suma y equivalencia).
+
+- Analizar el algoritmo EP-Means a la luz de estas propiedades. Explicar la estructura estocástica de las nubes de puntos usando métodos para visualización y reducción de dimensiones (ACP) y agrupación (e.g. K-Means, Ward, Chamaleon, ECSAGO, entre otros). 
+
+- Evaluar la propuesta resultante mediante un estudio de simulación comparando distintos enfoques.
+
+- Implementar y aplicar la propuesta resultante en datos reales con miras a crear un paquete en R.
+
