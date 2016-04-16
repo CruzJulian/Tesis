@@ -24,6 +24,16 @@ Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto
 
 se denomina el espacio simplex de orden $n$.
 
+## Distancia
+
+Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\mathbb{R}$ que cumple ciertas propiedades, para todo $a, b y c \in P^2$:
+
+- $d(a,b) > 0$
+
+- $d(a,b) = 0 \longleftrightarrow a = b$
+
+- $d(a,b) < d(a,c) + d(c,b)$
+
 ## Nube de puntos
 
 Sean $n$ un número natural, $(\Omega, \leq)$ un conjunto totalmente ordenado, $S$ un elemento en $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
@@ -62,4 +72,43 @@ En conseuencia, es posible partir el conjunto de todas las nubes de puntos:
 \Omega^n \times \bigtriangleup^n /\mathfrak{Em}
 \end{gather*}
 
-Esta partición es el conjunto con el que vamos a trabajar toda la tesis.
+## Nubes de puntos equivalentes
+
+Como consecuencia de **2** el operador $\mathfrak{Em}$ genera una partición del conjunto $\Omega^n \times \bigtriangleup^n$ de todas las nubes de puntos. Esta partición define una relación de equivalencia; se nota $\doteq$. Por construcción se tiene que dos nubes de puntos $(S_1, a_1)$ y $(S_2, a_2)$ son equivalentes sí y sólo sí tienen la misma función empírica.
+
+### Ejemplo:
+
+Las nubes de puntos son equivalentes:
+
+- $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
+
+- $(1, 3, 2, 2) (0.3, 0.3, 0.2, 0.2)$
+
+- $(1, 2, 3) (0.3, 0.4, 0.3)$
+
+- $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
+
+## Estadísticas
+
+Sean $n$ un número natural y $f$ una función de $\Omega^n \times \bigtriangleup^n$ en un conjunto $K$. Se dice que $f$ es una estadísitica sí nubes de puntos equivalentes producen imágenes equivalentes. En símbolos:
+
+\[(S_1, a_1) \doteq (S_2, a_2) \longrightarrow f(S_1, a_1) = f(S_2, a_2)\]
+
+### Ejemplo
+
+La función $\mu$ definida como sigue:
+
+\begin{gather*}
+\mu: \mathbb{R}^n \times \bigtriangleup^n \longrightarrow \mathbb{R}\\
+\mu((S, a)) = \sum\limits_{i = 1}^n a_iS_i
+\end{gather*}
+
+se denomina **promedio** y es una estadística para las nubes de puntos con valores reales.
+
+### Ejemplo
+
+Por definición el operador $\mathfrak{Em}$ es una estadística.
+
+## Distancias
+
+## Suma directa
