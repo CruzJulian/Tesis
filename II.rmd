@@ -1,2 +1,65 @@
-# Fundamentos
+---
+title: "Fundamentos"
+output: html_document
+---
+# Definiciones iniciales
 
+## Función indicatriz
+
+Sea $\Omega$ un conjunto y $S \subseteq \Omega$ un subconjunto de $\Omega$. La función indicatriz de $S$ se define así:
+\begin{gather*}
+I_S: \Omega \longrightarrow \{ 0 , 1\}\\
+I_S(x) := 
+\begin{cases}
+1 \text{ si } x \in S\\
+0 \text{ si } x \notin S
+\end{cases}
+\end{gather*}
+
+## Espacio simplex
+
+Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto 
+
+\[\bigtriangleup^n = \left \{ (a_1, ..., a_n) \in \mathbb{R}^n \mid \sum\limits_{i = 1}^n a_i = 1 \wedge \forall_{i = 1, ..., n} a_i \geq 0 \right \}\]
+
+se denomina el espacio simplex de orden $n$.
+
+## Nube de puntos
+
+Sean $n$ un número natural, $(\Omega, \leq)$ un conjunto totalmente ordenado, $S$ un elemento en $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
+
+## Función (empírica)
+
+Sea $(S, a)$ una nube de puntos de tamaño $n$. Se define su función empírica:
+
+\begin{gather*}
+f_{Em}: \Omega \longrightarrow [0,1]\\
+f_{Em}(x) := \sum\limits_{i = 1}^n a_iI_{(\leftarrow x)}(s_i)
+\end{gather*}
+
+donde $(\leftarrow x)$ es el conjunto de todos los puntos en $\Omega$ menores o iguales a $x$.
+
+## Operador funcional
+
+Dados $\Omega$ y $n$ se define el operador $\mathfrak{Em}$ que asigna a cada nube de puntos $(S, a)$ su función empírica:
+
+\begin{gather*}
+\mathfrak{Em}: \Omega^n \times \bigtriangleup^n \longrightarrow [0,1]^{\Omega}\\
+\mathfrak{Em}((S, a)) = f_{Em}
+\end{gather*}
+
+# Proposiciones, propiedades y teoremas
+
+## 1
+
+El operador funcional $\mathfrak{Em}$ no es inyectivo ni sobreyectivo.
+
+## 2
+
+En conseuencia, es posible partir el conjunto de todas las nubes de puntos:
+
+\begin{gather*}
+\Omega^n \times \bigtriangleup^n /\mathfrak{Em}
+\end{gather*}
+
+Esta partición es el conjunto con el que vamos a trabajar toda la tesis.
