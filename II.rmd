@@ -2,6 +2,7 @@
 title: "Fundamentos"
 output: html_document
 ---
+
 # Definiciones iniciales
 
 ## Función indicatriz
@@ -16,6 +17,8 @@ I_S(x) :=
 \end{cases}
 \end{gather*}
 
+La función indicatriz de un subconjunto asigna 1 a los elementos del subconjunto y 0 a los elementos de su complemento.
+
 ## Espacio simplex
 
 Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto 
@@ -24,9 +27,11 @@ Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto
 
 se denomina el espacio simplex de orden $n$.
 
+El espacio simplex de orden $n$ está conformado por vectores cuyas entradas están entre cero y uno y suman 1. Este tipo de elementos es conocido en otros contextos con el nombre de datos composicionales, se usan para especificar la composición porcentual de un todo con respecto a sus partes.
+
 ## Distancia
 
-Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\mathbb{R}$ que cumple ciertas propiedades, para todo $a, b y c \in P^2$:
+Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\mathbb{R}$ que cumple ciertas propiedades, para todo $a$, $b$ y $c \in P^2$:
 
 - $d(a,b) > 0$
 
@@ -36,7 +41,15 @@ Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\math
 
 ## Nube de puntos
 
-Sean $n$ un número natural, $(\Omega, \leq)$ un conjunto totalmente ordenado, $S$ un elemento en $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
+Sean $n$ un número natural, $(\Omega, \leq)$ un conjunto totalmente ordenado, $S$ un elemento de $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
+
+Así, la definición formal de nube de puntos habla tanto de los puntos: $S$; como de sus pesos: $a$. La construción de $S$ como elemento de $\Omega^n$ permite usar valores repetidos: $(1, 2, 2, 3)$; sin embargo $(1, 2, 3) \neq (3, 2, 1)$, es decir, dos nubes de puntos con los mismos puntos en diferente orden serán diferentes. Esto se soluciona más adelante.
+
+Nótese que $\Omega$ puede ser un espacio vectorial de dimensión $m$ con algún orden total.
+
+### Ejemplo
+
+La dupla $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos perteneciente a $\mathbb{Z}^4 \times \bigtriangleup^4$.
 
 ## Función (empírica)
 
@@ -44,41 +57,68 @@ Sea $(S, a)$ una nube de puntos de tamaño $n$. Se define su función empírica:
 
 \begin{gather*}
 f_{Em}: \Omega \longrightarrow [0,1]\\
-f_{Em}(x) := \sum\limits_{i = 1}^n a_iI_{(\leftarrow x)}(s_i)
+f_{Em}(x) := \sum\limits_{i = 1}^n a_iI_{(\leftarrow x]}(s_i)
 \end{gather*}
 
-donde $(\leftarrow x)$ es el conjunto de todos los puntos en $\Omega$ menores o iguales a $x$.
+donde $(\leftarrow x]$ es el conjunto de todos los puntos en $\Omega$ menores o iguales a $x$.
+
+### Ejemplo
+
+La nube de puntos $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ tiene como función empírica:
+
+```{r, echo = FALSE}
+
+df <- data.frame(S1 = c(-1, 1, 1, 2, 2, 3, 3, 5, 5, 7), a1 = c(0, 0, 0.3, 0.3, 0.5, 0.5, 0.7, 0.7, 1, 1))
+
+plot(df, xlim = c(-0, 6), ylim = c(-0.1, 1.1), axes = FALSE, ylab = "y", xlab = "x")
+points(df[2*(1:5),], pch = 20)
+lines(df[1:2,])
+lines(df[3:4,])
+lines(df[5:6,])
+lines(df[7:8,])
+lines(df[9:10,])
+axis(1)
+axis(2)
+```
+
+## Conjunto de todas las nubes de puntos
+
+El conjunto de todas las posibles nubes de puntos de $\Omega$ es $\mathbb{X} = \bigcup_{i = 1}^{\infty} \Omega^n \times \bigtriangleup^n$
 
 ## Operador funcional
 
-Dados $\Omega$ y $n$ se define el operador $\mathfrak{Em}$ que asigna a cada nube de puntos $(S, a)$ su función empírica:
+Dado $\Omega$ se define el operador $\mathfrak{Em}$ que asigna a cada nube de puntos $(S, a)$ su función empírica:
 
 \begin{gather*}
-\mathfrak{Em}: \Omega^n \times \bigtriangleup^n \longrightarrow [0,1]^{\Omega}\\
+\mathfrak{Em}: \mathbb{X} \longrightarrow [0,1]^{\Omega}\\
 \mathfrak{Em}((S, a)) = f_{Em}
 \end{gather*}
 
 # Proposiciones, propiedades y teoremas
 
+El operador funcional $\mathfrak{Em}$ asigna a cada nube de puntos de $\mathbb{X}$ su función empírica. Lo siguiente es investigar si este operador es inyectivo, es decir, si existen dos nubes de puntos que tengan la misma función empírica y si en esto influye el tamaño de las mismas.
+
 ## 1
 
 El operador funcional $\mathfrak{Em}$ no es inyectivo ni sobreyectivo.
+
+(demostrar)
 
 ## 2
 
 En conseuencia, es posible partir el conjunto de todas las nubes de puntos:
 
 \begin{gather*}
-\Omega^n \times \bigtriangleup^n /\mathfrak{Em}
+\mathbb{X} /\mathfrak{Em}
 \end{gather*}
 
 ## Nubes de puntos equivalentes
 
-Como consecuencia de **2** el operador $\mathfrak{Em}$ genera una partición del conjunto $\Omega^n \times \bigtriangleup^n$ de todas las nubes de puntos. Esta partición define una relación de equivalencia; se nota $\doteq$. Por construcción se tiene que dos nubes de puntos $(S_1, a_1)$ y $(S_2, a_2)$ son equivalentes sí y sólo sí tienen la misma función empírica.
+Como consecuencia de **2** el operador $\mathfrak{Em}$ genera una partición del conjunto $\mathbb{X}$ de todas las nubes de puntos. Esta partición define una relación de equivalencia; se nota $\doteq$. En otras palabras dos nubes de puntos $(S_1, a_1)$ y $(S_2, a_2)$ son equivalentes sí y sólo sí tienen la misma función empírica.
 
 ### Ejemplo:
 
-Las nubes de puntos son equivalentes:
+Las siguientes nubes de puntos son equivalentes:
 
 - $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
 
@@ -90,7 +130,7 @@ Las nubes de puntos son equivalentes:
 
 ## Estadísticas
 
-Sean $n$ un número natural y $f$ una función de $\Omega^n \times \bigtriangleup^n$ en un conjunto $K$. Se dice que $f$ es una estadísitica sí nubes de puntos equivalentes producen imágenes equivalentes. En símbolos:
+Sea $f$ una función de $\mathbb{X}$ en un conjunto $K$. Se dice que $f$ es una estadísitica sí nubes de puntos equivalentes producen imágenes equivalentes. En símbolos:
 
 \[(S_1, a_1) \doteq (S_2, a_2) \longrightarrow f(S_1, a_1) = f(S_2, a_2)\]
 
@@ -99,16 +139,24 @@ Sean $n$ un número natural y $f$ una función de $\Omega^n \times \bigtriangleu
 La función $\mu$ definida como sigue:
 
 \begin{gather*}
-\mu: \mathbb{R}^n \times \bigtriangleup^n \longrightarrow \mathbb{R}\\
+\mu: \mathbb{X} \longrightarrow \mathbb{R}\\
 \mu((S, a)) = \sum\limits_{i = 1}^n a_iS_i
 \end{gather*}
 
-se denomina **promedio** y es una estadística para las nubes de puntos con valores reales.
+donde $n$ es el tamaño de la nube de puntos $(S, a)$, se denomina **promedio** y es una estadística para las nubes de puntos con valores reales.
 
 ### Ejemplo
 
 Por definición el operador $\mathfrak{Em}$ es una estadística.
 
-## Distancias
+#### Pendientes:
 
-## Suma directa
+- Ponerle nombre a las nubes de puntos
+
+- Ponerle nombre a la función empírica
+
+- Ponerle nombre al operador
+
+- Distancias entre nubes
+
+- Suma directa de nubes
