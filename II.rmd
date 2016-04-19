@@ -70,7 +70,7 @@ La nube de puntos $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ tiene como funci√
 
 df <- data.frame(S1 = c(-1, 1, 1, 2, 2, 3, 3, 5, 5, 7), a1 = c(0, 0, 0.3, 0.3, 0.5, 0.5, 0.7, 0.7, 1, 1))
 
-plot(df, xlim = c(-0, 6), ylim = c(-0.1, 1.1), axes = FALSE, ylab = "y", xlab = "x")
+plot(df[2*(1:5) - 1,], xlim = c(-0, 6), ylim = c(-0.1, 1.1), axes = FALSE, ylab = "y", xlab = "x")
 points(df[2*(1:5),], pch = 20)
 lines(df[1:2,])
 lines(df[3:4,])
@@ -106,10 +106,10 @@ El operador funcional $\mathfrak{Em}$ no es inyectivo ni sobreyectivo.
 
 ## 2
 
-En conseuencia, es posible partir el conjunto de todas las nubes de puntos:
+En conseuencia, es posible partir el conjunto de todas las nubes de puntos. El espacio cociente resultante se denomina $O$:
 
 \begin{gather*}
-\mathbb{X} /\mathfrak{Em}
+O =\mathbb{X} /\mathfrak{Em}
 \end{gather*}
 
 ## Nubes de puntos equivalentes
