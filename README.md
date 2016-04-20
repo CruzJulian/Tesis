@@ -14,12 +14,14 @@ Hasta el momento hay cuatro capítulos en fase de desarrollo. Son:
 [Capítulo IV:](https://github.com/CruzJulian/Tesis/blob/master/IV.rmd) Aplicación usando datos genómicos.
 
 
-## Estas son algunas de las correcciones pendientes.
+## Pendientes
+
+Estas son algunas de las correcciones pendientes.
  
  - Terminar Introducción.
  - Revisar objetivos.
 
-## Evaluador 1. 
+### Evaluador 1. 
 
 A continuación adjunto algunos comentarios sobre la propuesta de trabajo de grado titulada " Aplicación de algoritmos de agrupamiento a funciones de densidad empíricas".
 
@@ -47,7 +49,7 @@ En general considero que la propuesta aun no está bien formulada. Debe revisars
 
 No se incluye el nombre del director.
 
-## Evaluador 2
+### Evaluador 2
 
 Con relación al proyecto de tesis (asumo que es de la maestría en Estadística) “Aplicación de algoritmos de agrupamiento a funciones empíricas de densidad acumulada”, del estudiante Julián Mauricio Cruz, dirigida por el profesor Campo Elías Pardo, considero que debe aclararse lo siguiente:
 
