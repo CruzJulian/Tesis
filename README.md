@@ -1,9 +1,20 @@
 # Tesis
-Mi tesis de maestría
+Esta es mi tesis de maestría
+
+## Contenido
 
 Hasta el momento hay cuatro capítulos en fase de desarrollo. Son:
 
 [Capítulo I:](https://github.com/CruzJulian/Tesis/blob/master/I.rmd) Introductorio, con estado del arte y marco teórico a medio hacer.
+
+[Capítulo II:](https://github.com/CruzJulian/Tesis/blob/master/II.rmd) Desarrollo matemático y funamentación de los conceptos.
+
+[Capítulo III:](https://github.com/CruzJulian/Tesis/blob/master/III.rmd) Aplicación usando los datos de Saber 2014.
+
+[Capítulo IV:](https://github.com/CruzJulian/Tesis/blob/master/IV.rmd) Aplicación usando datos genómicos.
+
+
+## Estas son algunas de las correcciones pendientes.
  
  - Terminar Introducción.
  - Revisar objetivos.
@@ -20,7 +31,7 @@ A continuación adjunto algunos comentarios sobre la propuesta de trabajo de gra
 
 4. Los párrafos de la introducción no están encadenados (no están hilados) y es difícil descifrar que es lo que se busca hacer en el trabajo. No se sabe si es una aplicación, una modificación de un método ya existente o  la formulación de una nueva metodología.
 
-5. En los objetivos que quiere decir fundamentar y generalizar el algoritmo EP�-means?
+5. En los objetivos que quiere decir fundamentar y generalizar el algoritmo EP?-means?
 
 6. En el cuarto objetivo específico. La creación de la librería es independiente de la aplicación a aun conjunto de datos reales.
 
@@ -48,8 +59,3 @@ Con relación al proyecto de tesis (asumo que es de la maestría en Estadística
 
 Una vez que se responda a estas inquietudes consideraré la viabilidad de la propuesta.
  
-[Capítulo II:](https://github.com/CruzJulian/Tesis/blob/master/II.rmd) Desarrollo matemático y funamentación de los conceptos.
-
-[Capítulo III:](https://github.com/CruzJulian/Tesis/blob/master/III.rmd) Aplicación usando los datos de Saber 2014.
-
-[Capítulo IV:](https://github.com/CruzJulian/Tesis/blob/master/IV.rmd) Aplicación usando datos genómicos.
