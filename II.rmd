@@ -3,7 +3,7 @@ title: "Fundamentos"
 output: html_document
 ---
 
-# Definiciones iniciales
+# Conceptos básicos
 
 ## Función indicatriz
 
@@ -39,13 +39,85 @@ Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\math
 
 - $d(a,b) < d(a,c) + d(c,b)$
 
+## $\sigma$-álgebra
+
+Dado un conjunto arbitrario, no vacío $\Omega$, una $\sigma$-álgebra $\mathcal{A}$ sobre $\Omega$ es un conjunto de subconjuntos de $\Omega$ que cumple tres condiciones:
+
+ - $\Omega \in \mathcal{A}$.
+ - Si $A \in \mathcal{A}$ entonces su complemento $A' \in \mathcal{A}$. 
+ - Si $\{A_1, A_2, ... \} \subseteq \mathcal{A}$ entonces $\bigcup_{i = 1 }^\infty A_i$ es un elemento de $\mathcal{A}$.
+ 
+El par $(\Omega, \mathcal{A})$ se llama un {Espacio medible} y los elementos de $\mathcal{A}$ se llaman {Conjuntos medibles}.
+
+## $\sigma$-álgebra de Borel
+
+La menor $\sigma$-álgebra sobre $\mathbb{R}$ que contiene todos los intervalos de la forma $(-\infty, a]$ con $a \in \mathbb{R}$ se llama $\sigma$-álgebra de Borel y se denota por $\mathcal{B}$. Además, la restricción de la $\sigma$-álgebra de Borel a los reales positivos se denomina $\sigma$-álgebra de Borel en $\mathbb{R}^+$ y se denota por $\mathcal{B}^+$.
+
+## Función medible
+
+Sean $(\Omega, \mathcal{A})$ y $(\Omega', \mathcal{A}')$ espacios medibles. Sea una función $f: \Omega \rightarrow \Omega'$ . Entonces $f$ se llama Función medible si la preimagen de un conjunto medible es un conjunto medible. En símbolos, sea:
+
+\begin{gather*}
+f: \Omega \longrightarrow \Omega'\\
+\omega \mapsto f(\omega)
+\end{gather*}
+
+$f$ es medible si
+
+\begin{gather*}
+ D \in \mathcal{A}' \text{ implica que } f^{-1}(D) \in \mathcal{A}
+\end{gather*}
+
+### Nota:
+
+Cuando $(\Omega', \mathcal{A}')$ corresponden a $(\mathbb{R}, \mathcal{B})$, se dice que $f$ es una Función Borel-medible si la preimagen de un conjunto Borel-medible es un conjunto medible.
+
+## Medida, espacio de medida
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible. Una {Medida} en $(\Omega, \mathcal{A})$ es una función de conjuntos $\mu: \mathcal{A} \rightarrow [0, +\infty]$ que cumple:
+
+ - $\mu(\varnothing) = 0$
+ - Si dos conjuntos $A_1, A_2 \in \mathcal{A}$ son disyuntos, entonces $\mu(A_1 \cup A_2) = \mu(A_1) + \mu(A_2)$.
+
+La terna $(\Omega, \mathcal{A}, \mu)$ se llama {Espacio de medida}.
+
+## Conjunto de todas las medidas
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible. El conjunto
+\begin{gather*}
+\mathbb{P} := \{\mu: \mathcal{A}\rightarrow [0, +\infty] \mid \mu \text{ es una medida}\}
+\end{gather*}
+se llama Conjunto de todas las medidas sobre $(\Omega, \mathcal{A})$.
+\end{defin}
+
+## Integral de Lebesgue
+
+## Integral de Lebesgue para funciones indicatrices
+
+Sea $(\Omega, \mathcal{A}, \mu)$ un espacio de medida. Sean $A$ un conjunto medible e $I_A$ su función indicatriz. La {Integral de Lebesgue} de $I_A$ con respecto a $\mu$ se define como el valor de $\mu(A)$ y se nota así:
+
+\begin{gather*}
+\int I_A d\mu := \mu(A)
+\end{gather*}
+
+## Integral de Lebesgue para funciones simples
+
+Sea $(\Omega, \mathcal{A}, \mu)$ un espacio de medida. Sean: $\{A_i\}_{i\leq n}$ una colección conjuntos medibles disyuntos dos a dos, $\{a_i\}_{i\leq n}$ un conjunto de reales positivos y $f:=\sum_{i=1}^{n} a_i I_{A_i}$ una {función simple}. La {Integral de Lebesgue} de $f$ con respecto a $\mu$ corresponde al valor $\sum_{i=1}^{n} a_i \mu(A_i)$ y se nota así:
+
+\begin{gather*}
+\int f d\mu := \sum_{i=1}^{n} a_i \mu(A_i)
+\end{gather*}
+
+
 ## Nube de puntos
 
-Sean $n$ un número natural, $(\Omega, \leq)$ un conjunto totalmente ordenado, $S$ un elemento de $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
+Sean $n$ un número natural, $(\Omega, \mathcal{A}, \lambda, \leq)$ un espacio de medida totalmente ordenado, $S$ un elemento de $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
 
 Así, la definición formal de nube de puntos habla tanto de los puntos: $S$; como de sus pesos: $a$. La construción de $S$ como elemento de $\Omega^n$ permite usar valores repetidos: $(1, 2, 2, 3)$; sin embargo $(1, 2, 3) \neq (3, 2, 1)$, es decir, dos nubes de puntos con los mismos puntos en diferente orden serán diferentes. Esto se soluciona más adelante.
 
-Nótese que $\Omega$ puede ser un espacio vectorial de dimensión $m$ con algún orden total.
+La medida $\lambda$ del espacio $\Omega$ es su medida natural; si $\Omega$ es el continuo, $\lambda$ es la medida de Lebesgue. Es necesario trabajar en un espacio medible ya que más adelante se realizan definiciones con base en integrales.
+
+Es necesario que la relación de orden $<$ sea compatible con la $\sigma$-álgebra $\mathcal(A)$, esto es, que los intervalos definidos a partir de $<$ sean elementos de $\mathcal(A)$. Nótese que $\Omega$ puede ser un espacio vectorial, como $\mathbb{R}^m$ de dimensión $m$, con algún orden total.
 
 ### Ejemplo
 
