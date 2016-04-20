@@ -1,0 +1,133 @@
+---
+title: "Aplicación I"
+output: html_document
+---
+
+# Examen Saber Pro
+
+# Presentación de los datos
+
+```{r setup, echo=FALSE, include=FALSE}
+# library("grid")
+# library("magrittr")
+# library("knitr")
+# library("FactoMineR")
+# library("reshape2")
+# library("dplyr")
+# library("ggplot2")
+# library("infotheo")
+
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
+
+options(stringsAsFactors = TRUE)
+
+```
+
+
+El Instituto Colombiano para la Evaluación de la Educacaión ICFES pone a disposición de investigadores las bases de datos de resultados de las pruebas Saber11 y SaberPro.
+
+Las condiciones de acceso a los datos se pueden consultar [aquí](http://www.icfes.gov.co/investigacion/acceso-a-bases-de-datos)
+
+## R
+
+[R](https://cran.r-project.org/) es un lenguaje y entorno de programación libre enfocado en estadística. Está constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales. No hay estmación del número de paquetes no oficiales.
+
+Un tutorial [aquí](http://bogota-r.github.io/intro/)
+
+## Nebulae
+
+[Nebulae](https://github.com/nebulae-co) es un grupo de trabajo incipiente autogestionado con intereses en estadística.
+
+Para facilitar el acceso a estos datos y promover su uso en investigación el colectivo Nebulae compiló los resultados de las pruebas Saber11 desde 2006 en un paquete de R denominado [saber](https://github.com/nebulae-co/saber)
+
+## Descarga e instalación
+
+El siguiente código descarga e instala el paquete de datos:
+
+```{r install, eval=FALSE, echo=TRUE}
+library("devtools")
+devtools::install_github("nebulae-co/saber")
+```
+
+Los datos escogidos corresponden a los resultados de calendario A de 2014.
+
+```{r data, cache=TRUE, echo=TRUE}
+library("saber")
+data("SB11_20142")
+```
+
+## Descripción
+
+El `data.frame` está compuesto por los resultados de cada estudiante que presentó la prueba Saber11 en el segundo semestre de 2014. Se trata de una base de datos de dimensiones: $[m, n] = [`r dim(SB11_20142)`]$
+
+## Variables 
+
+La base de datos contiene las siguientes variables.
+
+## Variables {.smaller}
+
+```{r echo = FALSE}
+#SB11_20142 %>% names %>% matrix(ncol = 3) %>% kable
+```
+
+# Preprocesamiento
+ 
+## Retirar individuos {.smaller}
+
+La base de datos registra cuatro tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial. Los estudiantes con estas condiciones representan menos del 2% de la población, en consecuencia las conclusiones del estudio no explican los comportamientos de estas poblaciones. Además las distintas formas de evaluación no aseguran comparabilidad con la forma estándar del examen, con lo cual estos datos podrían agregar ruido. Por estas razones los estudiantes pertenecientes a estas poblaciones son retirados de la base de datos.  
+ 
+```{r retirar}
+SB11_20142 %>% 
+  mutate(
+    TOTAL = (
+      3 * LECTURA_CRITICA_PUNT +
+        3 * MATEMATICAS_PUNT + 
+        3 * SOCIALES_CIUDADANAS_PUNT + 
+        3 * CIENCIAS_NATURALES_PUNT + 
+        INGLES_PUNT) / 13) %>% 
+  mutate(COD_MUNI_RESIDE = sprintf("%05d", COD_MUNI_RESIDE),
+    Municipio = MUNI_RESIDE) -> temp
+temp %>%   filter(
+    is.na(DISC_COGNITIVA) & is.na(DISC_CONDICION_ESPECIAL) & 
+      is.na(DIS_MOTRIZ) & is.na(DISC_INVIDENTE) & 
+      is.na(DISC_SORDO) & is.na(DISC_SDOWN) & 
+      is.na(DISC_AUTISMO) & TOTAL > 10
+    ) -> temp
+temp %>% mutate(
+  FINS_ESTRATOVIVIENDAENERGIA = as.character(FINS_ESTRATOVIVIENDAENERGIA),
+  FINS_REPETICIONEXAMEN = as.character(FINS_REPETICIONEXAMEN),
+  FINS_TRABAJAACTUALMENTE = as.character(FINS_TRABAJAACTUALMENTE)) %>% 
+  lapply(function(x){"if"(is.character(x), factor(x), x)}) %>% 
+  as.data.frame -> Saber11
+
+Saber11 %>% sapply(function(x){mean(is.na(x))}) %>% ">"(0.05) %>% which -> na.remove
+Saber11[- na.remove] -> Saber11
+rm(temp, SB11_20142)
+```
+
+
+## Normalización {.smaller}
+
+----- métodos que requieren normalizción de las variables, por ejemplo aquellos que hacen uso del cálculo de distancias entre individuos, pues estas distancias se ven afectadas por la escala de cada una de las variables numéricas.
+
+En consecuencia es necesiario normalizar las variables numéricas. Se define una función que normaliza, con el método Min-Max en [0,1], las variables cuantitativas de una tabla de datos.
+
+```{r normalizacion}
+normalization.rule <- function(x){
+  Min <- min(x, na.rm = TRUE)
+  Max <- max(x, na.rm = TRUE)
+  "if"(Max == Min,1,(x-Min)/(Max - Min))
+  }
+
+normalize.data <- function(data){
+  data[which(sapply(data, is.numeric))] <-
+  as.data.frame(
+    lapply(
+      data[which(sapply(data, is.numeric))],
+      normalization.rule
+      )
+    )
+  data
+}
+
+```
