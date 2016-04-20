@@ -7,37 +7,21 @@ output: html_document
 
 ## Función indicatriz
 
-Sea $\Omega$ un conjunto y $S \subseteq \Omega$ un subconjunto de $\Omega$. La función indicatriz de $S$ se define así:
+Sea $\Omega$ un conjunto y $A \subseteq \Omega$ un subconjunto de $\Omega$. La función indicatriz de $A$ se define así:
 \begin{gather*}
-I_S: \Omega \longrightarrow \{ 0 , 1\}\\
-I_S(x) := 
+I_A: \Omega \longrightarrow \{ 0 , 1\}\\
+I_A(x) := 
 \begin{cases}
-1 \text{ si } x \in S\\
-0 \text{ si } x \notin S
+1 \text{ si } x \in A\\
+0 \text{ si } x \notin A
 \end{cases}
 \end{gather*}
 
 La función indicatriz de un subconjunto asigna 1 a los elementos del subconjunto y 0 a los elementos de su complemento.
 
-## Espacio simplex
+## Función simple
 
-Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto 
-
-\[\bigtriangleup^n = \left \{ (a_1, ..., a_n) \in \mathbb{R}^n \mid \sum\limits_{i = 1}^n a_i = 1 \wedge \forall_{i = 1, ..., n} a_i \geq 0 \right \}\]
-
-se denomina el espacio simplex de orden $n$.
-
-El espacio simplex de orden $n$ está conformado por vectores cuyas entradas están entre cero y uno y suman 1. Este tipo de elementos es conocido en otros contextos con el nombre de datos composicionales, se usan para especificar la composición porcentual de un todo con respecto a sus partes.
-
-## Distancia
-
-Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\mathbb{R}$ que cumple ciertas propiedades, para todo $a$, $b$ y $c \in P^2$:
-
-- $d(a,b) > 0$
-
-- $d(a,b) = 0 \longleftrightarrow a = b$
-
-- $d(a,b) < d(a,c) + d(c,b)$
+Sea $f$ una función de $\Omega$ en $[0,1]$. Si existe una colección $\{A_1, ..., A_n\}$ de subconjuntos de $\Omega$ y un vector de valores no negativos $(\alpha_1, ..., \alpha_n)$ en $\mathbb{R}^{n}$ tal que $f(x) = \sum_{i=1}^n \alpha_i I_{A_i}(x)$ entonces $f$ se denomina función simple.
 
 ## $\sigma$-álgebra
 
@@ -71,6 +55,14 @@ $f$ es medible si
 ### Nota:
 
 Cuando $(\Omega', \mathcal{A}')$ corresponden a $(\mathbb{R}, \mathcal{B})$, se dice que $f$ es una Función Borel-medible si la preimagen de un conjunto Borel-medible es un conjunto medible.
+
+### Teo 1
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible.
+
+ - Si $(f_1, ..., f_m)$ son funciones medibles y $(\alpha_1, ..., \alpha_m)$ es un vector de valores reales no negativos entonces $f(x) = \sum_{i=1}^n \alpha_i f_i(x)$ es una función medible.
+ - Sea $A$ un elemento de $\mathcal{A}$, entonces la función indicatriz $I_A$ es una función medible.
+ - Toda función simple de la forma $f(x) = \sum_{i=1}^n \alpha_i I_{A_i}(x)$ es medible si todos los $A_i$ pertenecen a $\mathcal{A}$ .
 
 ## Medida, espacio de medida
 
@@ -108,6 +100,27 @@ Sea $(\Omega, \mathcal{A}, \mu)$ un espacio de medida. Sean: $\{A_i\}_{i\leq n}$
 \int f d\mu := \sum_{i=1}^{n} a_i \mu(A_i)
 \end{gather*}
 
+
+
+## Espacio simplex
+
+Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto 
+
+\[\bigtriangleup^n = \left \{ (a_1, ..., a_n) \in \mathbb{R}^n \mid \sum\limits_{i = 1}^n a_i = 1 \wedge \forall_{i = 1, ..., n} a_i \geq 0 \right \}\]
+
+se denomina el espacio simplex de orden $n$.
+
+El espacio simplex de orden $n$ está conformado por vectores cuyas entradas están entre cero y uno y suman 1. Este tipo de elementos es conocido en otros contextos con el nombre de datos composicionales, se usan para especificar la composición porcentual de un todo con respecto a sus partes.
+
+## Distancia
+
+Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\mathbb{R}$ que cumple ciertas propiedades, para todo $a$, $b$ y $c \in P^2$:
+
+- $d(a,b) > 0$
+
+- $d(a,b) = 0 \longleftrightarrow a = b$
+
+- $d(a,b) < d(a,c) + d(c,b)$
 
 ## Nube de puntos
 
