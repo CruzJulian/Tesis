@@ -1,3 +1,13 @@
+---
+title: "Ensayo"
+author: "Julian Cruz"
+output: 
+  pdf_document:
+    keep_tex: true
+    toc: false
+    number_sections: true
+---
+
 # Introducción
 
 El desarrollo tecnológico de los últimos 20 años ha cambiado por completo los conceptos y procesos de análisis de la información. El aumento de la capacidad computacional conlleva la aparición de algoritmos y técnicas que, exigiendo mucho más sobre la máquina, permiten extraer información más precisa y útil. De manera simultánea estos desarrollos han conducido a la gestión y almacenamiento de grandes conjuntos de datos; conjuntos cuyo procesamiento y análisis presentan retos en términos estadísticos. Esto ha impulsado el estudio y desarrollo de diversas metodogías y herramientas analíticas, entre ellas se encuentra la Función de Densidad Acumulada Empírica, cuyo estudio es el eje central del presente trabajo.

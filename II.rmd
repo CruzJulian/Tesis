@@ -1,6 +1,11 @@
 ---
 title: "Fundamentos"
-output: html_document
+author: "Julian Cruz"
+output: 
+  pdf_document:
+    keep_tex: true
+    toc: false
+    number_sections: true
 ---
 
 # Conceptos básicos
