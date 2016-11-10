@@ -8,6 +8,88 @@ output:
     number_sections: true
 ---
 
+# Desarrollo
+
+## Nube de puntos
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo. Las siguientes son directrices de notación y definiciones iniciales:
+
+ - El conjunto $\textbf{S}/\equiv$ se nota por $\mathbb{S}$
+ - Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se denomina familia y se nota $\mathbb{P}$. Si es posible indexarlo mediante un espacio de dimensión finita se denomina familia paramétrica, caso contrario se denomina familia no paramétrica.
+ - El conjunto que indexa una familia se denomina espacio de parámetros, para una familia paramétrica el espacio de parámetros tiene dimensión finita, para una familia no paramétrica, necesariamente infinita.
+ - Dado $n$ un número natural, $1:n$ es el intervalo de los naturales entre 1 y $n$ inclusive.
+ - El conjunto de partes, $\wp(1:n)$, se nota en adelante $\wp_n$
+ - Se nota $\textbf{P}_n$ al conjunto de todas las medidas de probabilidad sobre $(1:n, \wp_n)$. Sea $p$ un elemento de $\textbf{P}_n$.
+ - Una función $s$ de $(1:n,\wp_n, p)$ en el espacio medible, $(\Omega, \mathcal{A})$ se denomina nube de puntos. Evidentemente toda nube de puntos es función simple y en consecuencia es medible.^[Revisar en Shao]
+ - Dada una nube de puntos $s$, siendo función, tiene dominio $Dom(s)$, rango $Ran(s)$, y en virtud de ser medible tiene una medida asociada $\lambda_s$ sobre $(\Omega, \mathcal{A})$.
+ - Dada una nube de puntos $s$ su tamaño es el máximo de su dominio: $n_s := \max(Dom(s))$.
+ - El conjunto de todas las nubes de puntos de tamaño $n$ se denomina $s_n$. Esto es $s_n := \{ s: (1:n, \wp_n, p) \rightarrow (\Omega, \mathcal{A}) \mid p \in \textbf{P}_n \land n \in \mathbb{N} \}$
+ - El conjunto de todas las nubes de puntos posibles se nota por $\textbf{S}$. En otras palabras: $\textbf{S} = \bigcup_{i=1}^\infty s_n$.
+ - La relación $\equiv$ se define por por $s_1 \equiv s_2 : \Leftrightarrow \lambda_{s_1} = \lambda_{s_2}$. Evidentemente es una relación de equivalencia sobre $\textbf{S}$.
+
+Teoremas, proposiciones, etc
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de puntos cualquiera sobre $(\Omega, \mathcal{A})$. Los siguientes enunciados se tienen en consecuencia de las definiciones anteriores.
+
+ - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria.
+ - En este caso el valor esperado de $s$ es $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral.^[Cuestionar]
+ - Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Cuestionar]
+ - Dos nubes de puntos equivalentes $s_1 \equiv s_2$ tienen el mismo rango, el mismo valor esperado y la misma varianza. Esto no se cumple para tamaño.
+ - Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
+
+## Cielo aleatorio, cielo de puntos
+
+Teorema y definición
+
+Sean $(\Omega, \mathcal{A}, \lambda)$, con $\lambda$ en una familia $\mathbb{P}$, un espacio de medida cualquera fijo y $\mathbb{S}$ según lo mostrado previamente. La función de conjuntos $\lambda^*$ definida como
+
+\begin{align}
+\lambda^* &:  \wp(\mathbb{S}) \longrightarrow [0,1]\\
+& S \subseteq \mathbb{S} \mapsto \lambda^*(S) := \lambda\left(\bigcup\limits_{s \in S} Ran(s) \right)
+\end{align}
+
+Es una función de medida. En particular el espacio de medida $(\mathbb{S}, \mathcal{P}(\mathbb{S}), \lambda^*)$ se denomina el cielo aleatorio de $(\Omega, \mathcal{A}, \lambda)$.
+
+## Teorema de grandes números^[Confirmar]
+
+Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo y $(\mathbb{S}, \wp(\mathbb{S}), \lambda^*)$ su cielo de puntos. Sea $e$ el valor esperado visto como opreador sobre el cielo de puntos.
+
+\begin{align}
+e &:  (\mathbb{S}, \wp(\mathbb{S}), \lambda^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, \lambda)\\
+& s \in \mathbb{S} \mapsto e(s) := E(s)
+\end{align}
+
+Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$.
+
+Entonces
+
+ - $e$ está bien definido.
+ - $e$ es una variable aleatoria.
+ - Su valor esperado es $\int \mathbb{1} d\lambda$ siendo $\mathbb{1}$ la función identidad.
+
+# hasta aquí por hoy
+
+
+
+Sean $n$ un número natural, $1:n$ el intervalo de los naturales entre 1 y $n$ inclusive, $(1:n, \mathcal{P}, \mu)$, $(\Omega, \mathcal{A}, \lambda)$ un espacio de medida, $S$ una función medible de $1:n$ en $\Omega$. $S$ es una nube de puntos. 
+
+Sea $\lambda_S$ la medida de probabilidad sobre $\Omega$ generada por $S$.
+
+
+
+
+Así, la definición formal de nube de puntos habla tanto de los puntos: $S$; como de sus pesos: $a$. La construción de $S$ como elemento de $\Omega^n$ permite usar valores repetidos: $(1, 2, 2, 3)$; sin embargo $(1, 2, 3) \neq (3, 2, 1)$, es decir, dos nubes de puntos con los mismos puntos en diferente orden serán diferentes. Esto se soluciona más adelante.
+
+La medida $\lambda$ del espacio $\Omega$ es su medida natural; si $\Omega$ es el continuo, $\lambda$ es la medida de Lebesgue. Es necesario trabajar en un espacio medible ya que más adelante se realizan definiciones con base en integrales.
+
+Es necesario que la relación de orden $<$ sea compatible con la $\sigma$-álgebra $\mathcal(A)$, esto es, que los intervalos definidos a partir de $<$ sean elementos de $\mathcal(A)$. Nótese que $\Omega$ puede ser un espacio vectorial, como $\mathbb{R}^m$ de dimensión $m$, con algún orden total.
+
+### Ejemplo
+
+La dupla $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos perteneciente a $\mathbb{Z}^4 \times \bigtriangleup^4$.
+
+
+
 # Conceptos básicos
 
 ## Función indicatriz
@@ -127,19 +209,6 @@ Dado un conjunto $P$ una distancia es una función $d$ de $P \times P$ en $\math
 
 - $d(a,b) < d(a,c) + d(c,b)$
 
-## Nube de puntos
-
-Sean $n$ un número natural, $(\Omega, \mathcal{A}, \lambda, \leq)$ un espacio de medida totalmente ordenado, $S$ un elemento de $\Omega^n$ y $a \in \bigtriangleup^n$ un punto en el espacio simplex de orden $n$. La dupla $(S, a)$ se denomina una nube de puntos y $n$ es su tamaño.
-
-Así, la definición formal de nube de puntos habla tanto de los puntos: $S$; como de sus pesos: $a$. La construción de $S$ como elemento de $\Omega^n$ permite usar valores repetidos: $(1, 2, 2, 3)$; sin embargo $(1, 2, 3) \neq (3, 2, 1)$, es decir, dos nubes de puntos con los mismos puntos en diferente orden serán diferentes. Esto se soluciona más adelante.
-
-La medida $\lambda$ del espacio $\Omega$ es su medida natural; si $\Omega$ es el continuo, $\lambda$ es la medida de Lebesgue. Es necesario trabajar en un espacio medible ya que más adelante se realizan definiciones con base en integrales.
-
-Es necesario que la relación de orden $<$ sea compatible con la $\sigma$-álgebra $\mathcal(A)$, esto es, que los intervalos definidos a partir de $<$ sean elementos de $\mathcal(A)$. Nótese que $\Omega$ puede ser un espacio vectorial, como $\mathbb{R}^m$ de dimensión $m$, con algún orden total.
-
-### Ejemplo
-
-La dupla $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos perteneciente a $\mathbb{Z}^4 \times \bigtriangleup^4$.
 
 ## Función (empírica)
 
