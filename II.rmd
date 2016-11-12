@@ -29,13 +29,72 @@ Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo. Las siguientes so
 
 De esta manera queda formalizado por completo el concepto de nubes de puntos. Como se ve, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad $p_n$ uniformes, dando a cada punto un peso de $\frac{1}{n}$.
 
+### Teoremas, proposiciones, etc
+
+Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de puntos cualquiera sobre $(\Omega, \mathcal{A})$. Los siguientes enunciados se tienen en consecuencia de las definiciones anteriores.
+
+ - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria.
+ - En este caso el valor esperado de $s$ es $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral.^[Cuestionar]
+ - Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Cuestionar]
+
+### Ejemplo
+
+Una medida de probabilidad $p$ sobre $(1:n, \wp_n)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{N}, \wp(\mathbb{N}))$ espacio medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
+
+
+## Cielo aleatorio, cielo de puntos, cielito lindo^[No me vaya a dejar esto así]
+
 Algunas propiedades y ejemplos
 
 $\textbf{S}$ es un conjunto muy áspero. Es posible realizar algunas restricciones interesantes.
 
- - Sea una medida $\mu$ sobre el espacio medible $(\mathbb{N}, \wp(\mathbb{N}))$, sea $p_n$ la medida de probabilidad generada por $\mu$ sobre $(1:n, \wp_n)$. $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp_n,p _n)$.
+ - Sea una medida $\mu$ sobre el espacio medible $(\mathbb{N}, \wp(\mathbb{N}))$, sea $p_n$ la medida de probabilidad generada por $\mu$ sobre $(1:n, \wp_n)$, es decir: $p_n(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp_n,p _n)$.
  
  - Sea $n$ un entero positivo fijo, $\textbf{S} \mid_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$.
+
+ - $\textbf{S} \mid_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p_n(\{i\}) = \frac{\mu(\{i\})}{\mu(1:n)}$.
+
+Teorema y definición
+
+Sean $(\Omega, \mathcal{A}, P, \lambda)$, con $P$ en una familia $\mathbb{P}_\lambda$, un espacio de medida cualquera fijo y $\textbf{S}$ definido según lo mostrado previamente, $f = \frac{dP}{d\lambda}$ la derivada de radon-Nikodim^[este nombre está bien?] de $P$ con respeto a $\lambda$. Sea
+
+\begin{align}
+f^*: &\textbf{S} \longrightarrow \mathbb{R}\\
+& s \mapsto f^*(s) = \prod\limits_{i=1}^{n_s} f(s(i))
+\end{align}
+
+Entonces, a función de conjuntos $P^*$ definida como
+
+\begin{align}
+P^* &:  \wp(\textbf{S}) \longrightarrow [0,1]\\
+& S \subseteq \textbf{S} \mapsto P^*(S) := \int I_S f^* d\lambda
+\end{align}
+
+Es una función de medida. En particular el espacio de medida $(\textbf{S}, \mathcal{P}(\textbf{S}), \lambda^*)$ se denomina el cielo aleatorio de $(\Omega, \mathcal{A}, \lambda)$.
+
+### teorema otro^[arreglarlo]
+
+Dados $n$ y $\mu$, $\textbf{S} \mid_{\mu,n}$ es un subconjunto de $\textbf{S}$. Su medida es 1.
+
+## Teorema de grandes números^[Confirmar]
+
+Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo y $(\textbf{S}, \wp(\textbf{S}), P^*)$ su cielo de puntos. Sea $e$ el valor esperado visto como opreador sobre el cielo de puntos.
+
+\begin{align}
+e &:  (\textbf{S}, \wp(\textbf{S}), P^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, P, \lambda)\\
+& s \in \mathbb{S} \mapsto e(s) := E(s)
+\end{align}
+
+Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$.
+
+Entonces
+
+ - $e$ está bien definido.
+ - $e$ es una variable aleatoria.
+ - Su valor esperado $E(s) = \int e dP^*$ es igual a $\int X dP$ (siendo X(x) = x).
+
+
+# especulación
  
 Se define la función $\mathfrak{P}$ de $\textbf{S}$ en $\mathbb{P}$ como sigue:
 
@@ -55,45 +114,21 @@ La función $\mathfrak{P}$ asigna a cada $s \in \textbf{S}$ su medida de probabi
 
 Se dice que dos nubes de puntos $s_1$ y $s_2$ son equivalentes si son iguales en $\mathbb{S}$ y se nota $s_1 \equiv s_2$.
 
-Teoremas, proposiciones, etc
-
-Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de puntos cualquiera sobre $(\Omega, \mathcal{A})$. Los siguientes enunciados se tienen en consecuencia de las definiciones anteriores.
-
- - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria.
- - En este caso el valor esperado de $s$ es $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral.^[Cuestionar]
- - Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Cuestionar]
  - Dos nubes de puntos equivalentes $s_1 \equiv s_2$ tienen el mismo rango, el mismo valor esperado y la misma varianza. Esto no se cumple para tamaño.
  - $\mathbb{S}$ es inmune a permutaciones. Dada una permutación $j$ tal que $s_1(i) = s_2(j)$ entonces $s_1 \equiv s_2$.
 
-## Cielo aleatorio, cielo de puntos
+### Ejemplo:
 
-Teorema y definición^[No sirve]
+Las siguientes nubes de puntos son equivalentes:
 
-Sean $(\Omega, \mathcal{A}, P, \lambda)$, con $P$ en una familia $\mathbb{P}_\lambda$, un espacio de medida cualquera fijo y $\mathbb{S}$ según lo mostrado previamente. La función de conjuntos $\lambda^*$ definida como
+- $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
 
-\begin{align}
-\lambda^* &:  \wp(\mathbb{S}) \longrightarrow [0,1]\\
-& S \subseteq \mathbb{S} \mapsto \lambda^*(S) := \lambda\left(\bigcup\limits_{s \in S} Ran(s) \right)
-\end{align}
+- $(1, 3, 2, 2) (0.3, 0.3, 0.2, 0.2)$
 
-Es una función de medida. En particular el espacio de medida $(\mathbb{S}, \mathcal{P}(\mathbb{S}), \lambda^*)$ se denomina el cielo aleatorio de $(\Omega, \mathcal{A}, \lambda)$.
+- $(1, 2, 3) (0.3, 0.4, 0.3)$
 
-## Teorema de grandes números^[Confirmar]
+- $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
 
-Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo y $(\mathbb{S}, \wp(\mathbb{S}), \lambda^*)$ su cielo de puntos. Sea $e$ el valor esperado visto como opreador sobre el cielo de puntos.
-
-\begin{align}
-e &:  (\mathbb{S}, \wp(\mathbb{S}), \lambda^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, \lambda)\\
-& s \in \mathbb{S} \mapsto e(s) := E(s)
-\end{align}
-
-Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$.
-
-Entonces
-
- - $e$ está bien definido.
- - $e$ es una variable aleatoria.
- - Su valor esperado es $\int \mathbb{1} d\lambda$ siendo $\mathbb{1}$ la función identidad.
 
 # hasta aquí por hoy
 
@@ -112,9 +147,6 @@ La medida $\lambda$ del espacio $\Omega$ es su medida natural; si $\Omega$ es el
 
 Es necesario que la relación de orden $<$ sea compatible con la $\sigma$-álgebra $\mathcal(A)$, esto es, que los intervalos definidos a partir de $<$ sean elementos de $\mathcal(A)$. Nótese que $\Omega$ puede ser un espacio vectorial, como $\mathbb{R}^m$ de dimensión $m$, con algún orden total.
 
-### Ejemplo
-
-La dupla $S = (1, 2, 3, 5), a = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos perteneciente a $\mathbb{Z}^4 \times \bigtriangleup^4$.
 
 
 
@@ -303,17 +335,6 @@ O =\mathbb{X} /\mathfrak{Em}
 
 Como consecuencia de **2** el operador $\mathfrak{Em}$ genera una partición del conjunto $\mathbb{X}$ de todas las nubes de puntos. Esta partición define una relación de equivalencia; se nota $\doteq$. En otras palabras dos nubes de puntos $(S_1, a_1)$ y $(S_2, a_2)$ son equivalentes sí y sólo sí tienen la misma función empírica.
 
-### Ejemplo:
-
-Las siguientes nubes de puntos son equivalentes:
-
-- $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
-
-- $(1, 3, 2, 2) (0.3, 0.3, 0.2, 0.2)$
-
-- $(1, 2, 3) (0.3, 0.4, 0.3)$
-
-- $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
 
 ## Estadísticas
 
