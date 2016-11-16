@@ -41,6 +41,9 @@ Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de 
 
 Una medida de probabilidad $p$ sobre $(1:n, \wp_n)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{N}, \wp(\mathbb{N}))$ espacio medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
 
+### Ejemplo bonito
+
+Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris es una nube de puntos $s$ de $(1:150, \wp_{150}, P_u)$ en $(\Omega, \mathcal{A})$, donde $P_u$ es la medida de probabilidad uniforme.
 
 ## Cielo aleatorio, cielo de puntos, cielito lindo^[No me vaya a dejar esto así]
 
@@ -78,20 +81,20 @@ Dados $n$ y $\mu$, $\textbf{S} \mid_{\mu,n}$ es un subconjunto de $\textbf{S}$. 
 
 ## Teorema de grandes números^[Confirmar]
 
-Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo y $(\textbf{S}, \wp(\textbf{S}), P^*)$ su cielo de puntos. Sea $e$ el valor esperado visto como opreador sobre el cielo de puntos.
+Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo, $(\textbf{S}, \wp(\textbf{S}), P^*)$ su cielo de puntos, $f: (\mathbb{R}^k, \mathcal{B}^k, \lambda) \leftarrow (\mathbb{R}, \mathcal{B})$ una función medible. Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos.
 
 \begin{align}
-e &:  (\textbf{S}, \wp(\textbf{S}), P^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, P, \lambda)\\
-& s \in \mathbb{S} \mapsto e(s) := E(s)
+e_f &:  (\textbf{S}, \wp(\textbf{S}), P^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, P, \lambda)\\
+& s \in \mathbb{S} \mapsto e_f(s) := E(f\circ s)
 \end{align}
 
-Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$.
+Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
 
-Entonces
+tiene las propiedades:
 
  - $e$ está bien definido.
  - $e$ es una variable aleatoria.
- - Su valor esperado $E(s) = \int e dP^*$ es igual a $\int X dP$ (siendo X(x) = x).
+ - Su valor esperado $E(e) = \int e dP^*$ es igual a $E(f) = \int f d\lambda$ ???.
 
 
 # especulación
