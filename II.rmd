@@ -12,38 +12,41 @@ output:
 
 ## Nube de puntos
 
-El objeto de estudio se denomina nube de puntos. En el argot estadístico una nube de puntos es un concepto intuitivo, que corresponde de alguna manera a una colección finita en un espacio euclidiano. Muchas veces los valores preesentan una estructura de pesos muestrales o factores de expansión asociados. Estos conceptos se formalizan a continuación.
+El objeto de estudio se denomina nube de puntos. En el argot estadístico una nube de puntos es un concepto intuitivo, que corresponde de alguna manera a una colección finita en un espacio euclidiano. Muchas veces los valores presentan una estructura de pesos muestrales o factores de expansión asociados. Estos conceptos se formalizan a continuación.
 
-Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo. Las siguientes son directrices de notación y definiciones iniciales:
+Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo. Las siguientes son directrices de notación, acuerdos y definiciones iniciales:
 
  - Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se denomina familia y se nota $\mathcal{P}$. Si es posible indexarlo mediante un espacio de dimensión finita se denomina familia paramétrica, caso contrario se denomina familia no paramétrica. El conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}$. Dada una medida $\lambda$ sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}_\lambda$ el conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ absolutamente contínuas con respecto a $\lambda$.
  - El conjunto que indexa una familia $\mathcal{P}$ es su espacio de parámetros. Una familia paramétrica tiene un espacio de parámetros de dimensión finita; una familia no paramétrica, necesariamente infinita. Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
- - Dado $n$ un número natural, $1:n$ es el intervalo de núeros naturales entre 1 y $n$ inclusive.
- - El conjunto de partes, $\wp(1:n)$, se nota en adelante $\wp_n$.
- - Se nota $\textbf{P}_n$ al conjunto de todas las medidas de probabilidad sobre $(1:n, \wp_n)$. Sea $p$ un elemento de $\textbf{P}_n$.
+ - Dados dos números naturales $a$ y $b$, $a:b$ es el intervalo de números naturales entre $a$ y $b$ inclusive.
+ - Salvo se especifique lo contrario, se usarán el símbolo $\wp$ para notar la $\sigma$-álgebra discreta en tanto el contexto sea claro.
+ - El símbolo $\ddot{\mu}$ se reserva para la medida cardinal; y el símbolo $\ddot{\lambda}$, para la de Lebesgue.
+ - Se nota $\textbf{P}_n$ al conjunto de todas las medidas de probabilidad sobre $(1:n, \wp)$. Sea $p$ un elemento de $\textbf{P}_n$.
  - Una función $s$ del espacio de probabilidad $(1:n,\wp_n, p)$ en el espacio medible, $(\Omega, \mathcal{A})$ se denomina nube de puntos. Evidentemente toda nube de puntos es función simple y en consecuencia es medible.^[Revisar en Shao]
  - Dada una nube de puntos $s$, siendo función, tiene dominio $Dom(s)$, rango $Ran(s)$, y en virtud de ser medible tiene una medida asociada $P_s$ sobre $(\Omega, \mathcal{A})$.
  - Dada una nube de puntos $s$ su tamaño es el máximo de su dominio: $n_s := \max(Dom(s))$.
- - El conjunto de todas las nubes de puntos de tamaño $n$ se denomina $s_n$. Esto es $s_n := \{ s: (1:n, \wp_n, p) \rightarrow (\Omega, \mathcal{A}) \mid p \in \textbf{P}_n \land n \in \mathbb{N} \}$
- - El conjunto de todas las nubes de puntos posibles se nota por $\textbf{S}$. En otras palabras: $\textbf{S} = \bigcup_{i=1}^\infty s_n$.
+ - El conjunto de todas las nubes de puntos posibles se nota por $\textbf{S}$. En otras palabras: $\textbf{S} = \{ s: (1:n, \wp, p) \rightarrow (\Omega, \mathcal{A}) \mid n \in \mathbb{N} \land p \in \textbf{P}_n\}$.
 
-De esta manera queda formalizado por completo el concepto de nubes de puntos. Como se ve, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad $p_n$ uniformes, dando a cada punto un peso de $\frac{1}{n}$.
+De esta manera queda formalizado por completo el concepto de nubes de puntos. Los ítemes anteriores a pesar de ser triviales deben ser comprendidos a cabalidad, se sugiere un estudio detenido de los mismos para ver sus implicaciones directas. De acuerdo a la estructura propuesta, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad uniformes cuya notación, $\ddot{p}$, se argumenta más adelante. Las medidas $\ddot{p}$ dan a cada punto un peso de $\frac{1}{n}$, sin embargo no son la única opción.
+
+Para efectos prácticos todo el fundamento teórico se ha escrito usando la integral de Lebesgue. Sin embargo existe la inquietud respecto a si los resultados son corecos usando la integral de Bochner^[citar]. En caso de que lo sean, el fundamento teórico sería válido para funciones medibles multivariadas, evitando el ruidoso concepto de vectores aleatorios. El uso de la integral de Lebesgue corresponde, en gran cantidad, a la mayor familiaridad del autor al respecto y a la claridad sobre la medida de Lebesgue.
 
 ### Teoremas, proposiciones, etc
 
 Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de puntos cualquiera sobre $(\Omega, \mathcal{A})$. Los siguientes enunciados se tienen en consecuencia de las definiciones anteriores.
 
- - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria.
+ - Sea $\mathbb{E}$ un espacio vectorial y $A$ un subconjunto de este. Se dice que $A$ es un conjunto convexo si dada una nube de puntos $s$ sobre $A$, su valor esperado $E(s)$ pertenece a $A$.
+ - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria o vector aleatorio según corresponda.
  - En este caso el valor esperado de $s$ es $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral.^[Cuestionar]
  - Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Cuestionar]
 
 ### Ejemplo
 
-Una medida de probabilidad $p$ sobre $(1:n, \wp_n)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{N}, \wp(\mathbb{N}))$ espacio medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
+Una medida de probabilidad $p$ sobre $(1:n, \wp)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{N}, \wp)$ espacio medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
 
 ### Ejemplo bonito
 
-Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris es una nube de puntos $s$ de $(1:150, \wp_{150}, P_u)$ en $(\Omega, \mathcal{A})$, donde $P_u$ es la medida de probabilidad uniforme.
+Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris^[citar] es una nube de puntos $s$ de $(1:150, \wp, \dot{p})$ en $(\Omega, \mathcal{A})$.
 
 ## Cielo aleatorio, cielo de puntos, cielito lindo^[No me vaya a dejar esto así]
 
@@ -51,50 +54,41 @@ Algunas propiedades y ejemplos
 
 $\textbf{S}$ es un conjunto muy áspero. Es posible realizar algunas restricciones interesantes.
 
- - Sea una medida $\mu$ sobre el espacio medible $(\mathbb{N}, \wp(\mathbb{N}))$, sea $p_n$ la medida de probabilidad generada por $\mu$ sobre $(1:n, \wp_n)$, es decir: $p_n(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp_n,p _n)$.
+ - En el espacio de medida $(\mathbb{N}, \wp, \mu)$, dado un natural $n$, existe una medida de probabilidad $p$ generada por $\mu$ sobre $(1:n, \wp)$, es decir: $p(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp, p_n)$. En particular las restriciones finitas de $\ddot{\mu}$ se notan por $\ddot{p}$. Es evidente que $\ddot{p}$ es una medida de probabilidad uniforme.
  
  - Sea $n$ un entero positivo fijo, $\textbf{S} \mid_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$.
 
- - $\textbf{S} \mid_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p_n(\{i\}) = \frac{\mu(\{i\})}{\mu(1:n)}$.
+ - $\textbf{S} \mid_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p(\{i\}) = \frac{\mu(\{i\})}{\mu(1:n)}$. Se tiene que $\textbf{S} \mid_\mu = \bigcup\limits_{n=0}^\infty \textbf{S} \mid_{\mu,n}$
 
-Teorema y definición
+### Teorema y definición
 
-Sean $(\Omega, \mathcal{A}, P, \lambda)$, con $P$ en una familia $\mathbb{P}_\lambda$, un espacio de medida cualquera fijo y $\textbf{S}$ definido según lo mostrado previamente, $f = \frac{dP}{d\lambda}$ la derivada de radon-Nikodim^[este nombre está bien?] de $P$ con respeto a $\lambda$. Sea
+Sean los espacios de medida $(\mathbb{N}, \wp, \mu)$ y $(\Omega, \mathcal{A}, P)$. Dados $n$ en los naturales y $(\Omega^n, \mathcal{A}^n, P^n)$ el espacio producto. Existe una biyección $I$ entre $\Omega^n$ y $\textbf{S} \mid_{\mu,n}$. Esto dota a $\textbf{S} \mid_{\mu,n}$ de una medida de probabilidad homóloga a $P^n$ generando el espacio de probabilidad $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$.
 
-\begin{align}
-f^*: &\textbf{S} \longrightarrow \mathbb{R}\\
-& s \mapsto f^*(s) = \prod\limits_{i=1}^{n_s} f(s(i))
-\end{align}
-
-Entonces, a función de conjuntos $P^*$ definida como
+En consecuencia es posible dar una medida a $\textbf{S} \mid_{\mu}$ a partir de la unión de $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$ sobre los naturales.
 
 \begin{align}
-P^* &:  \wp(\textbf{S}) \longrightarrow [0,1]\\
-& S \subseteq \textbf{S} \mapsto P^*(S) := \int I_S f^* d\lambda
+P^*: &\bigcup\limits_{n=0}^\infty \mathcal{A}^n \longrightarrow \mathbb{R}\\
+&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} \mid_n) 
 \end{align}
 
-Es una función de medida. En particular el espacio de medida $(\textbf{S}, \mathcal{P}(\textbf{S}), \lambda^*)$ se denomina el cielo aleatorio de $(\Omega, \mathcal{A}, \lambda)$.
-
-### teorema otro^[arreglarlo]
-
-Dados $n$ y $\mu$, $\textbf{S} \mid_{\mu,n}$ es un subconjunto de $\textbf{S}$. Su medida es 1.
+En particular el espacio de medida $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$ se denomina un cielo aleatorio de $(\Omega, \mathcal{A}, P)$. Evidentemente $P^*(\textbf{S} \mid_{\mu,n}) = \mu(\{n\})$
 
 ## Teorema de grandes números^[Confirmar]
 
-Sean $(\mathbb{R}^k, \mathcal{B}^k, \lambda)$ un espacio de medida cualquera fijo, $(\textbf{S}, \wp(\textbf{S}), P^*)$ su cielo de puntos, $f: (\mathbb{R}^k, \mathcal{B}^k, \lambda) \leftarrow (\mathbb{R}, \mathcal{B})$ una función medible. Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos.
+Sean $(\Omega, \mathcal{A}, P)$ un espacio deprobabilidad cualquera fijo, $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ un cielo de puntos, $\mathbb{E}$ un espacio vectorial sobre los reales y $f: (\Omega, \mathcal{A}, P) \rightarrow \mathbb{E}$ una función (medible? continua?). Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos
 
 \begin{align}
-e_f &:  (\textbf{S}, \wp(\textbf{S}), P^*) \longrightarrow (\mathbb{R}^k, \mathcal{B}^k, P, \lambda)\\
+e_f &:  (\textbf{S}\mid_\mu, \sigma(P^*), P^*) \longrightarrow \mathbb{E}\\
 & s \in \mathbb{S} \mapsto e_f(s) := E(f\circ s)
 \end{align}
 
-Con $E(s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
+Con $E(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
 
 tiene las propiedades:
 
  - $e$ está bien definido.
  - $e$ es una variable aleatoria.
- - Su valor esperado $E(e) = \int e dP^*$ es igual a $E(f) = \int f d\lambda$ ???.
+ - Su valor esperado $E(e) = \int e dP^*$ es igual a $E(f) = \int f dP$ ???.
 
 
 # especulación
