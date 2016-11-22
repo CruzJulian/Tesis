@@ -8,6 +8,19 @@ output:
     number_sections: true
 ---
 
+ - Poner bonito lo que falta
+ - leer
+ - Arreglar lo del valor esperado.
+ - Decidir entre las integrales.
+ - GC theorme
+ - Relación de orden entre nubes de puntos
+ - Ejempls?
+ - Completar los teoremas
+ - Resolver el desorden entre $\textbf{S}$, $\textbf{S}\mid_\mu$ y $\textbf{S}\mid_{\mu, n}$.
+ - Otras particiones
+ 
+
+
 # Desarrollo
 
 ## Nube de puntos
@@ -54,64 +67,16 @@ Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+
 
 $\textbf{S}$ es un conjunto muy áspero. Es posible realizar algunas restricciones interesantes.
 
- - En el espacio de medida $(\mathbb{N}, \wp, \mu)$, dado un natural $n$, existe una medida de probabilidad $p$ generada por $\mu$ sobre $(1:n, \wp)$, es decir: $p(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp, p_n)$. Este tipo de restricción no genera una partición sobre $\textbf{S}$, pues las restricciones no son necesariamente disjuntas. En particular las restriciones finitas de $\ddot{\mu}$ se notan por $\ddot{p}$. Es evidente que $\ddot{p}$ es una medida de probabilidad uniforme.
+ - En el espacio de medida $(\mathbb{N}, \wp, \mu)$, dado un natural $n$, existe una medida de probabilidad $p$ generada por $\mu$ sobre $(1:n, \wp)$, es decir: $p(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp, p_n)$. Este tipo de restricción no genera una partición sobre $\textbf{S}$, pues las restricciones no son necesariamente disjuntas. En particular las restricciones finitas de $\ddot{\mu}$ se notan por $\ddot{p}$. Es evidente que $\ddot{p}$ es una medida de probabilidad uniforme.
  
- - Sea $n$ un entero positivo fijo, $\textbf{S} \mid_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$. Esta restricción genera una artición de $\textbf{S}$.
+ - Sea $n$ un entero positivo fijo, $\textbf{S} \mid_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$. Esta restricción genera una partición de $\textbf{S}$.
 
  - $\textbf{S} \mid_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p(\{i\}) = \frac{\mu(\{i\})}{\mu(1:n)}$. Se tiene que $\textbf{S} \mid_\mu = \bigcup\limits_{n=0}^\infty \textbf{S} \mid_{\mu,n}$
 
-### Proyecciones
+### Particiones
 
-Dados dos números naturales $i \leq n$ definimos la proyección $i$-ésima sobre $\textbf{S} \mid_n$ así:
+Como se vio, la restricción $\textbf{S} \mid_n$ genera una partición sobre $\textbf{S}$ y a su vez, $\textbf{S} \mid_{\mu, n}$ sobre $\textbf{S} \mid_\mu$. A continuación se muestran otras particiones.
 
-\begin{align}
-X_i: &\textbf{S} \mid_n \longrightarrow \Omega\\
-&s \mapsto X_i(s) := s(i)
-\end{align}
-
-Dado que la restricción $\textbf{S} \mid_n$ genera una artición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
-
-### Teorema y definición
-
-Sean los espacios de medida $(\mathbb{N}, \wp, \mu)$ y $(\Omega, \mathcal{A}, P)$. Dados $n$ en los naturales y $(\Omega^n, \mathcal{A}^n, P^n)$ el espacio producto. Existe una biyección $I$ entre $\Omega^n$ y $\textbf{S} \mid_{\mu,n}$. Esto dota a $\textbf{S} \mid_{\mu,n}$ de una medida de probabilidad homóloga a $P^n$ generando el espacio de probabilidad $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$.
-
-En consecuencia es posible dar una medida a $\textbf{S} \mid_{\mu}$ a partir de la unión de $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$ sobre los naturales.
-
-\begin{align}
-P^*: &\bigcup\limits_{n=0}^\infty \mathcal{A}^n \longrightarrow \mathbb{R}\\
-&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} \mid_n) 
-\end{align}
-
-En particular el espacio de medida $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$ se denomina un cielo aleatorio de $(\Omega, \mathcal{A}, P)$. Evidentemente $P^*(\textbf{S} \mid_{\mu,n}) = \mu(\{n\})$. Una función $f$ de $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ en $\mathbb{R}$ tiene valor esperado $\int f dP^*$ y valor esperado de tamaño $n$, $\int_{\textbf{S}\mid_{\mu, n}} f dP^n$. Estos cumplen que $\int_{\textbf{S}\mid_\mu} f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int_{\textbf{S}\mid_{\mu, n}} f dP^n$.
-
-La proyeción $i$-ésima $X_i$, definida sobre $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$, es una variable aleatoria, por lo tanto está definida su integral. Esto es, dada una función medible $f$ de $(\Omega, \mathcal{A}, P)$ en $\mathbb{R}$, se tiene que:
-
-\begin{gather}
-\int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \int f dP\\
-\int\limits_{\textbf{S} \mid_{\mu}} f \circ X_i dP^* = \sum\limits_{n = i}^\infty \mu(\{n\}) \int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \mu(\mathbb{N}) \int f dP
-\end{gather}
-
-
-## Teorema de valor esperado^[Confirmar]
-
-Sean $(\Omega, \mathcal{A}, P)$ un espacio deprobabilidad cualquera fijo, $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ un cielo de puntos, $\mathbb{E}$ un espacio vectorial sobre los reales y $f: (\Omega, \mathcal{A}, P) \rightarrow \mathbb{E}$ una función (medible? continua?). Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos
-
-\begin{align}
-e_f &:  (\textbf{S}\mid_\mu, \sigma(P^*), P^*) \longrightarrow \mathbb{E}\\
-& s \in \mathbb{S} \mapsto e_f(s) := E(f\circ s)
-\end{align}
-
-Con $E(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
-
-tiene las propiedades:
-
- - $e$ está bien definido.
- - $e$ es una variable aleatoria.
- - Su valor esperado de tamaño $n$, $E(e) = \int_{\textbf{S}\mid_{\mu, n}} e dP^n$ es igual a $E(f) = \int f dP$ ???.
-
-
-# especulación
- 
 Se define la función $\mathfrak{P}$ de $\textbf{S}$ en $\mathbb{P}$ como sigue:
 
 \begin{align}
@@ -145,6 +110,69 @@ Las siguientes nubes de puntos son equivalentes:
 
 - $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
 
+
+
+### Proyecciones
+
+Dados dos números naturales $i \leq n$ definimos la proyección $i$-ésima sobre $\textbf{S} \mid_n$ así:
+
+\begin{align}
+X_i: &\textbf{S} \mid_n \longrightarrow \Omega\\
+&s \mapsto X_i(s) := s(i)
+\end{align}
+
+Dado que la restricción $\textbf{S} \mid_n$ genera una partición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
+
+### Teorema y definición
+
+Sean los espacios de medida $(\mathbb{N}, \wp, \mu)$ y $(\Omega, \mathcal{A}, P)$. Dados $n$ en los naturales y $(\Omega^n, \mathcal{A}^n, P^n)$ el espacio producto. Existe una biyección $I$ entre $\Omega^n$ y $\textbf{S} \mid_{\mu,n}$. Esto dota a $\textbf{S} \mid_{\mu,n}$ de una medida de probabilidad homóloga a $P^n$ generando el espacio de probabilidad $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$.
+
+En consecuencia es posible dar una medida a $\textbf{S} \mid_{\mu}$ a partir de la unión de $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$ sobre los naturales.
+
+\begin{align}
+P^*: &\bigcup\limits_{n=0}^\infty \mathcal{A}^n \longrightarrow \mathbb{R}\\
+&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} \mid_n) 
+\end{align}
+
+En particular el espacio de medida $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$ se denomina un cielo aleatorio de $(\Omega, \mathcal{A}, P)$. Evidentemente $P^*(\textbf{S} \mid_{\mu,n}) = \mu(\{n\})$. Una función $f$ de $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ en $\mathbb{R}$ tiene valor esperado $\int f dP^*$ y valor esperado de tamaño $n$, $\int_{\textbf{S}\mid_{\mu, n}} f dP^n$. Estos cumplen que $\int_{\textbf{S}\mid_\mu} f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int_{\textbf{S}\mid_{\mu, n}} f dP^n$.
+
+La proyeción $i$-ésima $X_i$, definida sobre $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$, es una variable aleatoria, por lo tanto está definida su integral. Esto es, dada una función medible $f$ de $(\Omega, \mathcal{A}, P)$ en $\mathbb{R}$, se tiene que:
+
+\begin{gather}
+\int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \int f dP\\
+\int\limits_{\textbf{S} \mid_{\mu}} f \circ X_i dP^* = \sum\limits_{n = i}^\infty \mu(\{n\}) \int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \mu(\mathbb{N}) \int f dP
+\end{gather}
+
+## Teoremas
+
+### De valor esperado^[Confirmar]
+
+Sean $(\Omega, \mathcal{A}, P)$ un espacio deprobabilidad cualquera fijo, $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ un cielo de puntos, $\mathbb{E}$ un espacio vectorial sobre los reales y $f: (\Omega, \mathcal{A}, P) \rightarrow \mathbb{E}$ una función (lineal? medible? continua?). Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos
+
+\begin{align}
+e_f &:  (\textbf{S}\mid_\mu, \sigma(P^*), P^*) \longrightarrow \mathbb{E}\\
+& s \in \mathbb{S} \mapsto e_f(s) := E(f\circ s)
+\end{align}
+
+Con $E(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
+
+tiene las propiedades:
+
+ - $e$ está bien definido.
+ - $e$ es una variable aleatoria.
+ - Su valor esperado de tamaño $n$, $E(e) = \int_{\textbf{S}\mid_{\mu, n}} e dP^n$ es igual a $E(f) = \int f dP$.
+
+### de grandes números
+
+Cuando $n_s$ aumenta...
+
+### de Glivenko Cantelli
+
+
+
+
+# especulación
+ 
 
 # hasta aquí por hoy
 
