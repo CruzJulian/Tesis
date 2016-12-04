@@ -8,99 +8,99 @@ output:
     number_sections: true
 ---
 
- - Poner bonito lo que falta
- - leer
- - Arreglar lo del valor esperado.
- - Decidir entre las integrales.
- - GC theorme
- - Relación de orden entre nubes de puntos
- - Ejempls?
- - Completar los teoremas
- - Resolver el desorden entre $\textbf{S}$, $\textbf{S}\mid_\mu$ y $\textbf{S}\mid_{\mu, n}$.
- - Otras particiones
- 
-
-
 # Desarrollo
 
 ## Nube de puntos
 
 El objeto de estudio se denomina nube de puntos. En el argot estadístico una nube de puntos es un concepto intuitivo, que corresponde de alguna manera a una colección finita en un espacio euclidiano. Muchas veces los valores presentan una estructura de pesos muestrales o factores de expansión asociados. Estos conceptos se formalizan a continuación.
 
-Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo. Las siguientes son directrices de notación, acuerdos y definiciones iniciales:
+Sea $\Omega$ un espacio de Banach cualquera fijo y $\mathcal{A}$ su $\sigma$-álgebra asociada. Las siguientes son directrices de notación, acuerdos y definiciones iniciales:
 
- - Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se denomina familia y se nota $\mathcal{P}$. Si es posible indexarlo mediante un espacio de dimensión finita se denomina familia paramétrica, caso contrario se denomina familia no paramétrica. El conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}$. Dada una medida $\lambda$ sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}_\lambda$ el conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ absolutamente contínuas con respecto a $\lambda$.
- - El conjunto que indexa una familia $\mathcal{P}$ es su espacio de parámetros. Una familia paramétrica tiene un espacio de parámetros de dimensión finita; una familia no paramétrica, necesariamente infinita. Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
- - Dados dos números naturales $a$ y $b$, $a:b$ es el intervalo de números naturales entre $a$ y $b$ inclusive.
- - Salvo se especifique lo contrario, se usarán el símbolo $\wp$ para notar la $\sigma$-álgebra discreta en tanto el contexto sea claro.
- - El símbolo $\ddot{\mu}$ se reserva para la medida cardinal; y el símbolo $\ddot{\lambda}$, para la de Lebesgue.
- - Se nota $\textbf{P}_n$ al conjunto de todas las medidas de probabilidad sobre $(1:n, \wp)$. Sea $p$ un elemento de $\textbf{P}_n$.
- - Una función $s$ del espacio de probabilidad $(1:n,\wp_n, p)$ en el espacio medible, $(\Omega, \mathcal{A})$ se denomina nube de puntos. Evidentemente toda nube de puntos es función simple y en consecuencia es medible.^[Revisar en Shao]
- - Dada una nube de puntos $s$, siendo función, tiene dominio $Dom(s)$, rango $Ran(s)$, y en virtud de ser medible tiene una medida asociada $P_s$ sobre $(\Omega, \mathcal{A})$.
- - Dada una nube de puntos $s$ su tamaño es el máximo de su dominio: $n_s := \max(Dom(s))$.
- - El conjunto de todas las nubes de puntos posibles se nota por $\textbf{S}$. En otras palabras: $\textbf{S} = \{ s: (1:n, \wp, p) \rightarrow (\Omega, \mathcal{A}) \mid n \in \mathbb{N} \land p \in \textbf{P}_n\}$.
+ - Familia @Shao (citar, definición 2.1): Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se denomina familia y se nota $\mathcal{P}$. Siempre es posible indexar mediante $\mathcal{P}$ un espacio $\Theta$ que se denomina espacio de parámetros. Una familia $\mathcal{P}$ con un espacio de parámetros $\Theta$ de dimensión finita $d$, se denomina familia paramétrica. Una familia $\mathcal{P}$ cuyo espacio de parámetros $\Theta$ es neeariamente de dimensión infinita se denomina familia no paramétrica. Toda familia paremétrica está contenida en una familia no paramétrica, asímismo toda familia no paramétrica $\mathcal{P}$ contiene familias paramétricas. Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
 
-De esta manera queda formalizado por completo el concepto de nubes de puntos. Los ítemes anteriores a pesar de ser triviales deben ser comprendidos a cabalidad, se sugiere un estudio detenido de los mismos para ver sus implicaciones directas. De acuerdo a la estructura propuesta, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad uniformes cuya notación, $\ddot{p}$, se argumenta más adelante. Las medidas $\ddot{p}$ dan a cada punto un peso de $\frac{1}{n}$, sin embargo no son la única opción.
-
-Para efectos prácticos todo el fundamento teórico se ha escrito usando la integral de Lebesgue. Sin embargo existe la inquietud respecto a si los resultados son corectos usando la integral de Bochner^[citar]. En caso de que lo sean, el fundamento teórico sería válido para funciones medibles multivariadas, evitando el ruidoso concepto de vectores aleatorios. El uso de la integral de Lebesgue corresponde, en gran cantidad, a la mayor familiaridad del autor al respecto y a la claridad sobre la medida de Lebesgue.
-
-### Teoremas, proposiciones, etc
-
-Sea $(\Omega, \mathcal{A})$ un espacio medible cualquera fijo y $s$ una nube de puntos cualquiera sobre $(\Omega, \mathcal{A})$. Los siguientes enunciados se tienen en consecuencia de las definiciones anteriores.
-
- - Sea $\mathbb{E}$ un espacio vectorial y $A$ un subconjunto de este. Se dice que $A$ es un conjunto convexo si dada una nube de puntos $s$ sobre $A$, su valor esperado $E(s)$ pertenece a $A$.
- - Si $\Omega$ está contenido en $\mathbb{R}^k$, $s$ es variable aleatoria o vector aleatorio según corresponda.
- - En este caso el valor esperado de $s$ es $E(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral.^[Cuestionar]
- - Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Cuestionar]
-
-### Ejemplo
-
-Una medida de probabilidad $p$ sobre $(1:n, \wp)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{N}, \wp)$ espacio medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
-
-### Ejemplo bonito
-
-Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris^[citar] es una nube de puntos de $(1:150, \wp, \dot{p})$ en $(\Omega, \mathcal{A})$.
-
-## Cielo aleatorio, cielo de puntos, cielito lindo^[No me vaya a dejar esto así]
-
-### Restricciones
-
-$\textbf{S}$ es un conjunto muy áspero. Es posible realizar algunas restricciones interesantes.
-
- - En el espacio de medida $(\mathbb{N}, \wp, \mu)$, dado un natural $n$, existe una medida de probabilidad $p$ generada por $\mu$ sobre $(1:n, \wp)$, es decir: $p(A) = \frac{\mu(A)}{\mu(1:n)}$ así $\textbf{S} \mid_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp, p_n)$. Este tipo de restricción no genera una partición sobre $\textbf{S}$, pues las restricciones no son necesariamente disjuntas. En particular las restricciones finitas de $\ddot{\mu}$ se notan por $\ddot{p}$. Es evidente que $\ddot{p}$ es una medida de probabilidad uniforme.
+ - El conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}$. Dada una medida $\lambda$ sobre $(\Omega, \mathcal{A})$ se nota $\mathbb{P}_\lambda$ el conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{A})$ absolutamente contínuas con respecto a $\lambda$. Es posible indexar este conjunto usando el conjunto de sus derivadas con respecto a $\lambda$, no obstante se trata en general de una familia no paramétrica.
  
- - Sea $n$ un entero positivo fijo, $\textbf{S} \mid_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$. Esta restricción genera una partición de $\textbf{S}$.
+ - En adelante $\int$ representa la integral de Bochner. Se trata de una generalización de la integral de Lebesgue para funciones con valores en espacios de Banach. Al respecto, @COHN hace un repaso claro y conciso.^[El uso de la integral de Bochner enriquece la construcción teórica y evita el uso del concepto de vectores aleatorios.]
 
- - $\textbf{S} \mid_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p(\{i\}) = \frac{\mu(\{i\})}{\mu(1:n)}$. Se tiene que $\textbf{S} \mid_\mu = \bigcup\limits_{n=0}^\infty \textbf{S} \mid_{\mu,n}$
+ - Dados dos números naturales $a$ y $b$, se nota $a:b$ al intervalo de números naturales entre $a$ y $b$ inclusive.
 
-### Particiones
+ - Salvo se especifique lo contrario, se usarán el símbolo $\wp$ para notar la $\sigma$-álgebra discreta en tanto el contexto sea claro.
+ 
+ - El símbolo $\ddot{\mu}$ se reserva para la medida cardinal; y el símbolo $\ddot{\lambda}$, para la de Lebesgue.
+ 
+ - Se nota $\mathcal{P}_n$ a la familia de todas las medidas de probabilidad sobre $(1:n, \wp)$. 
+ 
+ - Sea $p$ un elemento de $\mathcal{P}_n$, es decir, una medida de probabilidad sobre $(1:n, \wp)$. Una función $s$ del espacio de probabilidad $(1:n,\wp, p)$ en el espacio medible, $(\Omega, \mathcal{A})$ se denomina nube de puntos.
 
-Como se vio, la restricción $\textbf{S} \mid_n$ genera una partición sobre $\textbf{S}$ y a su vez, $\textbf{S} \mid_{\mu, n}$ sobre $\textbf{S} \mid_\mu$. A continuación se muestran otras particiones.
+ - Una nube de puntos $s$ es función simple. En consecuencia, @Shao, es medible. Siendo función, tiene dominio $Dom(s)$, rango $Ran(s)$, y en virtud de ser medible tiene una medida asociada $P_s$ sobre $(\Omega, \mathcal{A})$.
+ 
+ - Dada una nube de puntos $s$ su tamaño es el máximo de su dominio: $n_s := \max(Dom(s))$.
+ 
+ - El conjunto de todas las nubes de puntos posibles se nota por $\textbf{S}$. En otras palabras: $\textbf{S} = \{ s: (1:n, \wp, p) \rightarrow (\Omega, \mathcal{A}) \mid n \in \mathbb{N} \land p \in \textbf{P}_n\}$.
+ 
+ - Una función medible que toma valores en un espacio de Banach se denomina variable aleatoria.^[Si bien el uso de variable aleatoria está destinado a funciones medibles de valor real, la presentación de un concepto más amplio obedece al caracter generalizado y generalizante de la construción teórica.]
+ 
+ - Dada una variable aleatoria $X$ su valor esperado y varianza, $E$ y $Var$, están dados por: $E(X) = \int X dp$ y $Var(X) = E(X^2) - E(X)^2$. 
+ 
+ - Se definen las funciones $\dddot{E}$ y $\dddot{Var}$, valor esperado muestral y varianza muestral: $\dddot{E}(s) = \int s dp$ y $\dddot{Var}(s) = \dddot{E}(s^2) - \dddot{E}(s)^2$. Es prudente enfatizar que el valor esperado y la varianza muestrales $\dddot{E}$ y $\dddot{Var}$ son funciones de $\textbf{S}$ en $\Omega$. El valor esperado muestral de $s$ es $\dddot{E}(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral. Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Evidentemente los nombres tradicionales de estas cantidades no coinciden con los aquí puestos. No se volverán a mencionar para no dar lugar a confusiones.]
+
+De esta manera queda formalizado por completo el concepto de nubes de puntos. Los ítemes anteriores a pesar de ser triviales deben ser comprendidos a cabalidad, se sugiere un estudio detenido de los mismos para ver sus implicaciones directas. De acuerdo a la estructura propuesta, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad uniformes cuya notación, $\ddot{p}$, se argumenta más adelante. Las medidas $\ddot{p}$ dan a cada punto un peso de $\frac{1}{n}$, sin embargo no son la única opción en temas de modelado.
+
+Todo el fundamento teórico se ha escrito usando la integral de Bochner^[citar]. Al respecto es importante notar que $\Omega$ es en todo momento un espacio de Banach. Es decir, un espacio vectorial normado y completo (citar, Cálculo avanzado José francisco caicedo def 1.68). De esta forma los resultados mostrados son válidos tanto para el caso univariado como el multivariado.
+
+### Medida de probabilidad empírica
 
 Se define la función $\mathfrak{P}$ de $\textbf{S}$ en $\mathbb{P}$ como sigue:
 
-\begin{align}
+\begin{align*}
 \mathfrak{P}: & \textbf{S} \longrightarrow \mathbb{P}  \\
 & s \mapsto \mathfrak{P}(s) := P_s
-\end{align}
+\end{align*}
 
 donde
 
-\begin{align}
+\begin{align*}
 P_s: & \mathcal{A} \longrightarrow \mathbb{R} \\
 & A \mapsto P_s(A) := p(s^{-1}(A))
-\end{align}
+\end{align*}
 
-La función $\mathfrak{P}$ asigna a cada $s \in \textbf{S}$ su medida de probabilidad asociada. Esto es crucial para poder definir el conjunto $\mathbb{S} := \textbf{S}/\mathfrak{P}$. 
+La función $\mathfrak{P}$ asigna a cada $s \in \textbf{S}$ su medida de probabilidad asociada. Esta medida de probabilidad se denomina medida d probabilidad empírica y es el centro de discusión del presente estudio.
 
-Se dice que dos nubes de puntos $s_1$ y $s_2$ son equivalentes si son iguales en $\mathbb{S}$ y se nota $s_1 \equiv s_2$.
+### Ejemplos
 
- - Dos nubes de puntos equivalentes $s_1 \equiv s_2$ tienen el mismo rango, el mismo valor esperado y la misma varianza. Esto no se cumple para tamaño.
- - $\mathbb{S}$ es inmune a permutaciones. Dada una permutación $j$ tal que $s_1(i) = s_2(j)$ entonces $s_1 \equiv s_2$.
+Una medida de probabilidad $p$ sobre $(1:n, \wp)$ queda definida completamente a partir de los valores $p(\{i\})$. Así, es posible especificar una nube de puntos listando los valores de $s(i)$ y de $p(\{i\})$. Por ejemplo para $(\mathbb{R}, \mathcal{B})$ espacio de Banach medible, $s = (1, 2, 3, 5)$, $p = (0.3, 0.2, 0.2, 0.3)$ es una nube de puntos.
+
+Sea $\Omega = \mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times\mathbb{R}^+\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris^[@citar iris] es una nube de puntos de $(1:150, \wp, \dot{p})$ en $(\Omega, \mathcal{A})$. En este caso particular $\Omega$ no es un espacio de Banach, por lo cual los reultados no necesariamente se cumplen.
+
+Sea $(\Omega, \mathcal{A})$ un espacio de Banach medible cualquera fijo. Un subconjunto $A$ de $\Omega$ se dice convexo si toda nube de puntos $s$ con valores en $A$ tiene su valor esperado muestal $E(s)$ en $A$.
+
+## Nebulosa
+
+### Restricciones
+
+$\textbf{S}$ es un conjunto muy interesante. Es posible realizar algunas restricciones.
+
+ - En el espacio de medida $(\mathbb{N}, \wp, \mu)$, para cada número natural $n$ existe una única medida de probabilidad $p_{\mu, n}$ generada por $\mu$ sobre $(1:n, \wp)$, es: $p_{\mu,n}(A) = \frac{\mu(A)}{\mu(1:n)}$. Así $\textbf{S} |_\mu$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen como dominio $(1:n, \wp, p_{\mu,n})$ para algún $n$. Este tipo de restricción no genera una partición sobre $\textbf{S}$, pues las restricciones no son necesariamente disjuntas. En particular las restricciones finitas de $\ddot{\mu}$ se notan por $\ddot{p}$. Es evidente que $\ddot{p}$ es una medida de probabilidad uniforme.
+ 
+ - Sea $n$ un entero positivo fijo, $\textbf{S} |_n$ es el subconjunto de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$. Esta restricción genera una partición de $\textbf{S}$.
+
+ - $\textbf{S} |_{\mu,n}$ es la restricción de $\textbf{S}$ cuyos elementos $s$ tienen tamaño $n$ y probabilidad $p_{\mu, n}$. Esta restricción genera una partición de $\textbf{S} |_{\mu}$
+
+### Particiones
+
+A continuación se muestran algunas particiones.
+
+ - $\textbf{S}/Ran$ corresponde a la partición de $\textbf{S}$ inducida por el rango $Ran(s)$. Dos nubes de puntos $s_1$ y $s_2$ pertenecen a la misma clase si $Ran(s_1) = Ran(s_2)$.
+
+ - $\textbf{S}/\dddot{E}$ corresponde a la partición de $\textbf{S}$ inducida por la función valor esperado muestral. Dos nubes de puntos $s_1$ y $s_2$ pertenecen a la misma clase si $\dddot{E}(s_1) = \dddot{E}(s_2)$.
+
+ - $\textbf{S}/\dddot{Var}$ corresponde a la partición de $\textbf{S}$ inducida por la función varianza muestral. Dos nubes de puntos $s_1$ y $s_2$ pertenecen a la misma clase si $\dddot{Var}(s_1) = \dddot{Var}(s_2)$.
+
+ - $\mathbb{S} := \textbf{S}/\mathfrak{P}$ corresponde a la partición de $\textbf{S}$ inducida por $\mathfrak{P}$. Además, se dice que dos nubes de puntos $s_1$ y $s_2$ son equivalentes si son iguales en $\mathbb{S}$ y se nota $s_1 \equiv s_2$. $\mathbb{S}$ es inmune a permutaciones. Dada una permutación $j$ tal que $s_1(i) = s_2(j)$ entonces $s_1 \equiv s_2$. Esta ultima partición implica las anteriores: Dos nubes de puntos equivalentes $s_1 \equiv s_2$ tienen el mismo rango, el mismo valor esperado y la misma varianza. Esto no se cumple para tamaño.
 
 ### Ejemplo:
 
-Las siguientes nubes de puntos son equivalentes:
+Las siguientes nubes de puntos son equivalentes en las particiones mostradas:
 
 - $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
 
@@ -110,65 +110,76 @@ Las siguientes nubes de puntos son equivalentes:
 
 - $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
 
-
-
 ### Proyecciones
 
-Dados dos números naturales $i \leq n$ definimos la proyección $i$-ésima sobre $\textbf{S} \mid_n$ así:
+Dados dos números naturales $i$ y $n$, con $i \leq n$, definimos la proyección $i$-ésima sobre $\textbf{S} |_n$ así:
 
 \begin{align}
-X_i: &\textbf{S} \mid_n \longrightarrow \Omega\\
+X_i: &\textbf{S} |_n \longrightarrow \Omega\\
 &s \mapsto X_i(s) := s(i)
 \end{align}
 
-Dado que la restricción $\textbf{S} \mid_n$ genera una partición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
+Dado que la restricción $\textbf{S} |_n$ genera una partición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
 
-### Teorema y definición
+### Definición (Nebulosa)
 
-Sean los espacios de medida $(\mathbb{N}, \wp, \mu)$ y $(\Omega, \mathcal{A}, P)$. Dados $n$ en los naturales y $(\Omega^n, \mathcal{A}^n, P^n)$ el espacio producto. Existe una biyección $I$ entre $\Omega^n$ y $\textbf{S} \mid_{\mu,n}$. Esto dota a $\textbf{S} \mid_{\mu,n}$ de una medida de probabilidad homóloga a $P^n$ generando el espacio de probabilidad $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$.
+Sean los espacios de medida $(\mathbb{N}, \wp, \mu)$ y $(\Omega, \mathcal{A}, P)$. Dados $n$ en los naturales y $(\Omega^n, \mathcal{A}^n, P^n)$ el espacio de medida producto existe una biyección $I$ entre $\Omega^n$ y $\textbf{S} |_{\mu,n}$. Esto dota a $\textbf{S} |_{\mu,n}$ de una medida de probabilidad homóloga a $P^n$ generando el espacio de probabilidad $(\textbf{S} |_{\mu,n}, \mathcal{A}^n, P^n)$. Este espacio de medida se denomina una nebulosa de $(\Omega, \mathcal{A}, P)$.^[El uso de la palabra nebulosa corresponde a la imagen de una nebulosa como un conjunto de nubes, sin embargo es pertinente enfatizar que la definición incluye la estructura de medida.]
 
-En consecuencia es posible dar una medida a $\textbf{S} \mid_{\mu}$ a partir de la unión de $(\textbf{S} \mid_{\mu,n}, \mathcal{A}^n, P^n)$ sobre los naturales.
+Como se ve, $(\Omega, \mathcal{A}, P)$ tiene infinitas nebulosas, dependiendo de la medida $\mu$ y del tamaño $n$. Una función medible $f$ de $(\textbf{S} |_{\mu, n}, \mathcal{A}^n, P^n)$ en $\mathbb{R}$ tiene integral $\int f dP^n$. En particular la proyeción $i$-ésima $X_i$, definida sobre $(\textbf{S} |_{\mu,n}, \mathcal{A}^n, P^n)$, es medible, por lo tanto está definida su integral.
+
+### Lemas
+
+Dada una función medible $f$ de $(\Omega, \mathcal{A}, P)$ en $\mathbb{R}$, se tiene que:
+
+\begin{gather}
+\int f \circ X_i dP^n = \int f dP
+\end{gather}
+
+Adicionalmente, la definición propuesta de nebulosa hace posible establecer una medida sobre $\textbf{S} |_{\mu} = \bigcup\limits_{n = 1}^\infty \textbf{S} |_{\mu,n}$:
 
 \begin{align}
 P^*: &\bigcup\limits_{n=0}^\infty \mathcal{A}^n \longrightarrow \mathbb{R}\\
-&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} \mid_n) 
+&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} |_n) 
 \end{align}
 
-En particular el espacio de medida $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$ se denomina un cielo aleatorio de $(\Omega, \mathcal{A}, P)$. Evidentemente $P^*(\textbf{S} \mid_{\mu,n}) = \mu(\{n\})$. Una función $f$ de $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ en $\mathbb{R}$ tiene valor esperado $\int f dP^*$ y valor esperado de tamaño $n$, $\int_{\textbf{S}\mid_{\mu, n}} f dP^n$. Estos cumplen que $\int_{\textbf{S}\mid_\mu} f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int_{\textbf{S}\mid_{\mu, n}} f dP^n$.
+Resulta fácil corroborar que $P^*(\textbf{S} |_{\mu,n}) = \mu(\{n\})$. Una función $f$ de $(\textbf{S} |_\mu, \sigma(P^*), P^*)$ en un espacio de Banach $\mathbb{E}$ tiene integral $\int f dP^*$. Es posible representar esta integral como la suma de los valores esperados de sus restricciones de tamaño $n$, $f|_n$. Es decir, $\int f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int f|_n dP^n$.
 
-La proyeción $i$-ésima $X_i$, definida sobre $(\textbf{S} \mid_{\mu}, \sigma(P^*), P^*)$, es una variable aleatoria, por lo tanto está definida su integral. Esto es, dada una función medible $f$ de $(\Omega, \mathcal{A}, P)$ en $\mathbb{R}$, se tiene que:
+### Ejemplo
+
+Dada una función medible $f$ de $(\Omega, \mathcal{A}, P)$ en un espacio de Banach $\Omega'$ el valor esperado de su proyección $i$-ésima está dado por:
 
 \begin{gather}
-\int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \int f dP\\
-\int\limits_{\textbf{S} \mid_{\mu}} f \circ X_i dP^* = \sum\limits_{n = i}^\infty \mu(\{n\}) \int\limits_{\textbf{S} \mid_{\mu, n}} f \circ X_i dP^n = \mu(\mathbb{N}) \int f dP
+\int\limits_{\textbf{S} |_{\mu}} f \circ X_i dP^* = \sum\limits_{n = i}^\infty \mu(\{n\}) \int\limits_{\textbf{S} |_{\mu, n}} f \circ X_i dP^n = \mu(\mathbb{N}) \int f dP
 \end{gather}
 
-## Teoremas
+## Teorema de valor esperado
 
-### De valor esperado^[Confirmar]
-
-Sean $(\Omega, \mathcal{A}, P)$ un espacio deprobabilidad cualquera fijo, $(\textbf{S}\mid_\mu, \sigma(P^*), P^*)$ un cielo de puntos, $\mathbb{E}$ un espacio vectorial sobre los reales y $f: (\Omega, \mathcal{A}, P) \rightarrow \mathbb{E}$ una función (lineal? medible? continua?). Entonces $e_f$ el valor esperado visto como opreador sobre el cielo de puntos
+Sea $(\textbf{S} |_{\mu,n}, \mathcal{A}^n, P^n)$ una nebulosa sobre $(\Omega, \mathcal{A}, P)$ un espacio de Banach de probabilidad cualquera fijo. La restricción de tamaño $n$ del valor esperado muestral $\dddot{E}|_n$.
 
 \begin{align}
-e_f &:  (\textbf{S}\mid_\mu, \sigma(P^*), P^*) \longrightarrow \mathbb{E}\\
-& s \in \mathbb{S} \mapsto e_f(s) := E(f\circ s)
+\dddot{E}|_n:  = &\textbf{S} |_{\mu, n} \longrightarrow \Omega\\
+& s \mapsto \int s dp
 \end{align}
 
-Con $E(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ como ya se vio.
+Entonces
 
-tiene las propiedades:
+ - $\dddot{E}|_n$ está bien definido.
+ - $\dddot{E}|_n$ es una variable aleatoria.
+ - Su valor esperado, $E(\dddot{E}|_n) = \int I dP$ siendo $I$ la función identidad. 
+ 
+### Corolario
 
- - $e$ está bien definido.
- - $e$ es una variable aleatoria.
- - Su valor esperado de tamaño $n$, $E(e) = \int_{\textbf{S}\mid_{\mu, n}} e dP^n$ es igual a $E(f) = \int f dP$.
+El valor esperado del valor esperado muestral de una variable aleatoria coincide con su valor esperado. Dada una función medible $f: (\Omega, \mathcal{A}, P) \rightarrow \Omega'$. $\dddot{E}(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ y  $E(\dddot{E}|_n \circ f) = \int f dP$. 
 
-### de grandes números
+## Teorema (débil? fuerte?) de grandes números
+
+### Lema
+
+Sea el espacio de medida $(\mathbb{N}, \wp, \mu)$ y los espacios asociados $(1:n, \wp, p_{\mu, n})$, si los valores $\mu({i})$ son acotados pero $\mu(\mathbb{N})$ es infinito, entonces la sucesión $a_n = \sum{i=1}^n p_{\mu,n}(\{i\})$ converge a cero.
 
 Cuando $n_s$ aumenta...
 
 ### de Glivenko Cantelli
-
-
 
 
 # especulación
@@ -268,7 +279,7 @@ La terna $(\Omega, \mathcal{A}, \mu)$ se llama {Espacio de medida}.
 
 Sea $(\Omega, \mathcal{A})$ un espacio medible. El conjunto
 \begin{gather*}
-\mathbb{P} := \{\mu: \mathcal{A}\rightarrow [0, +\infty] \mid \mu \text{ es una medida}\}
+\mathbb{P} := \{\mu: \mathcal{A}\rightarrow [0, +\infty] | \mu \text{ es una medida}\}
 \end{gather*}
 se llama Conjunto de todas las medidas sobre $(\Omega, \mathcal{A})$.
 \end{defin}
@@ -297,7 +308,7 @@ Sea $(\Omega, \mathcal{A}, \mu)$ un espacio de medida. Sean: $\{A_i\}_{i\leq n}$
 
 Sea $\bigtriangleup^n \subseteq \mathbb{R}^n$ el subconjunto 
 
-\[\bigtriangleup^n = \left \{ (a_1, ..., a_n) \in \mathbb{R}^n \mid \sum\limits_{i = 1}^n a_i = 1 \wedge \forall_{i = 1, ..., n} a_i \geq 0 \right \}\]
+\[\bigtriangleup^n = \left \{ (a_1, ..., a_n) \in \mathbb{R}^n | \sum\limits_{i = 1}^n a_i = 1 \wedge \forall_{i = 1, ..., n} a_i \geq 0 \right \}\]
 
 se denomina el espacio simplex de orden $n$.
 
@@ -412,3 +423,22 @@ Por definición el operador $\mathfrak{Em}$ es una estadística.
 - Distancias entre nubes
 
 - Suma directa de nubes
+
+ - Poner bonito lo que falta
+
+ - leer
+
+ - Arreglar lo del valor esperado.
+
+ - GC theorme
+
+ - Relación de orden entre nubes de puntos
+
+ - Ejempls?
+
+ - Completar los teoremas
+
+ - Resolver el desorden entre $\textbf{S}$, $\textbf{S}|_\mu$ y $\textbf{S}|_{\mu, n}$.
+
+ - Otras particiones
+
