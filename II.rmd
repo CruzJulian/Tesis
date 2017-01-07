@@ -6,6 +6,8 @@ output:
     keep_tex: true
     toc: false
     number_sections: true
+bibliography: Biblio.bib
+csl: apa.csl
 ---
 
 # Nube de puntos
@@ -16,11 +18,11 @@ El objeto de estudio se denomina nube de puntos. En el argot estadístico una nu
 
 Sea $\Omega$ un conjunto cualquera fijo, espacio de Banach a menos que se especifique lo contrario, y $\mathcal{B}$ su $\sigma$-álgebra de Borel. Las siguientes son directrices de notación, acuerdos y definiciones iniciales:
 
- - Familia @Shao (citar, definición 2.1): Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{B})$ se denomina familia y se nota $\mathcal{P}$. Siempre es posible indexar mediante $\mathcal{P}$ un espacio $\Theta$ que se denomina espacio de parámetros. Una familia $\mathcal{P}$ con un espacio de parámetros $\Theta$ de dimensión finita $d$, se denomina familia paramétrica. Una familia $\mathcal{P}$ cuyo espacio de parámetros $\Theta$ es neceariamente de dimensión infinita se denomina familia no paramétrica. Toda familia paremétrica está contenida en una familia no paramétrica, asímismo toda familia no paramétrica $\mathcal{P}$ contiene familias paramétricas. Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
+ - Familia [@Shao, definición 2.1]: Un conjunto de medidas de probabilidad sobre $(\Omega, \mathcal{B})$ se denomina familia y se nota $\mathcal{P}$. Siempre es posible indexar mediante $\mathcal{P}$ un espacio $\Theta$ que se denomina espacio de parámetros. Una familia $\mathcal{P}$ con un espacio de parámetros $\Theta$ de dimensión finita $d$, se denomina familia paramétrica. Una familia $\mathcal{P}$ cuyo espacio de parámetros $\Theta$ es neceariamente de dimensión infinita se denomina familia no paramétrica. Toda familia paremétrica está contenida en una familia no paramétrica, asímismo toda familia no paramétrica $\mathcal{P}$ contiene familias paramétricas. Toda familia se puede indexar a sí misma, en este sentido una medida de probabilidad puede ser un parámetro de si misma.
 
  - El conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{B})$ se nota $\mathbb{P}$. Dada una medida $\lambda$ sobre $(\Omega, \mathcal{B})$ se nota $\mathbb{P}_\lambda$ el conjunto de todas las medidas de probabilidad sobre $(\Omega, \mathcal{B})$ absolutamente contínuas con respecto a $\lambda$. Es posible indexar este conjunto usando el conjunto de sus derivadas con respecto a $\lambda$, no obstante se trata en general de una familia no paramétrica.
 
- - En adelante $\int$ representa la integral de Bochner. Se trata de una generalización de la integral de Lebesgue para funciones con valores en espacios de Banach. Al respecto, @COHN hace un repaso claro y conciso.^[El uso de la integral de Bochner enriquece la construcción teórica y evita el uso del concepto de vectores aleatorios.]
+ - En adelante $\int$ representa la integral de Bochner. Se trata de una generalización de la integral de Lebesgue para funciones con valores en espacios de Banach. Al respecto, @Cohn hace un repaso claro y conciso.^[El uso de la integral de Bochner enriquece la construcción teórica y evita el uso del concepto de vectores aleatorios.] Es importante tener en cuenta que la definición de integral incluye los casos divergentes, es decir, los valores $\infty$ y $-\infty$ están contemplados como posibles resultados de una integral.
 
  - Dados dos números naturales $a$ y $b$, se nota $a:b$ al intervalo de números naturales entre $a$ y $b$ inclusive.
 
@@ -40,15 +42,15 @@ Sea $\Omega$ un conjunto cualquera fijo, espacio de Banach a menos que se especi
  
  - Una función medible que toma valores en un espacio de Banach se denomina variable aleatoria.^[Si bien el uso de variable aleatoria está destinado a funciones medibles de valor real, la presentación de un concepto más amplio obedece al caracter generalizado y generalizante de la construcción teórica.]
  
- - Dada una variable aleatoria $X$ su valor esperado y varianza, $E$ y $Var$, están dados por: $E(X) = \int X dp$ y $Var(X) = E(X^2) - E(X)^2$. 
+ - Dada una variable aleatoria $X$ su valor esperado y varianza, $E$ y $Var$, están dados por: $E(X) = \int X dP$ y $Var(X) = E(X^2) - E(X)^2$. Estos valores no siempre son finitos.
  
  - Se definen las funciones $\dddot{E}$ y $\dddot{Var}$, valor esperado muestral y varianza muestral: $\dddot{E}(s) = \int s dp$ y $\dddot{Var}(s) = \dddot{E}(s^2) - \dddot{E}(s)^2$.
 
 De esta manera queda formalizado por completo el concepto de nubes de puntos. Los ítemes anteriores a pesar de ser triviales deben ser comprendidos a cabalidad, se sugiere un estudio detenido de los mismos para ver sus implicaciones directas. De acuerdo a la estructura propuesta, una nube de puntos $s$ tiene tamaño y probabilidades asociadas. En el uso cotidiano se suelen usar medidas de probabilidad uniformes cuya notación, $\ddot{p}$, se argumenta más adelante. Las medidas $\ddot{p}$ dan a cada punto un peso de $\frac{1}{n}$, sin embargo no son la única opción en temas de modelado.
 
-Todo el fundamento teórico se ha escrito usando la integral de Bochner^[citar]. Al respecto es importante notar que, salvo se especifique lo contrario, $\Omega$ es un espacio de Banach. Es decir, un espacio vectorial normado y completo (citar, Cálculo avanzado José francisco caicedo def 1.68). De esta forma los resultados mostrados son válidos tanto para el caso univariado como el multivariado.
+Todo el fundamento teórico se ha escrito usando la integral de Bochner^[@Cohn]. Al respecto es importante notar que, salvo se especifique lo contrario, $\Omega$ es un espacio de Banach. Es decir, un espacio vectorial normado y completo [@Caicedo, definición 1.68]. De esta forma los resultados mostrados son válidos tanto para el caso univariado como el multivariado.
 
-Es posible ver que el valor esperado y la varianza muestrales $\dddot{E}$ y $\dddot{Var}$ son funciones de $\textbf{S}$ en $\Omega$. El valor esperado muestral de $s$ es $\dddot{E}(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral. Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Evidentemente los nombres tradicionales de estas cantidades no coinciden con los aquí puestos. No se volverán a mencionar para no dar lugar a confusiones.]
+Es posible ver que el valor esperado y la varianza muestrales $\dddot{E}$ y $\dddot{Var}$ son funciones de $\textbf{S}$ en $\Omega$. El valor esperado muestral de $s$ siempre existe y está dado por $\dddot{E}(s) = \sum_{i=1}^{n_s} p(\{i\})s(i)$. Que en algunos ámbitos se denomina media muestral. Asímismo, la varianza de $s$ es $Var(s) = \sum_{i=1}^{n_s} p(\{i\})(s(i) - E(s))^2$. Que en algunos ámbitos se denomina varianza poblacional.^[Evidentemente los nombres tradicionales de estas cantidades no coinciden con los aquí puestos. No se volverán a mencionar para no dar lugar a confusiones.]
 
 ## Medida de probabilidad empírica
 
@@ -74,7 +76,7 @@ Una medida de probabilidad $p$ sobre $(1:n, \wp)$ queda definida completamente a
 
 Dado un conjunto cualquiera $\Omega = \{a, b, c\}$. Una nube de puntos con valores en $(\Omega, \wp)$ se denomina nube de puntos categórica. En este caso $\Omega$ no es un espacio de Banach y la integración no está definida, por lo cual no es posible hablar de valores esperados. Muchas veces sucede que un espacio muestral está formado por una parte numérica, y otra categórica, es decir $\Omega = \Omega_N \times \Omega_C$, con $\Omega_N$ espacio de Banach.
 
-Sea $\Omega = \mathbb{R}\times\mathbb{R}\times\mathbb{R}\times\mathbb{R}\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris^[@citar iris] es una nube de puntos de $(1:150, \wp, \dot{p})$ en $(\Omega, \mathcal{A})$.
+Sea $\Omega = \mathbb{R}\times\mathbb{R}\times\mathbb{R}\times\mathbb{R}\times \{ `r paste(unique(iris$Species), collapse = ", ")` \}$ y $\mathcal{A} = \mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\mathcal{B}\times\wp$. Iris [@IrisData1935, @FISHER_IRIS] es una nube de puntos de $(1:150, \wp, \ddot{p})$ en $(\Omega, \mathcal{A})$.
 
 Sea $(\Omega, \mathcal{B})$ un espacio de Banach cualquera fijo. Un subconjunto $A$ de $\Omega$ se dice convexo si toda nube de puntos $s$ con valores en $A$ tiene su valor esperado muestal $E(s)$ en $A$.
 
@@ -123,7 +125,7 @@ Como se ve, $(\Omega, \mathcal{B}, P)$ tiene infinitas nebulosas, dependiendo de
 
 ## Lemas
 
-Dada una función medible $f$ de $(\Omega, \mathcal{B}, P)$ en $\mathbb{R}$, a raíz de la definición de $P^n$ se tiene que:
+Dada una función medible $f$ de $(\Omega, \mathcal{B}, P)$ en $\mathbb{R}$, a raíz de la definición de la medida producto $P^n$ se tiene que:
 
 \begin{gather}
 \int f \circ X_i dP^n = \int f dP
@@ -138,7 +140,7 @@ P^*: &\bigcup\limits_{n=0}^\infty \mathcal{B}^n \longrightarrow \mathbb{R}\\
 
 Como corolario, resulta fácil demostrar que $P^*(\textbf{S} |_{\mu,n}) = \mu(\{n\})$.
 
-Como es de esperarse, una función medible $f$ de $(\textbf{S} |_\mu, \sigma(P^*), P^*)$ en un espacio de Banach $\mathbb{E}$ tiene integral $\int f dP^*$. Como consecuencia de los enunciados anteriores es posible representar esta integral como la suma de los valores esperados de sus restricciones de tamaño $n$, $f|_n$. Es decir, $\int f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int f|_n dP^n$.
+Como es de esperarse, una función medible $f$ de $(\textbf{S} |_\mu, \sigma(P^*), P^*)$ en un espacio de Banach $\Omega'$ tiene integral $\int f dP^*$. Como consecuencia de los enunciados anteriores es posible representar esta integral como la suma de los valores esperados de sus restricciones de tamaño $n$, $f|_n$. Es decir, $\int f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int f|_n dP^n$.
 
 Dada una función medible $f$ de $(\Omega, \mathcal{B}, P)$ en un espacio de Banach $\Omega'$ el valor esperado de su proyección $i$-ésima está dado por:
 
@@ -182,17 +184,17 @@ En efecto, $\dddot{E}|_n$ es una función de $(\textbf{S} |_{\mu,n}, \mathcal{B}
 
 A modo de corolario, el valor esperado del valor esperado muestral de una variable aleatoria coincide con su valor esperado. Es decir, dada una función medible $f: (\Omega, \mathcal{B}, P) \rightarrow \Omega'$. $\dddot{E}(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ y  $E(\dddot{E}|_n \circ f) = \int f dP$. Esto se demuestra fácilmente viendo que $f\circ s$ es una nube de puntos sobre $\Omega'$, lo cual sitúa el problema en el contexto inmediatamente anterior.
 
-Otra consecuencia del anterior teorema es que, si los valores $\mu({i})$ son acotados pero $\mu(\mathbb{N})$ es infinito, entonces la sucesión $a_n = \sum_{i=1}^n \left(p_{\mu,n}(\{i\})\right)^2$ y por ende $Var(\dddot{E})$ converge a cero. Esto se denomina ley débil de los grandes números.^[confirmar en shao]
+Otra consecuencia del anterior teorema es que, si $P$ tiene primer y segundo momento finitos y los valores $\mu({i})$ son acotados pero $\mu(\mathbb{N})$ es infinito, entonces la sucesión $a_n = \sum_{i=1}^n \left(p_{\mu,n}(\{i\})\right)^2$ y por ende $Var(\dddot{E})$ convergen a cero. Usandoeste hecho y la desigualdad de Chevichev es posible probar (un caso particular de) la ley débil de los grandes números [@LBlanco]. Probar la ley débil y la ley fuerte de los grandes números excede los objetivos del estudio, sin embargo son resultados usados más adelante.
 
 Particularmente si $A \in \mathcal{B}$ es un evento cualquiera fijo, la función característica $\chi_A(x)$ es una función medible, de manera que el valor esperado de su valor esperado muestral $E(\dddot{E}|_n(\chi_A))$ es su valor esperado $E(\chi_A)$.
 
-### de Glivenko Cantelli
+## Teorema de Glivenko Cantelli
 
 Sean $(\textbf{S} |_\mu, \mathcal{B}^n, P^n)$ una nebulosa sobre $(\Omega, \mathcal{B}, P)$ un espacio de Banach de probabilidad cualquera fijo, $(\mathbb{N}, \wp, \mu)$ con los valores $\mu({i})$ acotados pero $\mu(\mathbb{N})$ infinito, $s$ una nube de puntos cualquiera en $(\textbf{S} |_{\mu,n}, \mathcal{B}^n, P^n)$ y $\dddot{E}|_n$ la restricción de tamaño $n$ del valor esperado muestral definido anteriormente.
 
 $P_s$, la medida de probabilidad empírica de $s$ converge puntualmente a $P$ cuando $n_s$ tiende a infinito.
 
-Para un evento cualquiera $A \in \mathcal{B}$ se tiene por definición que $P_s(A) = \int \chi_A dp$, que es igual a $\dddot{E}|_{n_s}(\chi_A)$, cuyo valor esperado $E(\dddot{E}|_{n_s}(\chi_A))$ es igual a $E(\chi_A)$, que a su vez es igual a $\int \chi_A dP$, por definición $P(A)$. Resumiendo, el valor esperado de $P_s(A)$ es $P(A)$, al cual converge a medida que el tamaño de $s$ aumenta, si los valores $\mu({i})$ son acotados pero $\mu(\mathbb{N})$ es infinito, por la ley de los grandes números.
+Para un evento cualquiera $A \in \mathcal{B}$ se tiene por definición que $P_s(A) = \int \chi_A dp$, que es igual a $\dddot{E}|_{n_s}(\chi_A)$, variable aleatoria de primer y segundo momentos finitos, cuyo valor esperado $E(\dddot{E}|_{n_s}(\chi_A))$ es igual a $E(\chi_A)$, que a su vez es igual a $\int \chi_A dP$, por definición $P(A)$. Resumiendo, el valor esperado de $P_s(A)$ es $P(A)$, al cual converge a medida que el tamaño de $s$ aumenta, si los valores $\mu({i})$ son acotados pero $\mu(\mathbb{N})$ es infinito, por la ley débil de los grandes números.
 
 # Distancias
 
@@ -200,103 +202,46 @@ La estructura construida hasta el momento tiene por objetivo analizar las caract
 
 ## Función de densidad general
 
-Sea $(\Omega, \mathcal{B})$ un espacio de medida cualquiera fijo. Sea $g$ una función de $\Omega$ en $\mathcal{B}$ que a cada elemento $x$ de $\Omega$ le asigna un evento $g(x)$, tal que $\mathcal{B}$ coincide con el álgebra generada por el rango de $f$. Es decir $\sigma(g(\Omega)) = \mathcal{B}$. Entonces $g$ se denomina función elemental.
+Sea $(\Omega, \mathcal{B}, \lambda)$ un espacio de medida cualquiera fijo. Sea $g$ una función de $\Omega$ en $\mathcal{B}$ que a cada elemento $x$ de $\Omega$ le asigna un evento $g(x)$, tal que $\mathcal{B}$ coincide con el álgebra generada por el rango de $f$. Es decir $\sigma(g(\Omega)) = \mathcal{B}$. Entonces $g$ se denomina función elemental.
 
 Sea $P$ una medida de probabilidad sobre $(\Omega, \mathcal{B})$ y $F = P \circ g$. $F$ es una función de $\Omega$ en $\mathbb{R}$ y se denomina función de densidad general asociada a $g$.
 
-Por ejemplo, sobre $(\mathbb{N}, \wp)$ se define la función elemental $g$, que a cada elemento le asigna su conjunto unitario: $g(i) = \{i\}$, de manera que efectivamente $\sigma(g(\mathbb{N})) = \wp$.
+Por ejemplo, sobre $(\mathbb{N}, \wp, \ddot{\mu})$ se define la función elemental $g$, que a cada elemento le asigna su conjunto unitario: $g(i) = \{i\}$, de manera que efectivamente $\sigma(g(\mathbb{N})) = \wp$.
 
 Sea $P$ la medida de probabilidad de Poisson de parámetro $1$, entonces la función de densidad general asociada a $g$ está dada por
 
 $$ F(i) = P(g(i)) = \frac{dP}{d\ddot{\mu}}(i)$$
 
-Otro ejemplo, sobre $(\mathbb{R}, \mathcal{B})$ se define la función elemental $g$, que a cada elemento le asigna su cola abierta a izquierda: $g(x) = (-\infty, x)$, de manera que efectivamente $\sigma(g(\mathbb{R})) = \mathcal{B}$.
+Otro ejemplo, sobre $(\mathbb{R}, \mathcal{B}, \ddot{\lambda})$ se define la función elemental $g$, que a cada elemento le asigna su cola abierta a izquierda: $g(x) = (-\infty, x)$, de manera que efectivamente $\sigma(g(\mathbb{R})) = \mathcal{B}$.
 
 Sea $P$ la medida de probabilidad exponencial de parámetro $1$, entonces la función de densidad general asociada a $g$^[Cuando $\Omega = \mathbb{R}$ y $g(x) = (-\infty, x)$ la función de densidad general asociada a $g$, $F = P \circ g$, se denomina función de densidad acumulada.] está dada por
 
 $$ F(i) = P(g(i)) = \int \limits_{(-\infty, x)} \frac{dP}{d\ddot{\lambda}}(t) d\lambda(t) = \chi_{(-\infty, x)}(1 - e^{-x}) $$
 
-Dados $(\Omega, \mathcal{B})$ un espacio de medida cualquiera fijo y una función elemental $g$, sí dos medidas de probabilidad $P_1$ y $P_2$ tienen la misma función de densidad general entonces son iguales entre sí.
+Dados $(\Omega, \mathcal{B}, \lambda)$ un espacio de medida cualquiera fijo y una función elemental $g$, sí dos medidas de probabilidad $P_1$ y $P_2$ tienen la misma función de densidad general entonces son iguales entre sí.
 
-Dados $(\Omega, \mathcal{B})$ un espacio de medida cualquiera fijo, una función elemental $g$ y una nube de puntos $s: (1:n, \wp, p) \rightarrow (\Omega, \mathcal{B})$. La medida de probabilidad empírica $P_s$ definida previamente, tiene una función de densidad general, que en el caso contínuo se denomina función de densidad acumulada empirica.
+Dados $(\Omega, \mathcal{B}, P, \lambda)$ un espacio de medida cualquiera fijo, una función elemental $g$ y una nube de puntos $s: (1:n, \wp, p) \rightarrow (\Omega, \mathcal{B}, \lambda)$. La medida de probabilidad empírica $P_s$ definida previamente, tiene una función de densidad general, que se denomina función de densidad general (acumulada) empirica.
 
 El teorema de Glivenko Cantelli implica la convergencia puntual de la función de densidad general empírica (acumulada empírica) a la función de densidad general (acumulada) conforme el tamaño muestral $n_s$ aumenta. En consecuencia es posible pensar que nubes de puntos sobre el mismo espacio son cercanas en tanto su tamaño aumenta. Para poder formalizar estas conclusiones es necesario definir distancias entre nubes de puntos.
 
-#### Pendientes:
+Varias distancias entre funciones requieren de integrabilidad, por esto es necesario examinar la integrabilidad de las funciones de densidad generales respecto a la medida $\lambda$ antes de proseguir. Tomando primero el caso particular de las medidas de probabilidad empírica $P_s$ es posible ver que las funciones de densidad general empírica son funciones simples. Teniendo en cuenta la convergencia de $P_s$ a $P$, se tiene que cada función de densidad general es el límite de una sucesión de funciones de densidadd general empírica, como cada una de estas es una función simple, las funciones de densidad general son integrables.
 
+## Primer acercamiento
 
- - Ponerle nombre al operador
+La primera idea de una distancia entre nubes de puntos $\mathtt{d}$ puede estar asociada con la distancia entre sus funciones de densidad general empíricas. Intuitivamente, nubes de puntos muy diferentes producen medidas de probabilidad empírica muy diferentes, que a su vez producen funciones de densidad general empírica distintas; en consecuencia, medir cercanía entre funciones de densidad general empírica puede dar luces respecto a la cercanía entre nubes de puntos. O al menso esa es la propuesta EP-Means [@EPMEANS].
 
- - Distancias entre nubes
+Sean $(\Omega, \mathcal{B})$ y $d$ una distancia entre funciones de $(\Omega, \mathcal{B})$ en $\mathbb{R}$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ se define la función $\mathtt{d}_0(s_1, s_2) =  d(f_{s_1}, f_{s_2})$.
 
- - Suma directa de nubes
+Sin embargo $\mathtt{d}_0$ no es una distancia. Nubes de puntos equivalentes tienen medidas de pribabilidad empírica iguales y funciones de densidad general empírica iguales, por lo cual dos nubes de puntos distintas pueden tener distancia cero. En ese sentido $\mathtt{d}_0$ es una semidistancia.
 
- - Poner bonito lo que falta
+Por otro lado es necesario examinar la incidencia del tamaño de las nubes de puntos en la asignación de una distancia a la luz de la convergencia. El teorema de Glivenko Cantelli implica que, a medida que el tamaño aumenta, las funciones de densidad general empírica convergen a la función de densidad acumulada del modelo. Al aumentar el tamaño de las nubes de puntos la varianza de la medida de probabilidad empírica disminuye. De manera ilustrativa es posible ver el espacio de nubes de puntos pequeñas como un mundo amplio y el espacio de nubes de puntos puntos de gran tamaño como un mundo bastante más estrecho, que se encoge conforme el tamaño aumenta. La distancia definida debe reflejar esto, es decir, dos nubes de puntos de tamaños bajos deben considerase cercanas más fácilmente que dos de tamaños altos.
 
- - leer
+## Semidistancia de Minkowski entre nubes de puntos
 
- - Arreglar lo del valor esperado.
+Para finalizar el capítulo se define el criterio de distancia o cercania propuesto entre nubes de puntos. Como se aclaró en el capíitulo anterior, este criterio permitirá el uso de algoritmos basados en distancias y semidistancias en nubes de puntos. Se espera que el examen minucioso de los criterios de cercania o similaridad entre nubes de puntos sirva como insumo para fortalecer los modlos estadísiticos libres de distribución.
 
- - GC theorme
+Sean $(\Omega, \mathcal{B})$, $h$ una función creciente de $\mathbb{R}^+$ en sí mismo y $d$ una distancia de Minkowski entre funciones de $(\Omega, \mathcal{B})$ en $\mathbb{R}$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ y tamaños $n_{s_1}$ y $n_{s_2}$; se define la función $\mathtt{d}(s_1, s_2) =  h(n_{s_1}, n_{s_2})d(f_{s_1}, f_{s_2})$.
 
- - Relación de orden entre nubes de puntos
+$\mathtt{d}$ se denomina semidistancia de Minkkowski entre nubes de puntos. Como se explicó anteriormente se trata de una semidistancia y no d una distancia. La función $h$ permite ponderar la similaridad entre nubes de puntos de acuerdo a sus tamaños. La integrabilidad de las funciones de densidad general permite el uso de la distancia de Minkowski. El caso contínuo puede examinarse a la luz de las funciones de densidad acumulada y acumulada empírica, no obstante los resultados teóricos son bastante más generales. tanto el orden de la distancia $d$, así como las características idóneas de la función $h$ deben er examinados mediante experimentación.
 
- - Ejempls?
-
- - Completar los teoremas
-
- - Resolver el desorden entre $\textbf{S}$, $\textbf{S}|_\mu$ y $\textbf{S}|_{\mu, n}$.
-
- - Otras particiones
- 
- - Los ecosistemas
- 
- - Se denomina álgebra de borel a la generada por la norma en un espacio de banach.
- 
- - $p_{n.\mu}$ es único
-
-
-# Por corregir o borrar
-
-## Subnubes
-
-Sea $s: (1:n,\wp, p) \rightarrow (\Omega, \mathcal{B})$ una nube de puntos. Sea $n'$ menor o igual que $n$, y $t$ una función inyectiva de $1:n'$ en $1:n$, y $p'$ la probabilidad inducida, esto es: para todo $j$ en $1:n'$, $p'(\{j\}) = p(\{t(j)\})/p(t(1:n'))$. Entonces $s \circ t: (1:n',\wp, p') \rightarrow (\Omega, \mathcal{B})$ es una nube de puntos.
-
-Dadas $s_1$ y $s_2$ nubes de puntos de $(1:n_1,\wp, p_1)$ y $(1:n_2,\wp, p_2)$ en $(\Omega, \mathcal{B})$ respectivamente, con $n_1$ menor o igual que $n_2$, si existe una función inyectiva $t$ de $1:n_1$ en $1:n_2$ tal que, para todo $j$ en $1:n_1$, $p_1(\{j\}) = p_2(\{t(j)\})/p_2(t(1:n_2))$, entonces se dice que $s_1$ es una subnube de $s_2$ y se nota $s_1 \leq s_2$
-
-Dadas $s_1$ y $s_2$ nubes de puntos de $(1:n_1,\wp, p_1)$ y $(1:n_2,\wp, p_2)$ en $(\Omega, \mathcal{B})$ respectivamente, si $s_1 \leq s_2$ y $s_2 \leq s_1$ entonces $s_1 \equiv s_2$.
-
-En tanto $\leq$ es relación de orden existen las operaciones binarias sup $\wedge$ e inf $\lor$.
-
-## Sistemas
-
-Dada una nube de puntos $s$ sobre $(\Omega, \mathcal{B})$, el conjunto de todas las subnubes de $s$ se denomina el sistema generado por $s$ y se nota $\mathfrak{w}_s$. 
-
-Todo sistema es un retículo con la relación de orden $\leq$.
-
-Un subsistema $\mathfrak{W} \subset \mathfrak{W}_s$ es un subconjunto propio de un sistema.
-
-Un subsistema particional es aquel que cumple:
-
- - $Ran(s_1) \cap Ran(s_2) = \emptyset$ para todo par de nubes de puntos $s_1, s_2$ en $\mathfrak{W}$
- 
- - $\bigwedge \mathfrak{W} = s$
-
-Los subsistemas particionales han sido objeto de gran estudio en estadística por propiedades muy importantes como la descomposición de la media y de la varianza.
-
-En particular, una variable de tipo categórico $x$ puede particionar una nube de puntos en subnubes. generada por una variable categórica^[formalizar variables categóricas]
-
-## Ejemplos:
-
-Las siguientes nubes de puntos son equivalentes en las particiones mostradas:
-
-- $(1, 2, 2, 3) (0.3, 0.2, 0.2, 0.3)$
-
-- $(1, 3, 2, 2) (0.3, 0.3, 0.2, 0.2)$
-
-- $(1, 2, 3) (0.3, 0.4, 0.3)$
-
-- $(1, 2, 3, 1) (0.2, 0.4, 0.3, 0.1)$
-
-La nube de puntos Iris, se parte en tres subnubes, `r paste(unique(iris$Species), collapse = ", ")`. Generando un ecosistema.
-
+# Referencias
