@@ -13,27 +13,32 @@ csl: apa.csl
 
 # Introducción
 
-El desarrollo tecnológico de los últimos 20 años ha cambiado por completo los conceptos y procesos de análisis de la información. El aumento de la capacidad computacional conlleva la aparición de algoritmos y técnicas que, exigiendo mucho más sobre la máquina, permiten extraer información más precisa y útil. De manera simultánea estos avances han conducido a la gestión y almacenamiento de grandes conjuntos de datos; conjuntos cuyo procesamiento y análisis presentan retos en términos estadísticos. Esto ha impulsado el estudio y desarrollo de diversas metodogías y herramientas analíticas, entre ellas se encuentra la Función de Densidad Acumulada Empírica (FDAE), cuyo estudio es el eje central del presente trabajo.
+ - Intro
+  - Procesos que renuevan la estadística
+   - raise of the mecanism of recolecion de datos
+  - De dónde viene?
+   - Problema de investigación
+   - alterntivas tradicionales
+   - EPMeans
+ - Obj
+  - Gen
+  - Esp
+ 
+El desarrollo tecnológico de los últimos 20 años ha cambiado por completo los conceptos y procesos de análisis de la información. Las cifras son indimensionables: "En 2007, la humanidad pudo almacenar 2,9 × $10^{20}$ bytes óptimamente comprimidos, comunicar casi 2 × $10^{21}$ bytes y llevar a cabo $6.4 × 10^18$ instrucciones por segundo en equipos de uso general."[1] El auge y la consolidación de mecanismos cada vez más sofisticados de recolección de datos exigen la constante creación y actualización de las técnicas estadísticas.
 
-Dada una muestra aleatoria $X_i$ con distribución dada por una Función de Densidad Acuulada $F$, la Función Empírica de Densidad Acumulada se define de la siguiente manera:
+De manera simultánea, la capacidad computacional crece rápidamente. La ley de Moore, vigente desde su formulación en 1965, expresa que aproximadamente cada dos años se duplica el número de transistores en un microprocesador [2]. Esto conlleva la aparición de algoritmos y técnicas que, exigiendo mucho más sobre la máquina, permiten extraer información más precisa y útil. Estos avances han conducido a la gestión y almacenamiento de grandes conjuntos de datos; conjuntos cuyo procesamiento y análisis requiere desarrollos teóricos diseñados para este tipo de problemas.
 
-\[\widehat{f}(x) = \frac{1}{n} \sum_{i = 1}^n I_{(-\infty, x]}(X_i)\]
+El presente trabajo nace como respuesta a un problema específico de este tipo. En el marco de la tesis doctoral [3] el diagnóstico del problema de diseño requería clasificar 60 variedade de rosa de acuerdo a su resistencia al corte medida usando la fuerza en lbf necsaria para cortar los tallos. Los datos están conformados por dos variables: La resistencia al corte, variable continua y la variedad, categórica con 60 categorías; donde cada registro corresponde a un tallo de rosa cortado. Un problema similar, en política pública, consiste en realizar una clasificación de los municipios de Colombia con base en los puntajes individuales de las pruebas Saber 11, del ICFES. En este caso los datos están conformados por dos variables: el puntaje en la prueba Saber 11, variable coontinua y el municipio, variable categórica con 1122 categorias, según el DANE; donde cada registro corresponde a un estudiante que presentó la prueba. En ambos casos se trata de dos variables, el problema consiste en agrupar las categorías de la variable nominal con base en similaridades de sus valores alcanzados en la variable continua.
 
-Se trata de una función escalonada que aumenta en $\frac{1}{n}$ en cada uno de los puntos de la muestra. El teorema de Glivenko Cantelli (ver más adelante) garantiza que esta función converge puntualmente a $F$ con probabilidad igual a 1. En consecuencia la FEDA es un estimador de la Función de Densidad Acumulada asociada a $X$. El tamaño de los escalones es $\frac{1}{n}$, sin embargo es posible reemplazarlo por los pesos muestrales $a_i$ desde que todos sean positivos y su suma sea igual a 1.
+El caso bivariado cuanti-cualitativo, ha sido estudiado por varios autores, creando técnicas estadísticas propicias para responder interrogantes específicos. Entre ellas ANOVA [@Montgomery2004], Kruskal - Wallis [@KWTEST], Friedman [@Friedman1937], amén de un largo número de procedimientos de comparaciones mútiples [@CARSWA]. Estas herramientas hacen posible establecer cuándo las distribuciones asociadas a las distintas categoorías presentan valores significativamente distintoentre ellas. La popularidad de estos métodos radica en que resuelven de manera eficiente el problema para el que fueron diseñados. La eficiencia, en este contexto, se refiere al uso de la menor cantidad de datos posible. Una de las críticas más frecuentes  consiste en que al comparar las medias condicionales un resultado usual es $\mu_i = \mu_j$, $\mu_j = \mu_k$ y $\mu_i \neq \mu_k$. Esto sucede porque el error tipo I aumenta al aumentar el número de pruebas; en respuesta se amplían los intervalos de confianza llegando así a conclusiones que, como esta, resultan contraintuitivas.
 
-En este contexto un conjunto de puntos es representado completamente por una curva. En consecuencia es posible representar una colección de conjuntos de puntos usando una colección de curvas. La técnica EP-Means [@EPMEANS] aplica algoritmos de agrupación a estas curvas, separándolas en un número dado de grupos de curvas similares entre sí. De esta manera es posible afirmar que EP-Means es una técnica de agrupación asintótica, no paramétrica, aplicable en grandes conjuntos de datos, cuyo objetivo es encontrar una estructura de agrupación basada en la forma distribucional empírica dada por los datos. Esta técnica de análisis tiene aplicación en varios problemas estadísticos que se enumeran durante el desarrollo del presente estudio, uno de estos es la comparación de muestras de varias distribuciones.
+Al intentar resolver problemas con muchas categorías como el mostrado, estas técnicas poseen inconvenientes en cuanto a interpretabilidad y visualización. La construcción de modelos estadísticos de tipo inferencial tiene, en general, supuestos distribucionales que en muchas ocasiones no permiten una conceptualización nítida del comportamiento global de los datos. Adicionalmente, el problema requiere una clasificación de las categorías; establecer diferencias estadísticamente significativas no es suficiente.
 
-En su disertación de maestría, @Aponte2012 aborda el problema de comparación de muestras de varias distribuciones. Dado un número determinado de muestras, el problema consiste en encontrar diferencias distribucionales entre ellas. En respuesta a este problema existen pruebas estadísticas como ANOVA [@Montgomery2004], @KWTEST, @Friedman1937, amén de un largo número de procedimientos de comparaciones mútiples [@CARSWA].
+Esto ha impulsado el estudio y desarrollo de diversas metodogías y herramientas analíticas, entre ellas se encuentra la Función de Densidad Acumulada Empírica (FDAE), cuyo estudio es el eje central del presente trabajo. En este contexto un conjunto de puntos es representado completamente por una curva. En consecuencia es posible representar una colección de conjuntos de puntos usando una colección de curvas. La técnica EP-Means [@EPMEANS] aplica algoritmos de agrupación a estas curvas, separándolas en un número dado de grupos de curvas similares entre sí. EP-Means hace uso de K-Means [@HARTIGAN] para agrupar las curvas. Uno de los retos del presente estudio es investigar su desempeño cambiando el algoritmo de agrupación. Resulta pertinente comparar resultados usando los algoritmos de agrupación de Ward [@WARD], ECSAGO [@Leon2010] y DBSCAN [@DBSCAN]. De esta manera es posible afirmar que EP-Means es una técnica de agrupación asintótica, no paramétrica, aplicable en grandes conjuntos de datos, cuyo objetivo es encontrar una estructura de agrupación basada en la forma distribucional empírica dada por los datos.
 
-Las herramientas actuales hacen posible establecer cuándo una distribución presenta valores significativamente distintos a otra, sin embargo poseen inconvenientes en cuanto a interpretabilidad y visualización. La construcción de modelos estadísticos de tipo inferencial tiene, en general, supuestos distribucionales que en muchas ocasiones no permiten una conceptualización nítida del comportamiento global de los datos. Un resultado usual en este ambito es $\mu_i = \mu_j$, $\mu_j = \mu_k$ y $\mu_i \neq \mu_k$. Esto sucede porque el error tipo I aumenta al aumentar el número de pruebas; en respuesta se amplían los intervalos de confianza llegando así a conclusiones que, como esta, resultan contraintuitivas.
+El presente trabajo estructura una fundamentación matemática del problema de investigación introduciendo definiciones formales de las nubes de puntos, y de las funciones empíricas; y estudiando sus distancias y sus propiedades. Si bien el problema está planteado a nivel univariado, la formalización permite generalizar sus conceptos al ámbito multivariado. Con esto se obtiene el soporte teórico necesario antes de entrar en el contexto aplicado.
 
-Henderson y Clark (@HC) distinguen dos componentes en la creación de conocimiento. El conocimiento modular se refiere a las piezas que componen el producto y el conocimiento arquitectural se refiere a la estructura del mismo. En este sentido, es posible decir que la técnica EP-Means se trata de un avance arquitectural que nace en respuesta a las necesidades del investigador. Agrupar las poblaciones a partir de su comportamiento estocástico facilita la creación de perfiles, que evidencian las tendencias principales con una visualización específica. Representa un cambio en el componente estructural de las herramientas estadísticas indicadas para el priblema de comparación de muestras de varias distribuciones.
-
-Por otra parte, EP-Means hace uso de K-Means [@HARTIGAN] para agrupar las curvas. Uno de los retos del presente estudio es investigar su desempeño cambiando el algoritmo de agrupación. Resulta pertinente comparar resultados usando los algoritmos de agrupación de Ward [@WARD], ECSAGO [@Leon2010] y DBSCAN [@DBSCAN]
-
-El presente trabajo recoge una fundamentación matemática al algoritmo EP-Means [@EPMEANS] introduciendo definiciones formales de las nubes de puntos, y de las funciones empíricas; y estudiando sus distancias y sus propiedades. Si bien la idea original del algoritmo se plantea a nivel univariado, la formalización permite generalizar sus conceptos al ámbito multivariado. Con esto se obtiene el soporte teórico necesario antes de entrar en el contexto aplicado.
-
-Con estas bases es posible utilizar la técnica EP-Means en el problema de comparación no paramétrica de varias distribuciones ya mencionado. Esta propuesta se evalua mediante un estudio de Monte Carlo en dos etapas. La primera consiste en comparar el uso de distintos algoritmos de agrupación y así observar cuales resultan más apropiados. La segunda muestra el desempeño de la propuesta en relación con otras técnicas estadísticas diseñadas con objetivos similares: LSD de Fisher y Test de Duncan.
+Una vez establecidas las bases es necesario realizar alguna aplicación para apreciar su desempeño. Esta propuesta se evalua mediante un estudio de Monte Carlo en dos etapas. La primera consiste en comparar el uso de distintos algoritmos de agrupación y así observar cuales resultan más apropiados. La segunda muestra el desempeño de la propuesta en relación con otras técnicas estadísticas diseñadas con objetivos similares: LSD de Fisher y Test de Duncan.
 
 El estudio finaliza con la aplicación de la metodología propuesta en datos reales. Para este fin se dispone de los datos correspondientes a las pruebas Saber11, facilitados para la investigación por el Instituto Colombiano para la Evaluación de la Educación ICFES, y los datos “phytophthora”, de expresión genética presentes en el paquete “acde” de R [@Acosta2015].
 
@@ -156,3 +161,59 @@ kable(a)
 
 
 # Falta mucho
+
+
+[1]
+
+@article {Hilbert60,
+	author = {Hilbert, Martin and L{\'o}pez, Priscila},
+	title = {The World{\textquoteright}s Technological Capacity to Store, Communicate, and Compute Information},
+	volume = {332},
+	number = {6025},
+	pages = {60--65},
+	year = {2011},
+	doi = {10.1126/science.1200970},
+	publisher = {American Association for the Advancement of Science},
+	abstract = {We estimated the world{\textquoteright}s technological capacity to store, communicate, and compute information, tracking 60 analog and digital technologies during the period from 1986 to 2007. In 2007, humankind was able to store 2.9 {\texttimes} 1020 optimally compressed bytes, communicate almost 2 {\texttimes} 1021 bytes, and carry out 6.4 {\texttimes} 1018 instructions per second on general-purpose computers. General-purpose computing capacity grew at an annual rate of 58\%. The world{\textquoteright}s capacity for bidirectional telecommunication grew at 28\% per year, closely followed by the increase in globally stored information (23\%). Humankind{\textquoteright}s capacity for unidirectional information diffusion through broadcasting channels has experienced comparatively modest annual growth (6\%). Telecommunication has been dominated by digital technologies since 1990 (99.9\% in digital format in 2007), and the majority of our technological memory has been in digital format since the early 2000s (94\% digital in 2007).},
+	issn = {0036-8075},
+	URL = {http://science.sciencemag.org/content/332/6025/60},
+	eprint = {http://science.sciencemag.org/content/332/6025/60.full.pdf},
+	journal = {Science}
+}
+
+[2]
+@article{Moore65,
+  added-at = {2011-05-23T17:50:46.000+0200},
+  author = {Moore, Gordon E.},
+  biburl = {http://www.bibsonomy.org/bibtex/2867f7a1c71867074780e958c5cec38e4/klik24},
+  interhash = {886de6a8be647a56cc3de71d50149f5e},
+  intrahash = {867f7a1c71867074780e958c5cec38e4},
+  journal = {Electronics},
+  keywords = {1965 Moore},
+  month = {April},
+  number = 8,
+  timestamp = {2011-05-27T08:53:09.000+0200},
+  title = {Cramming more components onto integrated circuits},
+  volume = 38,
+  year = 1965
+}
+
+
+[3]
+
+@article{garcia2016modelo,
+  title={Modelo de ciclos socio-tecnol{\'o}gicos para productos social y ambientalmente responsables. Caso: corte intensivo de rosas con energ{\'\i}a humana},
+  author={Garc{\'\i}a Acosta, Gabriel},
+  year={2016},
+  publisher={Universitat Polit{\`e}cnica de Catalunya}
+}
+
+
+presentan retos en términos estadísticos. 
+
+Dada una muestra aleatoria $X_i$ con distribución dada por una Función de Densidad Acuulada $F$, la Función Empírica de Densidad Acumulada se define de la siguiente manera:
+
+\[\widehat{f}(x) = \frac{1}{n} \sum_{i = 1}^n I_{(-\infty, x]}(X_i)\]
+
+Se trata de una función escalonada que aumenta en $\frac{1}{n}$ en cada uno de los puntos de la muestra. El teorema de Glivenko Cantelli (ver más adelante) garantiza que esta función converge puntualmente a $F$ con probabilidad igual a 1. En consecuencia la FEDA es un estimador de la Función de Densidad Acumulada asociada a $X$. El tamaño de los escalones es $\frac{1}{n}$, sin embargo es posible reemplazarlo por los pesos muestrales $a_i$ desde que todos sean positivos y su suma sea igual a 1.
+
