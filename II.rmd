@@ -8,6 +8,8 @@ output:
     number_sections: true
 bibliography: Biblio.bib
 csl: apa.csl
+linkcolor: blue
+
 ---
 
 # Nube de puntos

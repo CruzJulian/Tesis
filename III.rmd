@@ -6,81 +6,92 @@ output:
     keep_tex: true
     toc: false
     number_sections: true
+bibliography: Biblio.bib
+csl: apa.csl
+linkcolor: blue
+
 ---
 
-# Examen Saber Pro
+ - Introducción
+ - Metodología
+  - Examen saber pro: Por qué esta base sirve para el problema?
+  - Accesibilidad de los datos
+  - Variables
+  - Muestra
+  - Software (paquete? Rmd? Anexo? Nebulae?)
+  - Análisis estadístico: Preprocesamiento y análisis explicados
+ - Resultados
+  - Hacer!
 
-# Presentación de los datos
+
+# Introducción
+
+# Metodología
+
+A continuación se explica de manera detallada la implementaciń de la metodología propuesta en los datos correspondientes a la prueba de estado Saber 11 del ICFES.
+
+## Examen Saber 11
+
+Uno de los temas polémicos en política pública es la medición de impacto en intervenciones en educación. El Instituto Colombiano para la Evaluación de la Educacaión ICFES es el organismo estatal encargado de medir los procesos educativos a nivel nacional con el mayor nivel técnico posible, de manera que el ejecutivo tenga herramientas propicias para tomar decisiones en materia de presupuesto, estímulos y programas de política pública.
+
+Con este fin el ICFES ha estandarizado la presentación de varias pruebas nacionales, entre ellas la prueba Saber 11, que es presentada cada año por más de 500.000 estudiatnes de último año de educación media de todo el territorio nacional. Los resultados de esta prueba inciden diretamente en el futuro de los estudiantes, pues son usados para la asignación de cupos en educación superior tanto en el sector estatal como el privado. Además, los resultados a nivel municipal y departamental deben servir como insumo a evaluaciones en términos de politica pública.
+
+Con el fin de promover el uso de estos datos el ICFES otorga becas de investigación en torno a los resultados de las pruebas y genera un espacio de divulgación: el Seminario Internacional de Investgación sobre la Calidad de la Educación; que se realiza de forma anual. Además, pone a disposición de investigadores las bases de datos de resultados de las pruebas Saber 11 y Saber Pro. Las condiciones de acceso a los datos se pueden consultar [aquí](http://www.icfes.gov.co/investigacion/acceso-a-bases-de-datos)
+
+Estos datos resultan muy útiles para evaluar la metodología propuesta. No es del todo posible comparar el desempeño de los municipios colombianos usando únicamente el promedio de los puntajes de la prueba Saber 11. El problema a resolver consiste en realizar una clasificación de los municipios de Colombia con base en los puntajes individuales de las pruebas Saber 11, del ICFES. En este caso los datos están conformados por dos variables: el puntaje en la prueba Saber 11, variable continua y el municipio, variable categórica con 1122 categorias, según el DANE; donde cada registro corresponde a un estudiante que presentó la prueba. Se trata de dos variables, el problema consiste en agrupar las categorías de la variable nominal con base en similaridades de sus valores alcanzados en la variable continua.
 
 ```{r setup, echo=FALSE, include=FALSE}
 # library("grid")
-# library("magrittr")
-# library("knitr")
+library("magrittr")
+library("knitr")
 # library("FactoMineR")
 # library("reshape2")
-# library("dplyr")
+library("dplyr")
 # library("ggplot2")
 # library("infotheo")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
 
 options(stringsAsFactors = TRUE)
 
 ```
 
+## Software
 
-El Instituto Colombiano para la Evaluación de la Educacaión ICFES pone a disposición de investigadores las bases de datos de resultados de las pruebas Saber11 y SaberPro.
+Para la descarga, preprocesamiento y procesamiento de los datos se utiliza [R](https://cran.r-project.org/) [@R], un lenguaje y entorno de programación libre enfocado en estadística, constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales pero no hay estmación del número de paquetes no oficiales. Un tutorial [aquí](http://bogota-r.github.io/intro/)
 
-Las condiciones de acceso a los datos se pueden consultar [aquí](http://www.icfes.gov.co/investigacion/acceso-a-bases-de-datos)
-
-## R
-
-[R](https://cran.r-project.org/) es un lenguaje y entorno de programación libre enfocado en estadística. Está constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales. No hay estmación del número de paquetes no oficiales.
-
-Un tutorial [aquí](http://bogota-r.github.io/intro/)
-
-## Nebulae
-
-[Nebulae](https://github.com/nebulae-co) es un grupo de trabajo incipiente autogestionado con intereses en estadística.
-
-Para facilitar el acceso a estos datos y promover su uso en investigación el colectivo Nebulae compiló los resultados de las pruebas Saber11 desde 2006 en un paquete de R denominado [saber](https://github.com/nebulae-co/saber)
-
-## Descarga e instalación
+[Nebulae](https://github.com/nebulae-co) es un grupo de trabajo incipiente autogestionado con intereses en estadística. Para facilitar el acceso a estos datos y promover su uso en investigación el colectivo Nebulae compiló los resultados de las pruebas Saber11 desde 2006 en un paquete de R denominado [saber](https://github.com/nebulae-co/saber)
 
 El siguiente código descarga e instala el paquete de datos:
 
-```{r install, eval=FALSE, echo=TRUE}
+```{r install, eval = FALSE, echo = TRUE}
 library("devtools")
 devtools::install_github("nebulae-co/saber")
+
 ```
 
 Los datos escogidos corresponden a los resultados de calendario A de 2014.
 
-```{r data, cache=TRUE, echo=TRUE}
+```{r data, cache = TRUE, echo = TRUE}
 library("saber")
 data("SB11_20142")
+
 ```
 
-## Descripción
+Así mismo este trabajo de investigación cuenta con un repositorio propio [aquí](https://github.com/CruzJulian/Tesis), donde descansan todos los archivos y códigos usados con el propósito de garantizar la reproducibilidad del mismo. 
 
-El `data.frame` está compuesto por los resultados de cada estudiante que presentó la prueba Saber11 en el segundo semestre de 2014. Se trata de una base de datos de dimensiones: $[m, n] = [`r dim(SB11_20142)`]$
+## Variables, población y muestra
 
-## Variables 
+La base de datos contiene `r ncol(SB11_20142)` variables. Sin embargo sólo se usan 2: El municipio de presentación de la prueba y el puntaje general obtenido en la misma.
 
-La base de datos contiene las siguientes variables.
+El `data.frame` está compuesto por los resultados de cada estudiante que presentó la prueba Saber 11 en el segundo semestre de 2014. Se trata de una base de datos de dimensiones: $[m, n] = [`r dim(SB11_20142)`]$. Así mismo, la población objetivo está compuesta por todas las personas que presentaron la prueba Saber 11 durante el segundo semestre de 2014, de manera que, teniendo acceso a los datos poblacionales, no existe la necesidad de un diseño muestral.
 
-## Variables {.smaller}
+## Análisis estadístico
 
-```{r echo = FALSE}
-#SB11_20142 %>% names %>% matrix(ncol = 3) %>% kable
-```
+Una fase de preparación de los datos precede el análisis.
 
-# Preprocesamiento
- 
-## Retirar individuos {.smaller}
+La base de datos registra cuatro tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial. Los estudiantes con estas condiciones representan menos del 2% de la población. Los puntajes de estos colectivos han sido medidos, en el mejor de los casos, realizando adaptaciones a la prueba en cuestión, de manera que, siendo medidos en condiciones distintas y or mecanismos distintos, resulta poco ortodoxo comparar sus puntajes con el resto.  Por estas razones los estudiantes pertenecientes a estas poblaciones son retirados de la base de datos.  
 
-La base de datos registra cuatro tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial. Los estudiantes con estas condiciones representan menos del 2% de la población, en consecuencia las conclusiones del estudio no explican los comportamientos de estas poblaciones. Además las distintas formas de evaluación no aseguran comparabilidad con la forma estándar del examen, con lo cual estos datos podrían agregar ruido. Por estas razones los estudiantes pertenecientes a estas poblaciones son retirados de la base de datos.  
- 
 ```{r retirar}
 SB11_20142 %>% 
   mutate(
@@ -111,28 +122,5 @@ rm(temp, SB11_20142)
 ```
 
 
-## Normalización {.smaller}
 
------ métodos que requieren normalizción de las variables, por ejemplo aquellos que hacen uso del cálculo de distancias entre individuos, pues estas distancias se ven afectadas por la escala de cada una de las variables numéricas.
-
-En consecuencia es necesiario normalizar las variables numéricas. Se define una función que normaliza, con el método Min-Max en [0,1], las variables cuantitativas de una tabla de datos.
-
-```{r normalizacion}
-normalization.rule <- function(x){
-  Min <- min(x, na.rm = TRUE)
-  Max <- max(x, na.rm = TRUE)
-  "if"(Max == Min,1,(x-Min)/(Max - Min))
-  }
-
-normalize.data <- function(data){
-  data[which(sapply(data, is.numeric))] <-
-  as.data.frame(
-    lapply(
-      data[which(sapply(data, is.numeric))],
-      normalization.rule
-      )
-    )
-  data
-}
-
-```
+# Referencias
