@@ -45,10 +45,12 @@ Estos datos resultan muy útiles para evaluar la metodología propuesta. No es d
 library("magrittr")
 library("knitr")
 # library("FactoMineR")
-# library("reshape2")
+library("reshape2")
 library("dplyr")
 # library("ggplot2")
 # library("infotheo")
+library("colmaps")
+library("ggplot2")
 
 opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
 
@@ -92,6 +94,8 @@ Una fase de preparación de los datos precede el análisis.
 
 La base de datos registra cuatro tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial. Los estudiantes con estas condiciones representan menos del 2% de la población. Los puntajes de estos colectivos han sido medidos, en el mejor de los casos, realizando adaptaciones a la prueba en cuestión, de manera que, siendo medidos en condiciones distintas y or mecanismos distintos, resulta poco ortodoxo comparar sus puntajes con el resto.  Por estas razones los estudiantes pertenecientes a estas poblaciones son retirados de la base de datos.  
 
+Adicionalmente se retiraron los municipios con menos de 30 estudiantes y los de Bogotá.
+
 ```{r retirar}
 SB11_20142 %>% 
   mutate(
@@ -101,25 +105,259 @@ SB11_20142 %>%
         3 * SOCIALES_CIUDADANAS_PUNT + 
         3 * CIENCIAS_NATURALES_PUNT + 
         INGLES_PUNT) / 13) %>% 
-  mutate(COD_MUNI_RESIDE = sprintf("%05d", COD_MUNI_RESIDE),
+  mutate(id_municipio = sprintf("%05d", COD_MUNI_RESIDE),
     Municipio = MUNI_RESIDE) -> temp
 temp %>%   filter(
     is.na(DISC_COGNITIVA) & is.na(DISC_CONDICION_ESPECIAL) & 
       is.na(DIS_MOTRIZ) & is.na(DISC_INVIDENTE) & 
       is.na(DISC_SORDO) & is.na(DISC_SDOWN) & 
-      is.na(DISC_AUTISMO) & TOTAL > 10
-    ) -> temp
-temp %>% mutate(
-  FINS_ESTRATOVIVIENDAENERGIA = as.character(FINS_ESTRATOVIVIENDAENERGIA),
-  FINS_REPETICIONEXAMEN = as.character(FINS_REPETICIONEXAMEN),
-  FINS_TRABAJAACTUALMENTE = as.character(FINS_TRABAJAACTUALMENTE)) %>% 
-  lapply(function(x){"if"(is.character(x), factor(x), x)}) %>% 
-  as.data.frame -> Saber11
+      is.na(DISC_AUTISMO) & id_municipio != "11001" & TOTAL > 10
+    ) -> Saber11
 
-Saber11 %>% sapply(function(x){mean(is.na(x))}) %>% ">"(0.05) %>% which -> na.remove
-Saber11[- na.remove] -> Saber11
-rm(temp, SB11_20142)
+Saber11 %>% dplyr::group_by(id_municipio) %>%
+  dplyr::summarise(N = n()) %>%
+  dplyr::filter(N > 30) -> municipios_50
+
+Saber11 %>% filter(id_municipio %in% municipios_50$id_municipio) %>% 
+  select(id_municipio, Municipio, TOTAL) %>%
+  lapply(function(x){"if"(is.factor(x), as.character(x), x)}) %>% 
+  data.frame(stringsAsFactors = FALSE) -> Saber11
+
+removidos <- nrow(SB11_20142) - nrow(Saber11)
+
+# rm(temp, SB11_20142)
+
 ```
+
+# Resultados
+
+En la etapa de preparación de los datos fueron removidos `r removidos` individuos, obteniendo una base de datos de `r nrow(Saber11)` registros. Se conservaron únicamente `r ncol(Saber11)` variables: `r names(Saber11)`.
+
+```{r Colmaps_tamano}
+colmaps::colmap(map = municipios, data = municipios_50, var = "N", data_id = "id_municipio", map_id = "id", autocomplete = TRUE) -> map
+
+map + labs(title = "Cantidad de estudiantes evaluados")
+
+```
+
+```{r ecdf}
+evaluated_ecdf <- function(categories, values){
+  
+  # a vector with sorted and unique values
+  unique(values) -> .
+  sort(.) -> ordenados
+  
+  # a list of functions, one function per category
+  ecdf_categories <- tapply(X = values, INDEX = categories, FUN = ecdf)
+  
+  # a data.frame with the evaluations of the functions in the sorted values
+  sapply(X = ecdf_categories, FUN = function(x, y){x(y)}, y = ordenados) -> .
+  t(.) ->.
+  data.frame(.)->.
+  set_colnames(., ordenados)
+}
+
+ecdf_eval <- Saber11 %$% evaluated_ecdf(categories = id_municipio, values = TOTAL)
+
+# categories = Saber11$id_municipio
+# values = Saber11$TOTAL
+
+```
+
+```{r ecdf_CvM_distance}
+# Funcion de distancia entre vectores para aplicar a los totales de los municipios
+
+fun_distance <- function(a, b, ...){
+  valores <- sort(unique(c(a, b)))
+  n <- length(valores)
+  diff_x <- diff(valores)
+
+  diff_2_y <- sapply(X = 1:(n-1),
+                     FUN = function(x, v, a, b){
+                       mean(v[x] >= a) - mean(v[x] >= b)
+                     },
+                     v = valores, a = a, b = b,
+                     USE.NAMES = FALSE)
+
+  drop(diff_x %*% diff_2_y^2)
+}
+
+```
+
+```{r dist_matrix, cache = TRUE}
+# Función para calcular la matriz de distancias
+
+# distance_matrix_f <- function(categories, values){
+#   
+#   unique(categories) -> .
+#   length(.) -> n_categories
+#   
+#   values_by_cat <- split(x = values, f = categories)
+# 
+#   dist_matrix <- matrix(nrow = n_categories, ncol = n_categories,
+#                       dimnames = list(names(values_by_cat), names(values_by_cat)))
+#   
+#   dist_matrix[lower.tri(dist_matrix)] <- 
+#     combn(values_by_cat, m = 2, FUN = function(x){fun_distance(x[[1]], x[[2]])})
+# 
+#  as.dist(dist_matrix)
+# 
+# }
+# 
+# dist_matrix <- nuevo_saber_11 %$% distance_matrix_f(categories = id_Municipio, values = Total)
+
+# Partir los totales por municipio
+ totales <- Saber11 %$% split(x = TOTAL, f = id_municipio)
+# 
+# dist_matrix <- matrix(nrow = nrow(municipios_50), ncol = nrow(municipios_50),
+#                       dimnames = list(names(totales), names(totales)))
+# 
+# dist_matrix[lower.tri(dist_matrix)] <- totales %>%
+#   combn(m = 2, FUN = function(x){fun_distance(x[[1]], x[[2]])})
+# 
+# dist_matrix %<>% as.dist
+
+# To reaload the dist_matrix
+ opts_knit$set("output.dir"= getwd())
+ knitr::load_cache(label = "dist_matrix", object = "dist_matrix")
+```
+
+```{r agrupamiento}
+# clustering_municipios <- dist_matrix %>%
+  # hclust(method = "ward.D2") # Agruparlo con el método de ward
+
+#plot(clustering_municipios, label=FALSE)
+# grupo <- c(Pionero = 5, Suficiente = 2, Regular = 1, Insuficiente = 4, 
+#            Prioritario = 3, Otro = 6)
+
+numero_grupos<-10
+# grupos_municipios <- clustering_municipios %>% cutree(k = numero_grupos)
+
+# ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% factor(ordered = TRUE, labels = LETTERS[1:numero_grupos]) -> nombres_grupos 
+
+# ecdf_eval %>% kmeans(aggregate(., by=list(grupos_municipios),FUN=mean)[,-1])  %$% 
+#   cluster -> 
+#   grupos_municipios
+
+ecdf_eval %>% kmeans(10)  %$% 
+  cluster -> 
+  grupos_municipios
+
+# nombres_grupos[grupos_municipios] -> grupos_municipios
+
+ggplot(data.frame(grupos_municipios = grupos_municipios), aes(factor(1), fill = grupos_municipios)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+
+grupos_municipios %>% table 
+
+```
+
+```{r ACP}
+ACP_de_municipios <- ecdf_eval %>%
+  FactoMineR::PCA(graph = FALSE)
+
+RESULTADO <- data.frame(
+  id = municipios_50$id_municipio,
+  x = ACP_de_municipios$ind$coord[, 1],
+  y = ACP_de_municipios$ind$coord[, 2],
+  z = ACP_de_municipios$ind$coord[, 3],
+  N = municipios_50$N,
+  grupo = as.character(grupos_municipios),
+  stringsAsFactors = FALSE
+  )
+
+RESULTADO <- merge(x = RESULTADO, y = municipios@data, by.x = "id", by.y = "id")
+
+qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO)
+#plot(ACP_de_municipios, label="none", axes = c(1,2))
+#plot(ACP_de_municipios, choix = "var") #para ver la correlación de las variables
+```
+
+```{r raster_plot}
+dff_to_plot <- ecdf_eval %>% mutate(id_municipio = rownames(.),
+                                    grupo = grupos_municipios) %>%
+  melt(id.vars = c("id_municipio", "grupo")) %>% arrange(grupo)
+
+dff_to_plot %>%
+  ggplot +
+  aes(y = variable, x = id_municipio, fill = value) +
+  geom_raster() +
+  theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
+  xlab("") +
+  ylab("") -> general_raster_plot
+
+general_raster_plot
+
+```
+
+```{r raster_plot2}
+general_raster_plot +
+  facet_grid(~ grupo, scale = "free_x", space = "free_x")
+
+```
+
+```{r box_plot}
+merge(Saber11, RESULTADO, by.x = "id_municipio", by.y = "id") -> dff_to_plot
+
+dff_to_plot %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
+  theme(axis.ticks = element_blank(), axis.text.x = element_blank(), panel.background = element_blank()) +
+  xlab("") +
+  ylab("") -> general_box_plot
+
+general_box_plot
+
+```
+
+```{r box_plot2}
+general_box_plot +
+  facet_grid(~ grupo, scales = "free_x", space = "free_x")
+
+
+```
+
+
+```{r density_plot}
+
+  dff_to_plot %>% 
+    ggplot +
+    aes(x = TOTAL, colour = id_municipio) +
+    geom_density() +
+    theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
+    xlab("") +
+    ylab("") -> general_density_plot
+
+general_density_plot
+
+```
+
+```{r density_plot2}
+general_density_plot +
+  facet_wrap(~ grupo, ncol = 2)
+
+```
+
+```{r Colmaps_todo}
+colmaps::colmap(map = municipios, data = RESULTADO, var = "grupo", map_id = "id", data_id = "id", autocomplete = TRUE)
+
+```
+
+
+
+```{r Kruskal-Wallis}
+
+list_for_kwtest<-split(totales, grupos_municipios)
+
+lapply(X = list_for_kwtest, FUN = function(x){kruskal.test(x)$p.value}) %>% 
+  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
+
+kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
+  geom_bar(stat = "identity") + 
+  geom_abline(intercept = 0.005, slope = 0) +
+  ggtitle("P valores Kruskall Wallis para los grupos")
+
+```
+
 
 
 
