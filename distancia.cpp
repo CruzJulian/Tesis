@@ -19,6 +19,6 @@ double distan_np(DataFrame df) {
   }
   
   // return a distance
-  return n*dis;
+  return dis;
 }
 
