@@ -12,9 +12,17 @@ linkcolor: blue
 
 ---
 
+## Lista de cosas
+
+ - probar varias distancias
+ - hacer gráficos cuadrados de distancias de la misma distribución
+ - Hacer simulaciones propuestas hace 3 años.
+
 ```{r setup, include=FALSE}
+library("agricolae")
 library("magrittr")
 library("Rcpp")
+library("FactoMineR")
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -68,7 +76,7 @@ list_outer <- function(a,b, fun) {
 ```
 
 ```{r}
-ep_means <- function(lista_nubes, n_grupos){
+k_clouds <- function(lista_nubes, n_grupos){
   
   sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
   
@@ -101,4 +109,106 @@ ep_means <- function(lista_nubes, n_grupos){
 ```
 
 
+
+```{r}
+# setwd("/media/TI106180W0A/Users/julian cruz/Desktop/Investigaciones/CLASIFICA/R")
+# source("CLASS.R")
+
+sigma<-1.5
+
+data.frame(
+  Y = c(
+    rnorm(40,1,sigma),
+    rnorm(40,2,3*sigma),
+    rnorm(40, 3,sigma), 
+    rnorm(40, 4, 5*sigma), 
+    rnorm(40, 5, sigma)
+    ),
+  X = rep(
+    c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
+      "K", "L", "M", "N", "O", "P","Q", "R", "S", "T"), 
+    each=10)
+) -> datos
+
+datos %$% split(Y, X)
+
+#Duncan
+DUNCAN<-duncan.test(aov(Y~X), "X")
+names(DUNCAN)
+DUNCAN$groups[order(DUNCAN$groups$trt),]
+
+#LSD
+LSD<-LSD.test(aov(Y~X), "X")
+names(LSD)
+LSD$groups[order(LSD$groups$trt),3]
+
+
+CC<-CLASS(X,Y, 2)#se realiza una vez
+plot(CC$hc)#se observa el arbol jerárquico para escoger el número de grupos
+CC<-CLASS(X,Y, 5)#se realiza una vez
+
+names(CC)
+CC$tabla
+
+#revisar kruskal wallis
+CC$kruskal.inicial#debe ser cercano a cero
+CC$kruskal.grupos.pval#deben ser altos
+CC$kruskal.general#debe ser cercano a cero y menor que el primero
+
+#Plots de ACP
+COL<-c("#E91B30", "#85C040", "#4A8D40", "#177CB4", "#E55E26")
+
+png("ACP.png",  width = 1200, height = 800, bg = "transparent", pointsize = 25)
+par( family="Kozuka Gothic Pro L", font=1, col="#555555")
+plot(CC$ACP, axes=c(1,2), col.ind=COL[CC$cluster$cluster], title="Plano Factorial 1 - 2", xlim=c(-4,9), ylim=c(-4,4), label="none")
+dev.off()
+
+png("ACP1.png",  width = 1200, height = 800, bg = "transparent", pointsize = 25)
+par( family="Kozuka Gothic Pro L", font=1, col="#555555")
+plot(CC$ACP, axes=c(1,2), col.ind=COL[1], title="Plano Factorial 1 - 2", xlim=c(-4,9), ylim=c(-4,4), select=which(CC$cluster$cluster==1), unselect=1)
+dev.off()
+
+
+S1<-data.frame(PROPUESTA = CC$cluster$cluster, LSD = LSD$groups[order(LSD$groups$trt),3], Duncan = DUNCAN$groups[order(DUNCAN$groups$trt),3])
+
+HC1<-CC$hc
+
+S2<-data.frame(PROPUESTA = CC$cluster$cluster, LSD = LSD$groups[order(LSD$groups$trt),3], Duncan = DUNCAN$groups[order(DUNCAN$groups$trt),3])
+
+HC2<-CC$hc
+
+S3<-data.frame(PROPUESTA = CC$cluster$cluster, LSD = LSD$groups[order(LSD$groups$trt),3], Duncan = DUNCAN$groups[order(DUNCAN$groups$trt),3])
+
+HC3<-CC$hc
+
+S4<-data.frame(PROPUESTA = CC$cluster$cluster, LSD = LSD$groups[order(LSD$groups$trt),3], Duncan = DUNCAN$groups[order(DUNCAN$groups$trt),3])
+
+HC4<-CC$hc
+
+S5<-data.frame(PROPUESTA = CC$cluster$cluster, LSD = LSD$groups[order(LSD$groups$trt),3], Duncan = DUNCAN$groups[order(DUNCAN$groups$trt),3])
+
+HC5<-CC$hc
+
+
+TAB<-data.frame(S1, S2, S3, S4, S5)
+
+
+png("hc1.png",  width = 1000, height = 500, bg = "transparent", pointsize = 17)
+par(mfrow=c(1,2), family="Kozuka Gothic Pro L", font=1, col="#555555")
+plot(HC1, xlab="Tratamientos", ylab="", sub="S=0.1")
+plot(HC2, xlab="Tratamientos", ylab="", sub="S=0.3")
+dev.off()
+png("hc2.png",  width = 1000, height = 500, bg = "transparent", pointsize = 17)
+par(mfrow=c(1,2), family="Kozuka Gothic Pro L", font=1, col="#555555")
+plot(HC3, xlab="Tratamientos", ylab="", sub="S=0.6")
+plot(HC4, xlab="Tratamientos", ylab="", sub="S=1.0")
+dev.off()
+png("hc3.png",  width = 1000, height = 500, bg = "transparent", pointsize = 17)
+plot(HC5, xlab="Tratamientos", ylab="", sub="S=1.5")
+dev.off()
+
+
+
+
+```
 
