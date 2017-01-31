@@ -1,6 +1,6 @@
 ---
-title: "Aplicación I"
-author: "Julian Cruz, Daniel Moreno, Adriana Calvijo"
+title: "Simulación"
+author: "Julian Cruz"
 output: 
   pdf_document:
     keep_tex: true
@@ -11,4 +11,94 @@ csl: apa.csl
 linkcolor: blue
 
 ---
+
+```{r setup, include=FALSE}
+library("magrittr")
+library("Rcpp")
+
+knitr::opts_chunk$set(echo = TRUE)
+
+sourceCpp("distancia.cpp")
+```
+
+```{r}
+to_nubepuntos <- function(a){
+  data.frame(value = a, weight = 1/length(a)) -> nubepuntos
+ class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+}
+
+dist_nubes <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  distan_np(tmp[order(tmp$value),])
+}
+
+# rnorm(1000) -> a
+# rnorm(840) -> b
+# 
+# a <- to_nubepuntos(a)
+# b <- to_nubepuntos(b)
+# 
+# dist_nubes(b, a)
+
+```
+
+```{r}
+collapsa_nubes <- function(nube_list){
+  
+  sum(unlist(lapply(nube_list, nrow))) -> n_total
+  lapply(nube_list, function(nube){
+    nube$weight <- nube$weight*nrow(nube)/n_total
+    nube}) -> .
+  do.call(rbind, .) -> nubepuntos
+    class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+
+}
+
+list_outer <- function(a,b, fun) {
+  outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
+}
+
+
+```
+
+```{r}
+ep_means <- function(lista_nubes, n_grupos){
+  
+  sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+  
+  centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  antes <- 0
+  ahora <- 1000
+  umbral <- 0.01
+  while(abs(antes - ahora) > umbral){
+    antes <- ahora
+    list_outer(centros, lista_nubes, dist_nubes) -> tmp
+    LETTERS[apply(tmp, 2, which.min)] -> grupos
+    sum(apply(tmp, 2, min)) -> ahora
+    split(lista_nubes, grupos) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  grupos  
+  
+}
+
+# ep_means(lista_nubes, 5)
+# 
+# lapply(1:100, function(i){rnorm(i)}) %>% lapply(to_nubepuntos) -> datos
+# 
+# lapply(1:10, function(i){rnorm(rpois(1, 100), 50)}) %>% lapply(to_nubepuntos) -> centros
+# 
+# list_outer(datos, datos, dist_nubes) -> ppp
+
+```
+
+
 
