@@ -19,15 +19,19 @@ linkcolor: blue
  - Hacer simulaciones propuestas hace 3 años.
 
 ```{r setup, include=FALSE}
+library("reshape2")
 library("agricolae")
 library("magrittr")
 library("Rcpp")
 library("FactoMineR")
 library("dplyr")
+library("ggplot2")
+library("fpc")
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 
 sourceCpp("distancia.cpp")
+
 ```
 
 ```{r}
@@ -36,23 +40,6 @@ to_nubepuntos <- function(a){
  class(nubepuntos) <- c("data.frame", "nubepuntos")
   nubepuntos
 }
-
-dist_nubes <- function(nube_0, nube_1){
-  rbind(
-    cbind(nube_0, binary = 0),
-    cbind(nube_1, binary = 1)
-  ) -> tmp
-  
-  nrow(tmp) * distan_np(tmp[order(tmp$value),])
-}
-
-# rnorm(1000) -> a
-# rnorm(840) -> b
-# 
-# a <- to_nubepuntos(a)
-# b <- to_nubepuntos(b)
-# 
-# dist_nubes(b, a)
 
 ```
 
@@ -73,18 +60,150 @@ list_outer <- function(a,b, fun) {
   outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
 }
 
+auto <- function(a, fun){list_outer(a, a, fun)}
+
+```
+
+
+
+## Distancia
+
+
+
+```{r}
+D0 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  distan_np(tmp[order(tmp$value),])
+}
+
+D1 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  nrow(tmp) * distan_np(tmp[order(tmp$value),])
+}
+
+D2 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  max(nrow(nube_0), nrow(nube_1)) * distan_np(tmp[order(tmp$value),])
+}
+
+D3 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  nrow(tmp) * nrow(tmp) * distan_np(tmp[order(tmp$value),])
+}
+
+D4 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  min(nrow(nube_0), nrow(nube_1)) * distan_np(tmp[order(tmp$value),])
+}
+
+D5 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  min(nrow(nube_0), nrow(nube_1)) -> n_min
+  
+  n_min* n_min* distan_np(tmp[order(tmp$value),])
+}
+
 
 ```
 
 ```{r}
-k_clouds <- function(lista_nubes, n_grupos){
+sample_size <- 40
+
+lapply(1:sample_size, rnorm) %>% lapply(to_nubepuntos) -> nubes_norm
+lapply(1:sample_size, runif) %>% lapply(to_nubepuntos) -> nubes_unif
+
+lapply(
+  list(D0 = D0, D1 = D1, D2 = D2, D3 = D3, D4 = D4, D5 = D5),
+  function(fun){
+    lapply(
+      list(normal = nubes_norm, uniforme = nubes_unif),
+      auto,
+      fun = fun
+    )
+  }
+  ) %>% do.call(c, .) %>% lapply(as.vector) %>% data.frame(expand.grid(1:sample_size,1:sample_size)) -> dis_frame
+
+```
+
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+
+```
+
+## Grupos
+
+```{r}
+dist_nubes <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
   
-  sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+  nrow(tmp) * distan_np(tmp[order(tmp$value),])
+}
+
+# rnorm(1000) -> a
+# rnorm(840) -> b
+# 
+# a <- to_nubepuntos(a)
+# b <- to_nubepuntos(b)
+# 
+# dist_nubes(b, a)
+
+```
+
+
+```{r}
+k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
   
-  centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  if(is.null(grupos_iniciales)) {
+    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+    
+    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  } else{
+    split(lista_nubes, grupos_iniciales) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
   antes <- 0
   ahora <- 1000
-  umbral <- 0.01
+  umbral <- 0.002
   while(abs(antes - ahora) > umbral){
     antes <- ahora
     list_outer(centros, lista_nubes, dist_nubes) -> dist_matriz
@@ -109,28 +228,48 @@ k_clouds <- function(lista_nubes, n_grupos){
 
 ```
 
+```{r}
+evaluated_ecdf <- function(categories, values){
+
+  # a vector with sorted and unique values
+  unique(values) -> .
+  sort(.) -> ordenados
+
+  # a list of functions, one function per category
+  ecdf_categories <- tapply(X = values, INDEX = categories, FUN = ecdf)
+
+  # a data.frame with the evaluations of the functions in the sorted values
+  sapply(X = ecdf_categories, FUN = function(x, y){x(y)},
+    y = ordenados) -> .
+  t(.) ->.
+  data.frame(.)->.
+  set_colnames(., ordenados)
+}
+
+```
 
 
 ```{r}
 # setwd("/media/TI106180W0A/Users/julian cruz/Desktop/Investigaciones/CLASIFICA/R")
 # source("CLASS.R")
 
-sigma<-1.5
-
 Simul_tabla <- function(sigma){
-
+  
   data.frame(
     Y = c(
-      rnorm(40,1,sigma),
-      rnorm(40,2,3*sigma),
-      rnorm(40, 3,sigma), 
-      rnorm(40, 4, 5*sigma), 
-      rnorm(40, 5, sigma)
+      rnorm(40,10,sigma),
+      rnorm(40,20,3*sigma),
+      rnorm(40, 30,sigma), 
+      rnorm(40, 40, 5*sigma), 
+      rnorm(40, 50, sigma)
     ),
     X = rep(
       LETTERS[1:20], 
-      each=10)
+      each=10),
+    grupo = rep(letters[1:5], each = 40)
   ) -> datos
+  
+  datos %>% ggplot + aes(x = Y, colour = grupo, group = X) + geom_line(stat = "ecdf") -> gr
   
   # Media
   Media_trt <- datos %$% aggregate(Y, list(X), mean) %>% setNames(c("trt", "Media"))
@@ -142,31 +281,37 @@ Simul_tabla <- function(sigma){
   LSD <- aov(Y~X, data = datos) %>% LSD.test("X")
   
   #K clouds
-  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(5) -> CC
+  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
   
-list(
-  Media_trt,
-  data.frame(
+  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% auto(dist_nubes) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
+
+
+  list(
+    Media_trt,
+    data.frame(
       trt = LETTERS[1:20],
       Grupo = rep(letters[1:5], each = 4)
-      ),
-  CC, 
-  LSD$groups[-2], 
-  DUNCAN$groups[-2]
+    ),
+    CC,
+    LSD$groups[-2], 
+    DUNCAN$groups[-2]
   ) -> tmp
+  
+  Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
+    setNames(c("Tratamiento", "Media", "Grupo Inicial", "K clouds", "H clouds", "LSD", "Duncan")) -> tabla
+  
+datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point() -> pca_gr
 
-Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
-  setNames(c("Tratamiento", "Media", "Grupo Inicial", "K clouds", "LSD", "Duncan"))
+  list(gr, tabla, pca_gr)
   
 }
 
 
-#revisar kruskal wallis
-CC$kruskal.inicial#debe ser cercano a cero
-CC$kruskal.grupos.pval#deben ser altos
-CC$kruskal.general#debe ser cercano a cero y menor que el primero
-
-
+```
+```{r, fig.width = 8, fig.height = 2.5}
+lapply(seq(2, 10, by = 2), Simul_tabla)
 
 ```
+
+
 
