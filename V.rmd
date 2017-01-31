@@ -1,0 +1,376 @@
+---
+title: "Aplicación II"
+author: "Julian Cruz, Jennifer Segura"
+output: 
+  pdf_document:
+    keep_tex: true
+    toc: false
+    number_sections: true
+---
+
+# Datos genómicos
+
+# Introducción
+
+La expresión  génica se define como la manifestación de un gen o grupo de genes, que se van a transcribir y traducir, mientras que el análisis de la expresión génica se define como la determinación de patrones de genes expresados a nivel de la transcripción bajo circunstancias específicas o en células específicas [@Information].
+
+Para el estudio de la expresión génica existen dos tecnologías: la secuenciación del RNA y el análisis de microarreglos, siendo este último el que presenta en la actualidad más metodologías de análisis debido a que es más popular que la de secuenciación del RNA (RNAseq) [@Zhao2014].
+
+Dadas las caracteristicas de los datos que se obtienen en los experimentos de microarreglos se pueden presentar datos con ruido y outliers. Además la cercanía entre los genes pueden interferir en la identificación de los mismos y por ello representan un desafío a nivel estadistico y computacional al momento de aplicar metodologías para identificar genes expresados diferencialmente [@Jiang2004]. 
+
+Teniendo en cuenta las caracteristicas de los datos es posible aplicar metodologías de clustering que permitan entender las funciones de los genes, la regulación génica y los procesos celulares, además los genes que presenten patrones similares de expresión pueden ser agrupados junto con las funciones celulares que estos desempeñen [@Jiang2004]. 
+
+# Antecedentes
+
+## Microarreglos 
+
+El análisis de microarreglos es una técnica de biología molecular desarrollada en los años 90 que ha estado enfocada en el análisis de colecciones de datos genéticos y se ha utilizado para monitorear la expresión génica de miles de genes de forma paralela, utilizando matrices para análisis miles de transcritos génicos y dando la posibilidad de responder a una amplia gama de problemas biológicos, como la identificación de genes expresados diferencialmente entre tejidos enfermos y sanos, evolución de la regulación génica y la respuesta a fármacos entre otros. Los experimentos aplicados con mayor frecuencia son microarreglos con cDNA (Copia de ADN) y los microarreglos de nucleótidos conocidos como oligochip [@Jiang2004][@Zhao2014].
+
+La técnica trata de medir el nivel de expresión del ADN por medio de la relación entre la señal de prueba de la muestra y la muestra control, que han sido previamente marcadas con un fluorocromo. Tanto la muestra como el control son marcados con fluorocromos y montados en un chip que luego van a ser leídos a través de una plataforma de microarreglos [@Jiang2004].
+
+Generalmente los experimentos de microarreglos cuentan con datos de 1000 a 10000 genes (pueden ser más, ya que los chips pueden ser diseñados) pero con un número de muestras usualmente menores a 100 [@Jiang2004].
+
+Entre las limitaciones de estas técnicas está el background de la hibridización, que limita la exactitud de las mediciones de expresión particularmente a los transcritos de baja frecuencia, los datos muchas veces son susceptibles al ruido dado que las mediciones dependen de la emisión de luz de las sondas marcadas y pueden generar de por sí falsos positivos. La identificación clara de outliers que son datos  obtenidos por respuesta experimental de los organismos a las condiciones expuestas se ve limitada por el ruido experimental de los datos [@Jiang2004][@Zhao2014]. 
+
+## Clustering en datos genéticos
+
+Existen tres modelos de clustering que han sido aplicados para el análisis de datos de microarrelgos, tales modelos como son [@Jiang2004]: 
+
+1. Clustering basado en genes, donde los genes son tratados como objetos mientras que las muestras (o condiciones) son tratadas como características y cada grupo corresponde a un fenotipo. 
+
+2. Clustering basado en la muestra: Las muestras son tratadas como objetos y los genes como características.
+
+3. Subespacio de clustering: Donde se toman los clusters formados por un subset de genes de una muestra, esto dado al principio biológico de que solo un grupo pequeño de genes participan en cualquier proceso celular de interés y se lleva a cabo por un subconjunto de muestras.
+
+## Medidas de proximidad.
+
+Entre las medidas de proximidad utilizadas para este tipo de análisis se encuentran: la distancia eclidiana, que presenta el inconveniente de que no puntúa bien los datos escalonados de expresión génica. El coeficiente de Pearson es el la medida más popular para el análisis de este tipo de datos pues ofrece una medición efectiva para los datos de expresión génica pero no es robusto con los outliers y puede generar falsos positivos cuando se asigna un puntaje de alta similariadad. Otra media es la correlación de Jackknife que elimina los outliers evitando la “dominación” pero implica la enumeración de diferentes combinaciones de características para luego eliminarlas, lo que hace que computacionalmente sea costo.  Finalmente esta la correlación de Sperman ya que no requiere una distribución Gaussiana y es muy robusta para trabajar los outliers pero presenta el inconveniente de la perdida de datos [@Jiang2004].   
+
+## Desafíos del clustering de genes. 
+
+La utilización de tecnicas de clustering para el analisis de expresión diferencial en datos obtenidos a partir de microarreglos son [@Jiang2004]:
+
+1. Los algoritmos a utilizar deben depender lo menos posible del conocimiento previo, para poder visualizar las estructuras de los datos y poder visualizar la distribución de los mismos.
+
+2. Los datos de microarreglos contienen mucho ruido, por lo tanto los algoritmos deben ser capaces de extraer información útil en esa condición.
+
+3. Los datos están altamente conectados entre sí,  por lo tanto los algoritmos deben ser capaces de manejar esta situación.
+
+4. A nivel biológico podría no ser de interés los clusters de los genes, pero sí la relación entre los clusters y la relación de los genes dentro del mismo clusters, por lo tanto los algoritmos deben ser capaces de particionar los datos sino que también de mostrar una estructura gráfica del cluster.
+
+## Agrupación estocástica
+
+El algoritmo EP-Means [@EPMEANS] es una nueva técnica que aplica el algoritmo K-Means sobre funciones empíricas de distribución acumulada. Para esto hace uso de la distancia Earth Mover's [@emd] entre estas funciones. El desarrollo desemboca en un algoritmo eficiente, empírico, no paramétrico y basado en distancias.
+
+Una idea bastante parecida fue presentada en el Simposio Internacional de Estadística, en esta propuesta se suavizan las distribuciones acumuladas estimadas e implementan herramientas diseñadas para datos funcionales. El artículo propone la implementación de un método de clustering jerárquico para funciones de densidad considerándolas datos funcionales. Para la implementación se representan en forma discreta de las funciones de densidad de probabilidad, posteriormente se usa la distancia de Hellinger con el fin de medir las distancias entre todas las curvas, y a su vez, se construye una estructura de cluster jerárquico.
+
+La idea de agrupar los datos a partir de su distribución es planteada por @Applegate2011, que aplica K-Means sobre histogramas multivariantes. No obstante el número de clases de los histogramas pueden influir sobre los agrupamientos. El uso de funciones empíricas resuelve esto, sin embargo en @EPMEANS se desarrolla únicamente el caso univariado, dejando el multivariado para trabajo futuro.
+
+## Análisis de Componentes Principales
+
+El Análisis de Componentes Principales es un método no supervisado que busca resumir un conjunto de variables en ejes factoriales mediante una transformación ortogonal. Debido a que estas transformaciones ortogonales son isomorfismos, el número de ejes factoriales posible corresponde al número de variables incluidas en el conjunto de interés.
+
+Los ejes factoriales reúnen el total de la variabilidad del conjunto de datos de forma descendente, así el primero recoge la mayor varianza posible, el segundo reúne una variabilidad menor que el primero pero contiene la mayor varianza restante y así sucesivamente. Estos ejes son calculados bajo la restricción de ortogonalidad, obteniendo un conjunto de ejes ortogonales. La cantidad de ejes factoriales a conservar depende de la proporción de variabilidad que el investigador necesite recoger.
+
+Este análisis tiene tres usos comunes en la literatura; los ejes factoriales recogen de manera descendente la varianza de los datos, por consiguiente es posible tomar un número reducido de ejes cubriendo un porcentaje importante de la información presente en los datos, disminuyendo la dimensión de los mismos. En este mismo sentido el uso de los ejes factoriales para interpretación gráfica de los datos proporciona visualizaciones óptimas e intuitivas. Por último, si las variables presentan correlaciones fuertes, es posible dar interpretación a los ejes factoriales y crear indicadores que midan aspectos específicos que no tienen una expresión explícita en la base de datos. [@Jolliffe2002]
+
+## Método de clasificación: K-means
+
+El algoritmo K-Means [@HARTIGAN] es teóricamente equivalente a la estimación vía EM de una mixtura compuesta por $K$ distribuciones normales homocedásticas.
+
+En este sentido el algoritmo tiene dos partes. Un paso de estimación, que define el centroide de cada grupo como el promedio de los individuos pertenecientes al mismo y un paso de maximización, que reasigna los individuos al grupo más cercano usando su distancia a los distintos centroides. Estos dos pasos se repiten hasta lograr convergencia.
+
+El uso de distancias puede verse afectado por distintas causas, entre ellos el factor de escala de las variables; en el sentido que las variables de mayor escala tienen un mayor peso en el cálculo de las distancias entre individuos. En consecuencia es necesario un tratamiento previo de normalización o estandarización de las mismas. La solución mostrada en Lebart [@LEBART] es tomar como insumo el resultado del ACP, que además de eliminar el ruido inherente a los datos produce ejes de escalas similares provenientes de las variables estandarizadas.
+
+Asimismo es necesario atender detalles como criterios de parada para la convergencia, distancia a usar (euclidiana, manhattan, Crámer-von Mises), el algoritmo EP-Means hace uso de la distancia Earth mover's, sin embargo es necesario realizar pruebas con varias opciones. Una definición correcta de los valores iniciales puede facilitar la convergencia, Lebart propone como valores iniciales los centroides provenientes del método de Ward.
+
+## Teorema de Glivenko Cantelli
+
+El teorema de Glivenko Cantelli es el eje teórico del algoritmo. Establece la convergencia de la función empírica de densidad acumulada a la función de densidad acumulada teórica.
+
+Sea $\{X\}_i, i = 1...m$ una muestra aleatoria con función de distribución acumulada $F$. La función de distribución empírica para el conjunto de v.a se define por:
+
+\[F_n(x) = \frac{1}{n}\sum\limits_{i=1}{m} I_{(-\infty, x]} (X_i) \]
+
+Donde $I_A$ es la función indicadora en el conjunto $A$. Para cada $x$ fijo $F_n(x)$ es una secuencia de variables aleatorias las cuales convergen de manera casi segura a  $F(x)$.
+
+El supuesto de independencia no es necesario para este teorema, y esto es fácilmente se observa que la misma conclusión se da cuando la secuencia de variables aleatorias es estrictamente una secuencia estacionaria y ergódica [@GCTHEO].
+
+Con esto en mente agrupar las funciones de densidad empíricas por su cercanía puede mostrar los comportamientos asintóticos de las nubes de puntos.
+
+## Metodologías a comparar para el análisis de expresión diferencial.
+
+El análisis de la expresión diferencial ha presentado diferentes propuestas para el análisis de expresión tales como el método SAM (Significance Analysis of Microarrays) que es una técnica estadística para encontrar genes diferencialmente expresados, la entrada para esta metodología es un conjunto de genes de un experimento de mircroarreglos, SAM calcula un di para cada gen i, y mide la relación entre la expresión génica y la variable respuesta, utilizando permutaciones repetidas de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste delta, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
+
+Otra metodología propuesta es  Artificial Components Detection of Differentially Expressed Genes que provee un análisis multivariado para la detección de genes expresados diferencialmente. Esta utiliza componentes artificiales y cierra los datos por componentes principales pero con la interpretación exacta en términos de expresión génica diferencial controlando los FDR (false Discovery rate), utilizando los componentes artificiales como estadísticos de prueba para la detección de genes. También se calcula los límites de confianza para iniciar el FDR y el uso de relaciones de inercia como evaluaciones adicionales [@Acosta2015].
+
+# Materiales y métodos
+
+## Datos a utilizar.
+
+```{r, include = FALSE}
+library("samr")
+library("acde")
+library("FactoMineR")
+library("reshape2")
+library("knitr")
+library("dplyr")
+library("magrittr")
+library("ggplot2")
+
+data("phytophthora")
+
+opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE)
+```
+
+Los datos `phytophthora` contienen 4 matrices de conteos de RNAseq tomadas en distintos tiempos después del experimento (`r names(phytophthora)`). Son datos de expresión génica para 16 plantas de tomate (línea IL6-2) en condiciones de campo, publicados en la libreria ACDE [@Acosta2015]. El diseño experimental fue el siguiente: 
+
+8 de plantas fueron inoculadas con Phytophthora infestans y otras 8 fueron inoculadas con agua estéril. Se tomaron muestras de tejido foliar de cada réplica en los siguientes tiempos: a las 12 horas antes de la inoculación y las 12h, 36h y 60 horas después de la inoculación. Nos referimos a 12 horas antes de la inoculación como el punto de tiempo 0h. Los niveles de expresión fueron obtenidos para 13440 genes.
+
+En este estudio se analizan únicamente los datos correspondientes a la última medición, 60 horas después de la inoculación.
+
+## Software
+
+Todo el análisis se realiza en el software estadístico R [@R] usando paquetes de Bioconductor, entre ellos los paquetes acde y samr.
+
+## Propuesta de análisis.
+
+La propuesta metodológica se basa en la aplicación del algoritmo EP-Means sobre los datos de expresión genética. Como ya se explicó, este algoritmo presenta propiedades dseables. Dado que es no paramétrico no exige normalización sobre los datos, además es aplicable tanto en el caso discreto como en el caso continuo. La aplicación del algoritmo EP-Means sobre los datos *phytophthora*, en su cuarta medición, en cada uno de los tratamientos, pretende generar grupos intrahomogeneos como se muestra en la figura 1. Esto genera clusters para cada una de las condiciones. Para saber si un gen tiene expresión diferencial, se aplica el test de Kolmogorov - Smirnov [@KS] en los grupos a los que pertenece.
+
+![Figura 1](figura1.png)
+
+La validación de los grupos se realiza mediante el test de Kruskall Wallis [@KWTEST] y se comparan con los resultados provenientes de SAM y de acde.
+
+# Resultados 
+
+```{r}
+Muestra <- phytophthora[[4]]
+names_datos <- names(Muestra)
+des <- rep(c(1,2), each = 8)
+tamano <- 1000
+Muestra[sample(nrow(Muestra), tamano),] -> Muestra
+```
+
+El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. Por facilidad computacional se selecciona una mestra de tamaño `r tamano`. Todos los análisis se realizan sobre esta.
+
+
+```{r}
+boxplot_phytophthora <- function(i){
+  nm <- names(phytophthora)
+  par(font=1, las = 1, mar = rep(2, 4), mar = c(2, 6, 2, 2))
+  boxplot(
+    phytophthora[[i]], main = nm[i], pch = 20,
+    outline = FALSE, col="lightblue", cex.names = 0.2, 
+    cex.names = 0.2, axes = FALSE, border = "#72A3B3", horizontal = TRUE)
+  axis(2, at = 1:16, labels = names_datos)
+  axis(1)
+}
+
+evaluated_ecdf <- function(categories, values){
+
+  # a vector with sorted and unique values
+  unique(values) -> .
+  sort(.) -> ordenados
+
+  # a list of functions, one function per category
+  ecdf_categories <- tapply(X = values, INDEX = categories, FUN = ecdf)
+
+  # a data.frame with the evaluations of the functions in the sorted values
+  sapply(X = ecdf_categories, FUN = function(x, y){x(y)},
+    y = ordenados) -> .
+  t(.) ->.
+  data.frame(.)->.
+  set_colnames(., ordenados)
+}
+
+```
+
+Como se dijo, se analizan únicamente los datos correspondientes a la última inoculación. A continuación vemos en un diagrama de caja el comportamiento de los datos.
+
+```{r, fig.height = 3.4, echo = FALSE, include = TRUE}
+boxplot_phytophthora(4)
+```
+
+En la gráfica se observan las distintas mediciones, se tienen 8 mediciones en plantas infectadas y otras 8 en plantas no infectadas.
+
+## ACDE (Artificial Components Detection of Differentially Expressed Genes)
+
+La metodología plantea el cálculo de componentes artificiales, que en el caso de dos condiciones quedan definidos por la siguiente expresión:
+
+\begin{gather}
+\psi_1(x_i) = \sqrt{p} x_i \\
+\psi_2(x_i) = \frac{\sqrt{p_1p_2}}{\sqrt{p_1 + p_2}} (x_{iTr} - x_{iC}) 
+\end{gather}
+
+```{r, ac}
+Muestra %>% 
+  ac(design = des) %>% as.data.frame -> 
+  Muestra_ac
+```
+
+Las figuras muestran la densidad estimada y el histograma.
+
+```{r, fig.height = 3.5, include = TRUE}
+Muestra_ac %>% 
+  ggplot + aes(x = psi1, y = ..density..) +
+  geom_histogram(binwidth = 1) +
+  geom_density(colour = "#333399") +
+theme_minimal()
+```
+
+Se muestra además la proyección de los genes en sus componentes artificiales.
+
+```{r, fig.height = 3.5, include=TRUE}
+Muestra_ac %>% ggplot + 
+  aes(x = psi1, y = psi2) + geom_point() + 
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  theme_minimal()
+```
+
+## Expresión
+
+La función `stp` realiza el procedimiento de Single Time Point Analysis, que determina un $\alpha^*$ óptimo que controla la taza de falsos positivos (FDR).
+
+```{r, fig.width = 8, fig.height = 3.5, include = TRUE}
+Muestra %>% stp(des, BCa = FALSE) -> stpPI
+Muestra_ac %>% ggplot + 
+  aes(x = psi1, y = psi2, colour = stpPI$dgenes) + 
+  geom_point() + geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  scale_color_manual(
+    values = c("#ff0000", "#000000", "#00ff00"), 
+    name="Expresión",
+    breaks=c("up-reg.", "no-diff.", "down-reg."),
+    labels=c("Expresados", "No expresados", "Inhibidos")
+  ) +
+  theme_minimal()
+
+```
+
+Las frecuencias relativas de expresión, inhibición y no expresión están dadas en la siguiente tabla:
+
+```{r}
+stpPI$dgenes %>% table %>% "/"(tamano) %>% setNames(c("Inhibidos", "No expresados", "Expresados")) %>% as.data.frame %>% kable
+```
+
+
+## Aplicación EP-Means
+
+```{r}
+n.clusters <- 40
+```
+
+Se aplica el algoritmo generando `r n.clusters` grupos de genes en cada condición.
+
+```{r}
+Muestra[,1:8] %>% mutate(gen = rownames(.)) %>% melt %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster1")) -> km_1
+
+mutate(km_1, gen = rownames(km_1)) -> km_1
+
+Muestra[,9:16] %>% mutate(gen = rownames(.)) %>%melt %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster2")) -> km_2
+
+mutate(km_2, gen = rownames(km_2)) -> km_2
+
+Muestra %>% mutate(gen = rownames(.)) %>% merge(km_1, by = "gen") %>% merge(km_2, by = "gen") -> Resultado
+
+```
+
+Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 1 (Inoculados).
+
+```{r, include = TRUE}
+sapply(1:40, 
+       function(i){
+         Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9] %>% t %>%
+           melt %$% kruskal.test(value~Var2)$p.value
+       })
+
+```
+
+Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 2 (No inoculados).
+
+```{r, include = TRUE}
+sapply(1:40, 
+       function(i){
+         Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17] %>% t %>%
+           melt %$% kruskal.test(value~Var2)$p.value
+       })
+
+```
+
+```{r}
+lapply(1:tamano, 
+       function(i){
+         ks.test(
+           unlist(Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9]), 
+           unlist(Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17]),
+           exact = FALSE
+         )$p.value
+       }) %>% unlist -> pval
+```
+
+La prueba de Kolmogorov Smirnov se realia repetidamente sobre los grupos, permitiendo encontrar diferencias estadísticamente significativas para cada uno de los genes. Sin embargo en este caso resulta demasiado loberal, rechazando casi todos los casos `r mean(pval*n.clusters< 0.05)` incluso después del uso de la corrección de Bonferoni [@DUNN]. La gráfica muestra la poca proporción de genes no rechazados.
+
+```{r, include = TRUE}
+Resultado[2:17] %>% ac(design = des) %>% 
+  as.data.frame %>% mutate(P = factor(pval*n.clusters< 0.05, labels = c("Iguales", "Diferentes"))) %>% ggplot + 
+  aes(x = psi1, y = psi2, colour = P) + geom_point() + 
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  scale_color_discrete(name = "Expresión") +
+  theme_minimal()
+```
+
+## SAM (Significance analysis of microarrays)
+
+```{r}
+data <- list(
+  x = Muestra,
+  y = des, 
+  geneid = as.character(1:nrow(Muestra)),
+  genenames = paste("g", as.character(1:nrow(Muestra)), sep = ""), 
+  logged2 = TRUE)
+
+samr.obj<-samr(data, resp.type="Two class unpaired", nperms=100)
+
+```
+
+Así mismo se aplica el análisis SAM sobre los genes de la muestra. Al realizar un Q-Q plot para los resultados del análisis se observan los genes diferenciados e inhibidos.
+
+```{r, include = TRUE}
+delta=.4
+samr.plot(samr.obj,delta)
+```
+
+La siguiente gráfica muestra el valor $t$ en cada uno de los genes.
+
+```{r, include = TRUE}
+Muestra_ac %>% 
+ ggplot + 
+  aes(x = psi1, y = psi2, colour = factor(samr.pvalues.from.perms(samr.obj$tt, samr.obj$ttstar) < 0.05, labels = c("Iguales", "Diferentes"))) + geom_point() + 
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  scale_color_discrete(name = "Expresión") +
+  theme_minimal()
+```
+
+La proporción de genes expresados es bastante diferente a los mostrados anteriormente.
+
+```{r}
+factor(samr.pvalues.from.perms(samr.obj$tt, samr.obj$ttstar) < 0.05, labels = c("Iguales", "Diferentes")) %>% table %>% "/"(tamano)
+```
+
+
+## Discusión
+
+Durante la aplicacion de los métodos se evidenciaron algunas dificultades respecto al algoritmo EP-Means. El costo computacional del mismo hizo imposible el trabajo con el conjunto de datos completo, en consecuencia fue necesario tomar una muestra aleatoria de los datos. La poca eficiencia del algoritmo puede deberse a distintas causas, entre ellas el constante cálculo de la distancia entre funciones empíricas, que implica integración numérica. 
+
+El proceso de detección de diferencias estadísticamente significativas en los genes no presenta una exactitud deseable. No resulta acertado suponer que el `r mean(pval*n.clusters< 0.05)*100` porciento de los genes son diferencialmente expresados. Esto se debe al tamaño de los clusters, ya que cada cluster reune cientos de datos, lo cual aumenta la probabilidad de rechazo.
+
+# Conclusiones
+
+- El uso del algoritmo EP-Means es computacionalmente más costoso que SAM y acde.
+
+- El algoritmo EP-Means detecta expresión genética en el 83% de los genes, lo cual no es acertado. SAM y acde resultan bastante más conservadores y por ende más convincentes.
+
+# Referencias
