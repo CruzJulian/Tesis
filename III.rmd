@@ -11,12 +11,16 @@ csl: apa.csl
 linkcolor: blue
 
 ---
-
 ## Lista de cosas
 
  - probar varias distancias
  - hacer gráficos cuadrados de distancias de la misma distribución
  - Hacer simulaciones propuestas hace 3 años.
+
+# Intro
+
+El presente capítulo estudia en la práctica las implicaciones de los componentes teóricos presentados en el capítulo anterior. Siguiendo el orden de ideas es necesario examinar detenidamente las propiedades de las nubes de puntos y de su distancia. Con este fin una serie de simlaciones es presentada en este capítulo, haciendo uso de la distancia de Minkowski de segundo orden entre funciones, en adelante notada $L^2$; obteniendo como resultado la implementación de los algoritmos J-nubes y K-nubes, que corresponden a la aplicación de conglomerados jerárquicos sobre nubes de puntos y de K-means respectivamente.
+
 
 ```{r setup, include=FALSE}
 library("reshape2")
@@ -27,8 +31,9 @@ library("FactoMineR")
 library("dplyr")
 library("ggplot2")
 library("fpc")
+library("latex2exp")
 
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 
 sourceCpp("distancia.cpp")
 
@@ -60,15 +65,127 @@ list_outer <- function(a,b, fun) {
   outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
 }
 
-auto <- function(a, fun){list_outer(a, a, fun)}
+list_auto <- function(a, fun){list_outer(a, a, fun)}
+
+auto <- function(a, fun){fun(a, a)}
+
 
 ```
 
+# Distancia
+
+El estudio simulado de la distancia entre nubes de puntos parte de la inquietud presentada en el capítulo anterior, en donde el factor de convergencia afecta la construcción presentada de las semidistancias entre nubes de puntos. La semidistancia de Minkowski controlada por tamaño presentada en el capítulo anterior requiere una función $h$ que permita controlar la convergencia a partir del tamaño de las nubes de puntos. Al respecto es necesario examinar esta convergencia y establecer patrones para su comportamiento.
+
+## Problema de tamaño
+
+La convergencia indicada por el teorema de Glivenko Cantelli sucede a medida de que la muestra aumenta. Esto genera efectos sobre la distancia entre nubes de puntos, explicado de manera sucinta con un ejemplo: Dos nubes de puntos de tamaño 10 que tienen una distancia de 1.2 pueden provenir de la misma distribución, sin embargo es muy poco probable que dos nubes de puntos de tamaño 1000 con una distancia igual provengan de la misma distribución. Es posible generar dos nubes pequeñas de la misma distribución y que tengan entre ellas una distancia mayor que dos nubes grandes de distribuciones diferentes.
+
+```{r}
+dist_nubes <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+ distan_np(tmp[order(tmp$value),])
+}
+
+# rnorm(1000) -> a
+# rnorm(840) -> b
+# 
+# a <- to_nubepuntos(a)
+# b <- to_nubepuntos(b)
+# 
+# dist_nubes(b, a)
+
+```
+
+```{r, fig.height=3, fig.width=3}
+to_nubepuntos(rnorm(10)) -> n1_peque
+to_nubepuntos(rnorm(10)) -> n2_peque
+
+dist_peque <- dist_nubes(n1_peque, n2_peque)
+
+data.frame(n1_peque, n2_peque) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(title = "Nubes pequeñas", caption = paste("Distancia entre nubes:", round(dist_peque, 2)))
+
+to_nubepuntos(rnorm(1000, .5)) -> n1_grande
+to_nubepuntos(rnorm(1000)) -> n2_grande
+
+dist_grande <- dist_nubes(n1_grande, n2_grande)
+
+data.frame(n1_grande, n2_grande) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(title = "Nubes grandes", caption = paste("Distancia entre nubes:", round(dist_grande, 2)))
 
 
-## Distancia
+```
 
+Si la semidistancia definida refleja características de tamaño en vez de características distribucionales, se trata de un problema de diseño. Por ende es necesario hacer uso de un mecanismo de control que retire la influencia del tamaño en la distancia. Para logar una aproximación adecuada al problema se realiza un examen a cerca de la convergencia de las nubes de puntos.
 
+## Convergencia
+
+El estudio de montecarlo respecto a la convergencia de la nube de puntos mide la incidencia del tamaño en la distancia $L^2$ entre nubes de puntos. Se realiza de la siguiente manera:
+
+ - Para la distribución normal estándar.
+ - Generar diez mil nubes de puntos: Cien de tamaño 1, cien de tamaño 2, ... cien de tamaño cien.
+ - Generar una nube de puntos de tamaño diezmil. Se supone que por su tamaño, esta nube de puntos representa la distribución teórica, o, en otras palabras, una nube de puntos de tamaño infinito.
+ - Encontrar la distancia entre cada una de las diezmil nubes de puntos y la nube gigante-teórica.
+ - Agrupar estas distancias de acuerdo al tamaño de la nube de puntos que representan y obtener promedios.
+ - Graficar las distancias meias por tamaño y ajustar una curva opcional.
+ - Hacer lo mismo para la distribución uniforme.
+
+```{r, fig.height = 3, fig.width = 3}
+lapply(1:100, function(x){
+  1:100 %>% lapply(function(y){rnorm(n = x, mean = 0, sd = 1)}) %>% lapply(to_nubepuntos)
+  }) -> nubes1
+
+nube_grande1 <- to_nubepuntos(rnorm(10000))
+
+nubes1 %>% lapply(list_outer, b = list(nube_grande1), dist_nubes) %>% lapply(mean) %>% unlist -> distancias1
+
+mean(distancias1*1:100) -> constante1
+
+distancias1 %>% 
+  data.frame(X = 1:100, Y = constante1/(1:100)) %>% 
+  ggplot + geom_point(aes(x = X, y = .)) +
+  geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
+  labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución normal")
+
+#, caption = TeX("Distancias medias por tamaño para\nuna distribución normal estándar: $h(x) \\propto \\frac{1}{n_s}$")
+
+lapply(1:100, function(x){
+  1:100 %>% lapply(function(y){runif(n = x)}) %>% lapply(to_nubepuntos)
+  }) -> nubes2
+
+nube_grande2 <- to_nubepuntos(runif(10000))
+
+nubes2 %>% lapply(list_outer, b = list(nube_grande2), dist_nubes) %>% lapply(mean) %>% unlist -> distancias2
+
+mean(distancias2*1:100) -> constante2
+
+distancias2 %>% 
+  data.frame(X = 1:100, Y = constante2/(1:100)) %>% 
+  ggplot + geom_point(aes(x = X, y = .)) + 
+  geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
+  labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución uniforme")
+# , caption = TeX("Distancias medias por tamaño para\nuna distribución uniforme: $h(x) \\propto \\frac{1}{n_s}$")
+```
+
+A partir de los resultados es posible observar como la distancia media por tamaño sigue un ajuste inversamente proporcional al tamaño de la nube de puntos. Este procedimiento da pautas respecto a la mejor función para corregir la distancia $L^2$.
+
+## Corrección por tamaño
+
+La tarea de corregir la distancia por tamaño consiste en encontrar una función $h$ que al multiplicarla por la distancia $L^2$ retire total o parcialmente la incidencia del tamaño de las nubes de puntos en la semidistancia propuesta. Al respecto las funciones candidatas son: $h(n_{s_1}, n_{s_2}) = 1$, $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$, $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$, $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$ y $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$.
+
+La simulación se realiza de la manera siguiente:
+
+```{r}
+sample_size <- 40
+
+```
+
+ - Generar `r sample_size` nubes de puntos de distribución normal (uniforme).
+ - Generar la matriz de distancias para cada una de las correcciones $h$ mencionadas.
+ - Se muestra la matriz de distancias.
+ - Se busca aquella que sea más homogénea.
 
 ```{r}
 D0 <- function(nube_0, nube_1){
@@ -116,32 +233,18 @@ D4 <- function(nube_0, nube_1){
   min(nrow(nube_0), nrow(nube_1)) * distan_np(tmp[order(tmp$value),])
 }
 
-D5 <- function(nube_0, nube_1){
-  rbind(
-    cbind(nube_0, binary = 0),
-    cbind(nube_1, binary = 1)
-  ) -> tmp
-  
-  min(nrow(nube_0), nrow(nube_1)) -> n_min
-  
-  n_min* n_min* distan_np(tmp[order(tmp$value),])
-}
-
-
 ```
 
 ```{r}
-sample_size <- 40
-
 lapply(1:sample_size, rnorm) %>% lapply(to_nubepuntos) -> nubes_norm
 lapply(1:sample_size, runif) %>% lapply(to_nubepuntos) -> nubes_unif
 
 lapply(
-  list(D0 = D0, D1 = D1, D2 = D2, D3 = D3, D4 = D4, D5 = D5),
+  list(D0 = D0, D1 = D1, D2 = D2, D3 = D3, D4 = D4),
   function(fun){
     lapply(
       list(normal = nubes_norm, uniforme = nubes_unif),
-      auto,
+      list_auto,
       fun = fun
     )
   }
@@ -150,43 +253,61 @@ lapply(
 ```
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6)
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6)
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
 
 ```
 
-## Grupos
+$h(n_{s_1}, n_{s_2}) = 1$: Esta es la visualización de las matrices de distancias sin controlar el tamaño. Como se mencionó, los tamaños de muestra pequeños producen distancias mayores a pesar de provenir de la misma distribución.
 
-```{r}
-dist_nubes <- function(nube_0, nube_1){
-  rbind(
-    cbind(nube_0, binary = 0),
-    cbind(nube_1, binary = 1)
-  ) -> tmp
-  
-  nrow(tmp) * distan_np(tmp[order(tmp$value),])
-}
 
-# rnorm(1000) -> a
-# rnorm(840) -> b
-# 
-# a <- to_nubepuntos(a)
-# b <- to_nubepuntos(b)
-# 
-# dist_nubes(b, a)
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
 
 ```
 
+$h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$: Visualización corrigiendo por la suma de los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución.
+
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
+
+```
+
+$h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$: Visualización usando el máximo entre los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución.
+
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
+
+```
+
+$h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$: Visualización usando la suma de los tamaños al cuadrado.
+
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
+
+```
+
+$h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$: Visualización corrigiendo mediante el mínimo de los tamaños.
+
+El análisis de las visualizaciones anteriores conduce a pensar que la corrección usando el mínimo de los tamaños es la más eficiente para estabilizar la distancia en torno a la convergencia, resolviendo el problema planteado. Esto es consistente particularmente con la función ajustada en la seción anterior, donde se examinaba la distancia media según el tamaño. En este sentido la distancia a usar queda definida así:
+
+## Distancia de Minkowski de segundo orden controlada por tamaño para nubes de puntos
+
+Sean $(\Omega, \mathcal{B})$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ y tamaños $n_{s_1}$ y $n_{s_2}$; se define la función 
+
+$$\mathtt{d}(s_1, s_2) =  \min(n_{s_1}, n_{s_2})\int(f_{s_1} - f_{s_2})^2 d\lambda$$
+Que es la distancia que se usa en adelante en todo el texto a menos que se indique lo contrario.
+
+# Métodos de agrupación
 
 ```{r}
 k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
@@ -269,7 +390,7 @@ Simul_tabla <- function(sigma){
     grupo = rep(letters[1:5], each = 40)
   ) -> datos
   
-  datos %>% ggplot + aes(x = Y, colour = grupo, group = X) + geom_line(stat = "ecdf") -> gr
+  datos %>% ggplot + aes(x = Y, colour = grupo, group = X) + geom_step(stat = "ecdf") + theme_minimal() -> gr
   
   # Media
   Media_trt <- datos %$% aggregate(Y, list(X), mean) %>% setNames(c("trt", "Media"))
@@ -283,7 +404,7 @@ Simul_tabla <- function(sigma){
   #K clouds
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
   
-  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% auto(dist_nubes) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
+  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(dist_nubes) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
 
 
   list(
@@ -300,7 +421,7 @@ Simul_tabla <- function(sigma){
   Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
     setNames(c("Tratamiento", "Media", "Grupo Inicial", "K clouds", "H clouds", "LSD", "Duncan")) -> tabla
   
-datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point() -> pca_gr
+datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point()  + theme_minimal() -> pca_gr
 
   list(gr, tabla, pca_gr)
   
@@ -308,6 +429,8 @@ datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.d
 
 
 ```
+
+
 ```{r, fig.width = 8, fig.height = 2.5}
 lapply(seq(2, 10, by = 2), Simul_tabla)
 
