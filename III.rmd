@@ -1,5 +1,5 @@
 ---
-title: "Simulación"
+title: "Métodos y resultados"
 author: "Julian Cruz"
 output: 
   pdf_document:
@@ -17,10 +17,11 @@ linkcolor: blue
  - hacer gráficos cuadrados de distancias de la misma distribución
  - Hacer simulaciones propuestas hace 3 años.
 
-# Intro
+El presente capítulo presenta un estudio en condiciones controladas de las implicaciones prácticas de los componentes teóricos presentados en el capítulo anterior. Siguiendo este orden de ideas es necesario examinar detenidamente las propiedades de las nubes de puntos y de sus posibles semidistancias. Diversas preguntas son respondidas mediante una serie de simlaciones, haciendo uso de la distancia de Minkowski de segundo orden entre funciones, en adelante notada $L_2$; obteniendo como resultado la implementación de los algoritmos J-nubes y K-nubes, que corresponden a la aplicación de conglomerados jerárquicos y de K-means sobre nubes de puntos respectivamente.
 
-El presente capítulo estudia en la práctica las implicaciones de los componentes teóricos presentados en el capítulo anterior. Siguiendo el orden de ideas es necesario examinar detenidamente las propiedades de las nubes de puntos y de su distancia. Con este fin una serie de simlaciones es presentada en este capítulo, haciendo uso de la distancia de Minkowski de segundo orden entre funciones, en adelante notada $L^2$; obteniendo como resultado la implementación de los algoritmos J-nubes y K-nubes, que corresponden a la aplicación de conglomerados jerárquicos sobre nubes de puntos y de K-means respectivamente.
+El trabajo en condiciones controladas se divide en dos partes, la primera caracteriza la distancia $L_2$ entre funciones, aborda el problema del tamaño y consigue controlarlo generando una semidistancia entre nubes de puntos; la segunda hace uso de esta herramienta para observar el comportamiento de las nubes de puntos al aplicar métodos de agrupación basados en distancias.
 
+Para comodidad de lector la metodología y los resultados son presentadas de manera simultánea.
 
 ```{r setup, include=FALSE}
 library("reshape2")
@@ -32,6 +33,7 @@ library("dplyr")
 library("ggplot2")
 library("fpc")
 library("latex2exp")
+library("knitr")
 
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 
@@ -76,7 +78,7 @@ auto <- function(a, fun){fun(a, a)}
 
 El estudio simulado de la distancia entre nubes de puntos parte de la inquietud presentada en el capítulo anterior, en donde el factor de convergencia afecta la construcción presentada de las semidistancias entre nubes de puntos. La semidistancia de Minkowski controlada por tamaño presentada en el capítulo anterior requiere una función $h$ que permita controlar la convergencia a partir del tamaño de las nubes de puntos. Al respecto es necesario examinar esta convergencia y establecer patrones para su comportamiento.
 
-## Problema de tamaño
+## El problema de tamaño
 
 La convergencia indicada por el teorema de Glivenko Cantelli sucede a medida de que la muestra aumenta. Esto genera efectos sobre la distancia entre nubes de puntos, explicado de manera sucinta con un ejemplo: Dos nubes de puntos de tamaño 10 que tienen una distancia de 1.2 pueden provenir de la misma distribución, sin embargo es muy poco probable que dos nubes de puntos de tamaño 1000 con una distancia igual provengan de la misma distribución. Es posible generar dos nubes pequeñas de la misma distribución y que tengan entre ellas una distancia mayor que dos nubes grandes de distribuciones diferentes.
 
@@ -275,7 +277,6 @@ $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$: Visualización corrigiendo por la sum
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
 
-
 ```
 
 $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$: Visualización usando el máximo entre los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución.
@@ -300,7 +301,7 @@ $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$: Visualización corrigiendo media
 
 El análisis de las visualizaciones anteriores conduce a pensar que la corrección usando el mínimo de los tamaños es la más eficiente para estabilizar la distancia en torno a la convergencia, resolviendo el problema planteado. Esto es consistente particularmente con la función ajustada en la seción anterior, donde se examinaba la distancia media según el tamaño. En este sentido la distancia a usar queda definida así:
 
-## Distancia de Minkowski de segundo orden controlada por tamaño para nubes de puntos
+## Semidistancia de Minkowski de segundo orden controlada por tamaño para nubes de puntos
 
 Sean $(\Omega, \mathcal{B})$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ y tamaños $n_{s_1}$ y $n_{s_2}$; se define la función 
 
@@ -308,6 +309,50 @@ $$\mathtt{d}(s_1, s_2) =  \min(n_{s_1}, n_{s_2})\int(f_{s_1} - f_{s_2})^2 d\lamb
 Que es la distancia que se usa en adelante en todo el texto a menos que se indique lo contrario.
 
 # Métodos de agrupación
+
+La estructura de semidistancias entre objetos permite la aplicación de algoritmos de agrupación basados en distancias, semidistancias y criterios de similitud. Haciendo uso de la semidistancia definida se estructuran algoritmos de agrupación entre nubes de puntos: J-nubes, que hace referencia a algoritmos de agrupación jerárquica y K-nubes, basado en K-means. Ambos algoritmos deberían agrupar las nubes de puntos de acuerdo a similitudes en su medida de probabilidad empírica, reflejando estructuras distribucionales más que características paramétricas.
+
+En esta sección se presenta un estudio de montecarlo comparativo que muestra resultados de los métodos propuestos J-nubes y K-nubes en paralelo con abordajes más tradicionales como las prueba de Duncan y LSD de Fisher. Para tal fin se simulan 200 datos para 20 tratamientos con distribución $N(\mu_i, \sigma_i)$ según la tabla~\ref{T3}.
+
+\begin{table}[htb!]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Nube & $\mu$ & $\sigma$ & Nube & $\mu$ & $\sigma$ \\ 
+\hline 
+A & 1 & $S$ & K & 3 & $S$ \\ 
+\hline 
+B & 1 & $S$ & L & 3 & $S$ \\ 
+\hline 
+C & 1 & $S$ & M & 4 & $5S$ \\ 
+\hline 
+D & 1 & $S$ & N & 4 & $5S$ \\ 
+\hline 
+E & 2 & $3S$ & O & 4 & $5S$ \\ 
+\hline 
+F & 2 & $3S$ & P & 4 & $5S$ \\ 
+\hline 
+G & 2 & $3S$ & Q & 5 & $S$ \\ 
+\hline 
+H & 2 & $3S$ & R & 5 & $S$ \\ 
+\hline 
+I & 3 & $S$ & S & 5 & $S$ \\ 
+\hline 
+J & 3 & $S$ & T & 5 & $S$ \\ 
+\hline 
+\end{tabular} 
+\caption{Simulación de 20 nubes de puntos a partir de una distribución $N(\mu_i,\sigma_i)$, cada uno con 10 datos.}
+\label{T3}
+\end{table}
+
+```{r}
+S <- seq(2, 10, by = 2)
+
+```
+
+Se trata de 20 nubes de puntos con distribución normal con distintas medias y varianzas. La constante $S$, permite controlar la dispersión de los datos, así al variar $S$ se controla la dificultad para distinguir entre las distintas nubes de puntos; de esta manera son realizados `r length(S)` experimentos con $S$ en $\{`r S`\}$. Los métodos presentados deben clasificar las nubes de puntos tal como se simularon o que por lo menos acercarse. Las pruebas de Duncan y LSD de Fisher son usadas para tener un panorama comparativo. En todos los casos se eligió una clasificación en $K=5$ clases.
+
+A continuación se incluyen los resultados para $S = `r S[1]`$ y $S = `r S[5]`$, los resultados restantes se incluyen al final del capítulo.
 
 ```{r}
 k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
@@ -431,10 +476,157 @@ datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.d
 ```
 
 
-```{r, fig.width = 8, fig.height = 2.5}
-lapply(seq(2, 10, by = 2), Simul_tabla)
+```{r}
+lapply(S, Simul_tabla) -> Resultados
 
 ```
 
+Para $S = `r S[1]`$ la variabilidad de los datos es pequeña con respecto a la variabilidad total. Los grupos de funciones empíricas pueden distinguirse fácilmente.
 
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[1]][[1]]
+
+```
+
+El resultado de los distintos métodos hace patente la diferencia entre los grupos. La baja variabilidad de las nubes de puntos facilita la tarea de clasificación.
+
+```{r}
+kable(Resultados[[1]][[2]])
+
+```
+
+La visualización mediante componentes principales evidencia los grupos y facilita la interpretación.
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[1]][[3]]
+
+```
+
+Para $S = `r S[5]`$ la variabilidad de los datos es alta con respecto a la variabilidad total, de manera que no resulta facil distinguir a simple vista las funciones de densidad acumulada empíricas coorrespondientes a los distintos grupos de nubes de puntos. Asímismo los métodos empleados tienen inconvenientes en la detección de dichos grupos.
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[5]][[1]]
+
+```
+
+Las dificultades en la clasificacción son notorias, es posible observar un desempeño de J-nubes bastante mejor que el de K-nubes, las pruebas de Duncan y LSD de Fisher presentan grandes dificultades, en éstas, las nubes de puntos con letras en común no presentan diferencias estadísticamente significativas.
+
+```{r}
+kable(Resultados[[5]][[2]])
+
+```
+
+La visualización mediante componentes principales difícilmente evidencia los grupos.
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[5]][[3]]
+
+```
+
+# Anexo: Resultados
+
+```{r}
+i <- 1
+```
+
+## $S = `r S[i]`$
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[i]][[1]]
+
+```
+
+```{r}
+kable(Resultados[[i]][[2]])
+
+```
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[i]][[3]]
+
+```
+
+```{r}
+i <- 2
+```
+
+## $S = `r S[i]`$
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[i]][[1]]
+
+```
+
+```{r}
+kable(Resultados[[i]][[2]])
+
+```
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[i]][[3]]
+
+```
+
+```{r}
+i <- 3
+```
+
+## $S = `r S[i]`$
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[i]][[1]]
+
+```
+
+```{r}
+kable(Resultados[[i]][[2]])
+
+```
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[i]][[3]]
+
+```
+
+```{r}
+i <- 4
+```
+
+## $S = `r S[i]`$
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[i]][[1]]
+
+```
+
+```{r}
+kable(Resultados[[i]][[2]])
+
+```
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[i]][[3]]
+
+```
+
+```{r}
+i <- 5
+```
+
+## $S = `r S[i]`$
+
+```{r, fig.width = 8, fig.height = 2.5}
+Resultados[[i]][[1]]
+
+```
+
+```{r}
+kable(Resultados[[i]][[2]])
+
+```
+
+```{r, fig.width = 4, fig.height = 2.5}
+Resultados[[i]][[3]]
+
+```
 
