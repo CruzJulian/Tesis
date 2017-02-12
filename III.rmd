@@ -35,7 +35,7 @@ library("fpc")
 library("latex2exp")
 library("knitr")
 
-knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+knitr::opts_chunk$set(echo = FALSE, cache = FALSE)
 
 sourceCpp("distancia.cpp")
 
@@ -143,10 +143,10 @@ nube_grande1 <- to_nubepuntos(rnorm(10000))
 
 nubes1 %>% lapply(list_outer, b = list(nube_grande1), dist_nubes) %>% lapply(mean) %>% unlist -> distancias1
 
-mean(distancias1*1:100) -> constante1
+lm(log(distancias1) ~ log(1:100)) %$% coefficients -> coef1
 
 distancias1 %>% 
-  data.frame(X = 1:100, Y = constante1/(1:100)) %>% 
+  data.frame(X = 1:100, Y = exp(coef1[1])*(1:100)^coef1[2]) %>% 
   ggplot + geom_point(aes(x = X, y = .)) +
   geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
   labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución normal")
@@ -161,10 +161,10 @@ nube_grande2 <- to_nubepuntos(runif(10000))
 
 nubes2 %>% lapply(list_outer, b = list(nube_grande2), dist_nubes) %>% lapply(mean) %>% unlist -> distancias2
 
-mean(distancias2*1:100) -> constante2
+lm(log(distancias2) ~ log(1:100)) %$% coefficients -> coef2
 
 distancias2 %>% 
-  data.frame(X = 1:100, Y = constante2/(1:100)) %>% 
+  data.frame(X = 1:100, Y = exp(coef2[1])*(1:100)^coef2[2]) %>% 
   ggplot + geom_point(aes(x = X, y = .)) + 
   geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
   labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución uniforme")
@@ -175,12 +175,12 @@ A partir de los resultados es posible observar como la distancia media por tama�
 
 ## Corrección por tamaño
 
-La tarea de corregir la distancia por tamaño consiste en encontrar una función $h$ que al multiplicarla por la distancia $L^2$ retire total o parcialmente la incidencia del tamaño de las nubes de puntos en la semidistancia propuesta. Al respecto las funciones candidatas son: $h(n_{s_1}, n_{s_2}) = 1$, $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$, $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$, $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$ y $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$.
+La tarea de corregir la distancia por tamaño consiste en encontrar una función $h$ que al multiplicarla por la distancia $L^2$ retire total o parcialmente la incidencia del tamaño de las nubes de puntos en la semidistancia propuesta. Al respecto las funciones candidatas son: $h(n_{s_1}, n_{s_2}) = 1$, $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$, $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$, $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$, $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$ y $h(n_{s_1}, n_{s_2}) = \sqrt{\min(n_{s_1}, n_{s_2})}$.
 
 La simulación se realiza de la manera siguiente:
 
 ```{r}
-sample_size <- 40
+sample_size <- 100
 
 ```
 
@@ -190,6 +190,15 @@ sample_size <- 40
  - Se busca aquella que sea más homogénea.
 
 ```{r}
+D_EMD <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  EMD(tmp[order(tmp$value),])
+}
+
 D0 <- function(nube_0, nube_1){
   rbind(
     cbind(nube_0, binary = 0),
@@ -235,6 +244,15 @@ D4 <- function(nube_0, nube_1){
   min(nrow(nube_0), nrow(nube_1)) * distan_np(tmp[order(tmp$value),])
 }
 
+D5 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  sqrt(min(nrow(nube_0), nrow(nube_1))) * distan_np(tmp[order(tmp$value),])
+}
+
 ```
 
 ```{r}
@@ -242,7 +260,7 @@ lapply(1:sample_size, rnorm) %>% lapply(to_nubepuntos) -> nubes_norm
 lapply(1:sample_size, runif) %>% lapply(to_nubepuntos) -> nubes_unif
 
 lapply(
-  list(D0 = D0, D1 = D1, D2 = D2, D3 = D3, D4 = D4),
+  list(D0 = D0, D1 = D1, D2 = D2, D3 = D3, D4 = D4, D5 = D5),
   function(fun){
     lapply(
       list(normal = nubes_norm, uniforme = nubes_unif),
@@ -258,7 +276,6 @@ lapply(
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
 
-
 ```
 
 $h(n_{s_1}, n_{s_2}) = 1$: Esta es la visualización de las matrices de distancias sin controlar el tamaño. Como se mencionó, los tamaños de muestra pequeños producen distancias mayores a pesar de provenir de la misma distribución.
@@ -267,7 +284,6 @@ $h(n_{s_1}, n_{s_2}) = 1$: Esta es la visualización de las matrices de distanci
 ```{r, fig.width = 3.5, fig.height = 2.5}
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
-
 
 ```
 
@@ -294,19 +310,42 @@ $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$: Visualización usando la suma de 
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
 
-
 ```
 
 $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$: Visualización corrigiendo mediante el mínimo de los tamaños.
 
-El análisis de las visualizaciones anteriores conduce a pensar que la corrección usando el mínimo de los tamaños es la más eficiente para estabilizar la distancia en torno a la convergencia, resolviendo el problema planteado. Esto es consistente particularmente con la función ajustada en la seción anterior, donde se examinaba la distancia media según el tamaño. En este sentido la distancia a usar queda definida así:
+```{r, fig.width = 3.5, fig.height = 2.5}
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución normal estándar")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", title = "Matriz de distancias", fill = "Distancia", caption = "Distribución uniforme")
+
+
+```
+
+$h(n_{s_1}, n_{s_2}) = \sqrt{\min(n_{s_1}, n_{s_2})}$: Visualización corrigiendo mediante la raíz cuadrada del mínimo de los tamaños.
+
+El análisis de las visualizaciones anteriores conduce a pensar que la corrección usando la raíz cuadrada del mínimo de los tamaños es la más eficiente para estabilizar la distancia en torno a la convergencia, resolviendo el problema planteado. Esto es consistente particularmente con la función ajustada en la sección anterior, donde se examinaba la distancia media según el tamaño. Para corroborar este hallazgo se plantea el modelo de regresión:
+
+$$ln(d(s_1, s_2)) = \beta_0 + \beta_1ln(\min(n_{s_1}, n_{s_2})) + \beta_2ln(\max(n_{s_1}, n_{s_2}))$$
+Que se presenta para datos normales:
+
+```{r}
+dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.normal) ~ log(min_12) + log(max_12), data = .) %>% summary
+```
+
+Y para datos uniformes:
+
+```{r}
+dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.uniforme) ~ log(min_12) + log(max_12), data = .) %>% summary
+```
+
+Ambos modelos ratifican la cercanía de $\beta_1$ a $\frac{-1}{2}$ además de la posibilidad de pasar por alto una corrección con respecto al máximo. En este sentido la distancia a usar queda definida así:
 
 ## Semidistancia de Minkowski de segundo orden controlada por tamaño para nubes de puntos
 
 Sean $(\Omega, \mathcal{B})$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ y tamaños $n_{s_1}$ y $n_{s_2}$; se define la función 
 
-$$\mathtt{d}(s_1, s_2) =  \min(n_{s_1}, n_{s_2})\int(f_{s_1} - f_{s_2})^2 d\lambda$$
-Que es la distancia que se usa en adelante en todo el texto a menos que se indique lo contrario.
+$$\mathtt{d}(s_1, s_2) =  \sqrt{\min(n_{s_1}, n_{s_2})\int(f_{s_1} - f_{s_2})^2 d\lambda}$$
+Que es la semidistancia que se usa en adelante en todo el texto a menos que se indique lo contrario.
 
 # Métodos de agrupación
 
@@ -355,6 +394,39 @@ Se trata de 20 nubes de puntos con distribución normal con distintas medias y v
 A continuación se incluyen los resultados para $S = `r S[1]`$ y $S = `r S[5]`$, los resultados restantes se incluyen al final del capítulo.
 
 ```{r}
+ep_means <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
+  
+  if(is.null(grupos_iniciales)) {
+    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+    
+    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  } else{
+    split(lista_nubes, grupos_iniciales) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  antes <- 0
+  ahora <- 1000
+  umbral <- 0.0002
+  while(abs(antes - ahora) > umbral){
+    antes <- ahora
+    list_outer(centros, lista_nubes, D_EMD) -> dist_matriz
+    letters[apply(dist_matriz, 2, which.min)] -> grupos
+    sum(apply(dist_matriz, 2, min)) -> ahora
+    split(lista_nubes, grupos) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  
+}
+
+
+```
+
+```{r}
 k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
   
   if(is.null(grupos_iniciales)) {
@@ -369,7 +441,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
   
   antes <- 0
   ahora <- 1000
-  umbral <- 0.002
+  umbral <- 0.0002
   while(abs(antes - ahora) > umbral){
     antes <- ahora
     list_outer(centros, lista_nubes, dist_nubes) -> dist_matriz
@@ -448,8 +520,12 @@ Simul_tabla <- function(sigma){
   
   #K clouds
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
-  
+
+  #H clouds
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(dist_nubes) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
+
+  #EP Means
+  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% ep_means(n_grupos = 5) %$% Grupo -> CC$EP
 
 
   list(
@@ -464,7 +540,7 @@ Simul_tabla <- function(sigma){
   ) -> tmp
   
   Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
-    setNames(c("Tratamiento", "Media", "Grupo Inicial", "K clouds", "H clouds", "LSD", "Duncan")) -> tabla
+    setNames(c("Tratamiento", "Media", "Grupo Inicial", "K Nubes", "J Nubes", "EP Means", "LSD", "Duncan")) -> tabla
   
 datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point()  + theme_minimal() -> pca_gr
 
@@ -522,6 +598,8 @@ La visualización mediante componentes principales difícilmente evidencia los g
 Resultados[[5]][[3]]
 
 ```
+
+Como se ve en as simulaciones realizadas, el procedimiento que mejor clasifica las nubes de puntos es J Nubes. No obstante es posible que realizar una combinación de os algoritmos H Nubes y J Nubes desemboque en un mejor esempeño. En los siguientes capítulos se aplican estos algoritmos a datos reales, estableciendo una utilidad práctica para la agrupación de nubes de puntos.
 
 # Anexo: Resultados
 
