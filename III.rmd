@@ -11,11 +11,6 @@ csl: apa.csl
 linkcolor: blue
 
 ---
-## Lista de cosas
-
- - probar varias distancias
- - hacer gráficos cuadrados de distancias de la misma distribución
- - Hacer simulaciones propuestas hace 3 años.
 
 El presente capítulo presenta un estudio en condiciones controladas de las implicaciones prácticas de los componentes teóricos presentados en el capítulo anterior. Siguiendo este orden de ideas es necesario examinar detenidamente las propiedades de las nubes de puntos y de sus posibles semidistancias. Diversas preguntas son respondidas mediante una serie de simlaciones, haciendo uso de la distancia de Minkowski de segundo orden entre funciones, en adelante notada $L_2$; obteniendo como resultado la implementación de los algoritmos J-nubes y K-nubes, que corresponden a la aplicación de conglomerados jerárquicos y de K-means sobre nubes de puntos respectivamente.
 
@@ -70,7 +65,6 @@ list_outer <- function(a,b, fun) {
 list_auto <- function(a, fun){list_outer(a, a, fun)}
 
 auto <- function(a, fun){fun(a, a)}
-
 
 ```
 
@@ -444,7 +438,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
   umbral <- 0.0002
   while(abs(antes - ahora) > umbral){
     antes <- ahora
-    list_outer(centros, lista_nubes, dist_nubes) -> dist_matriz
+    list_outer(centros, lista_nubes, D5) -> dist_matriz
     letters[apply(dist_matriz, 2, which.min)] -> grupos
     sum(apply(dist_matriz, 2, min)) -> ahora
     split(lista_nubes, grupos) -> agrupados
@@ -518,11 +512,11 @@ Simul_tabla <- function(sigma){
   #LSD
   LSD <- aov(Y~X, data = datos) %>% LSD.test("X")
   
-  #K clouds
+  #K nubes
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
 
-  #H clouds
-  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(dist_nubes) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
+  #J nubes
+  datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(D5) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
 
   #EP Means
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% ep_means(n_grupos = 5) %$% Grupo -> CC$EP
