@@ -11,9 +11,9 @@ Hasta el momento hay cuatro capítulos en fase de desarrollo. Son:
 
 [Capítulo III:](https://github.com/CruzJulian/Tesis/blob/master/III.rmd) Dsarrollo práctico y simulación.
 
-[Capítulo IV:](https://github.com/CruzJulian/Tesis/blob/master/III.rmd) Aplicación usando los datos de Saber 2014.
+[Capítulo IV:](https://github.com/CruzJulian/Tesis/blob/master/IV.rmd) Aplicación usando los datos de Saber 2014.
 
-[Capítulo V:](https://github.com/CruzJulian/Tesis/blob/master/IV.rmd) Aplicación usando datos genómicos.
+[Capítulo V:](https://github.com/CruzJulian/Tesis/blob/master/V.rmd) Aplicación usando datos genómicos.
 
 
 ## Pendientes
