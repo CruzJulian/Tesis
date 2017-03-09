@@ -1,6 +1,5 @@
 ---
-title: "Aplicación I"
-author: "Julian Cruz, Daniel Moreno, Adriana Calvijo"
+title: "Aplicación: Saber 11"
 output: 
   pdf_document:
     keep_tex: true
@@ -23,23 +22,6 @@ linkcolor: blue
  - Resultados
   - Hacer!
 
-
-# Introducción
-
-# Metodología
-
-A continuación se explica de manera detallada la implementaciń de la metodología propuesta en los datos correspondientes a la prueba de estado Saber 11 del ICFES.
-
-## Examen Saber 11
-
-Uno de los temas polémicos en política pública es la medición de impacto en intervenciones en educación. El Instituto Colombiano para la Evaluación de la Educacaión ICFES es el organismo estatal encargado de medir los procesos educativos a nivel nacional con el mayor nivel técnico posible, de manera que el ejecutivo tenga herramientas propicias para tomar decisiones en materia de presupuesto, estímulos y programas de política pública.
-
-Con este fin el ICFES ha estandarizado la presentación de varias pruebas nacionales, entre ellas la prueba Saber 11, que es presentada cada año por más de 500.000 estudiatnes de último año de educación media de todo el territorio nacional. Los resultados de esta prueba inciden diretamente en el futuro de los estudiantes, pues son usados para la asignación de cupos en educación superior tanto en el sector estatal como el privado. Además, los resultados a nivel municipal y departamental deben servir como insumo a evaluaciones en términos de politica pública.
-
-Con el fin de promover el uso de estos datos el ICFES otorga becas de investigación en torno a los resultados de las pruebas y genera un espacio de divulgación: el Seminario Internacional de Investgación sobre la Calidad de la Educación; que se realiza de forma anual. Además, pone a disposición de investigadores las bases de datos de resultados de las pruebas Saber 11 y Saber Pro. Las condiciones de acceso a los datos se pueden consultar [aquí](http://www.icfes.gov.co/investigacion/acceso-a-bases-de-datos)
-
-Estos datos resultan muy útiles para evaluar la metodología propuesta. No es del todo posible comparar el desempeño de los municipios colombianos usando únicamente el promedio de los puntajes de la prueba Saber 11. El problema a resolver consiste en realizar una clasificación de los municipios de Colombia con base en los puntajes individuales de las pruebas Saber 11, del ICFES. En este caso los datos están conformados por dos variables: el puntaje en la prueba Saber 11, variable continua y el municipio, variable categórica con 1122 categorias, según el DANE; donde cada registro corresponde a un estudiante que presentó la prueba. Se trata de dos variables, el problema consiste en agrupar las categorías de la variable nominal con base en similaridades de sus valores alcanzados en la variable continua.
-
 ```{r setup, echo=FALSE, include=FALSE}
 # library("grid")
 library("magrittr")
@@ -51,16 +33,52 @@ library("dplyr")
 # library("infotheo")
 library("colmaps")
 library("ggplot2")
+library("Rcpp")
+library("ggdendro")
+library("scales")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
+sourceCpp("distancia.cpp")
+
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
 
 options(stringsAsFactors = TRUE)
 
 ```
 
+
+# Introducción
+
+En el capítulo anterior se presentaron los resultados correspondientes a varios procesos de simulación que permitieron escoger la distancia apropiada para este tipo de datos y construir los algoritmos J-nubes y K-nubes, el primero de agregación jerárquica y el segundo basado en k-means. El presente capítulo emplea estos procedimientos en un conjunto de datos reales con el objeto de observar su comportamiento, desempeño e idoneidad, y de evidenciar uno de sus posibles usos.
+
+Se toman para este apartado los datos corespondientes a la prueba de educación básica secundaria Saber 11, realizada por el Instituto Colombiano de Evaluación de la Educación, ICFES, de manera semestral y con cobertura nacional. El problema planteado consiste en encontrar categorías a nivel municipal que agrupen municipios con condiciones educativas similares usando el desempeño de sus estudiantes en la prueba.
+
+Según la Divipola actualmente el territorio nacional se encuentra dividido en 1101 municipios. 
+
+```{r, fig.width=4}
+colmaps::colmap(map = municipios)
+
+```
+
+Figura PMM: Municipios de Colombia.
+
+# Metodología
+
+A continuación se explica de manera detallada la implementación de los métodos propuestos en los datos correspondientes a la prueba de estado Saber 11 del ICFES.
+
+## Examen Saber 11
+
+Uno de los temas polémicos en política pública es la medición de impacto en intervenciones en educación. El Instituto Colombiano para la Evaluación de la Educacaión ICFES es el organismo estatal encargado de medir los procesos educativos a nivel nacional con el mayor nivel técnico posible, de manera que el ejecutivo tenga herramientas propicias para tomar decisiones en materia de presupuesto, estímulos y programas de política pública.
+
+Con este fin el ICFES ha estandarizado la presentación de varias pruebas nacionales, entre ellas la prueba Saber 11, que es presentada cada año por más de 500.000 estudiantes de último año de educación media de todo el territorio nacional. Los resultados de esta prueba inciden directamente en el futuro de los estudiantes, pues son usados para la asignación de cupos en educación superior tanto en el sector estatal como el privado. Además, los resultados a nivel municipal y departamental deben servir como insumo a evaluaciones en términos de politica pública.
+
+Con el fin de promover el uso de estos datos el ICFES otorga becas de investigación en torno a los resultados de las pruebas y genera un espacio anual de divulgación: el Seminario Internacional de Investgación sobre la Calidad de la Educación; y pone a disposición de investigadores las bases de datos de resultados de las pruebas Saber 11 y Saber Pro. Las condiciones de acceso a los datos se pueden consultar [aquí](http://www.icfes.gov.co/investigadores-y-estudiantes-posgrado/acceso-a-bases-de-datos)
+
+Estos datos resultan muy útiles para evaluar la metodología propuesta. No es del todo posible comparar el desempeño de los municipios colombianos usando únicamente el promedio de los puntajes de la prueba. El problema a resolver consiste consiste en encontrar categorías a nivel municipal que agrupen los municipios de Colombia con condiciones educativas similares usando el desempeño de sus estudiantes en la prueba Saber 11 del ICFES. En este caso los datos están conformados por dos variables: un puntaje global de la prueba Saber 11, variable continua y el municipio, variable categórica con 1101 categorias, según Divipola; donde cada registro corresponde a un estudiante que presentó la prueba. Se trata de dos variables, el problema consiste en agrupar las categorías de la variable nominal con base en similaridades de sus valores alcanzados en la variable continua.
+
+
 ## Software
 
-Para la descarga, preprocesamiento y procesamiento de los datos se utiliza [R](https://cran.r-project.org/) [@R], un lenguaje y entorno de programación libre enfocado en estadística, constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales pero no hay estmación del número de paquetes no oficiales. Un tutorial [aquí](http://bogota-r.github.io/intro/)
+Para la descarga, preprocesamiento y procesamiento de los datos se utiliza [R](https://cran.r-project.org/) [@R], un lenguaje y entorno de programación libre enfocado en estadística, constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales, del número de paquetes no oficiales no hay estmación. Un tutorial [aquí](http://bogota-r.github.io/intro/)
 
 [Nebulae](https://github.com/nebulae-co) es un grupo de trabajo incipiente autogestionado con intereses en estadística. Para facilitar el acceso a estos datos y promover su uso en investigación el colectivo Nebulae compiló los resultados de las pruebas Saber11 desde 2006 en un paquete de R denominado [saber](https://github.com/nebulae-co/saber)
 
@@ -88,13 +106,11 @@ La base de datos contiene `r ncol(SB11_20142)` variables. Sin embargo sólo se u
 
 El `data.frame` está compuesto por los resultados de cada estudiante que presentó la prueba Saber 11 en el segundo semestre de 2014. Se trata de una base de datos de dimensiones: $[m, n] = [`r dim(SB11_20142)`]$. Así mismo, la población objetivo está compuesta por todas las personas que presentaron la prueba Saber 11 durante el segundo semestre de 2014, de manera que, teniendo acceso a los datos poblacionales, no existe la necesidad de un diseño muestral.
 
-## Análisis estadístico
+## Preparación de los datos
 
-Una fase de preparación de los datos precede el análisis.
+Una fase de preparación de los datos precede el análisis. La base de datos registra siete tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial que representan menos del 2% de la población. Los puntajes de estos colectivos han sido medidos, en el mejor de los casos, realizando adaptaciones a la prueba en cuestión, de manera que, siendo medidos en condiciones distintas y por mecanismos distintos, resulta poco ortodoxo comparar sus puntajes con el resto.  Por estas razones los registros pertenecientes a estas poblaciones son retirados de la base de datos. Asímismo los resultados muy cercanos a cero son casos en donde la evaluación de las competencias pertinentes no está siendo llevada a cabo, en consecuencia son retirados los registros con un puntaje total menor a 10.
 
-La base de datos registra cuatro tipos de condiciones particulares: discapacidad cognitiva, motriz, sordo, autismo, invidente, síndrome de down y condición especial. Los estudiantes con estas condiciones representan menos del 2% de la población. Los puntajes de estos colectivos han sido medidos, en el mejor de los casos, realizando adaptaciones a la prueba en cuestión, de manera que, siendo medidos en condiciones distintas y or mecanismos distintos, resulta poco ortodoxo comparar sus puntajes con el resto.  Por estas razones los estudiantes pertenecientes a estas poblaciones son retirados de la base de datos.  
-
-Adicionalmente se retiraron los municipios con menos de 30 estudiantes y los de Bogotá.
+Si bien, como se mostró, la distancia seleccionada es robusta frente al tamaño, es necesario fijar umbrales superior e inferior para la cantidad de individuos en cada nube de puntos. En consecuencia se retiraron los municipios con menos de 30 estudiantes y Bogotá. 
 
 ```{r retirar}
 SB11_20142 %>% 
@@ -129,40 +145,419 @@ removidos <- nrow(SB11_20142) - nrow(Saber11)
 
 ```
 
-# Resultados
+De esta forma son removidos `r removidos` individuos, obteniendo una base de datos depurada con `r nrow(Saber11)` registros. Se conservan únicamente `r ncol(Saber11)` variables: `r names(Saber11)`.
 
-En la etapa de preparación de los datos fueron removidos `r removidos` individuos, obteniendo una base de datos de `r nrow(Saber11)` registros. Se conservaron únicamente `r ncol(Saber11)` variables: `r names(Saber11)`.
+## Análisis estadístico
 
-```{r Colmaps_tamano}
-colmaps::colmap(map = municipios, data = municipios_50, var = "N", data_id = "id_municipio", map_id = "id", autocomplete = TRUE) -> map
+Respondiendo al problema planteado el análisis estadístico de los datos consiste en la aplicación de los métodos J-nubes y K-nubes a la base de datos depurada. En detalle los pasos que se siguen son:
 
-map + labs(title = "Cantidad de estudiantes evaluados")
+ - Generación de estadísticas descriptivas.
+ - Presentación del panorama actual.
+ - Generación de categorías en dos pasos: Exploración, con el método J-nubes y consolidación, con el método K-nubes. Presentación de las estadísticas generadas durante el proceso.
+ - Presentación de las estadísticas propias del resultado.
+ - Validación del resultado vía Kruskall-Wallis.
+
+```{r}
+Saber11 %>% group_by(id_municipio) %>% summarise(Estudiantes = n(), Puntaje = mean(TOTAL)) -> descriptivo_municipios
 
 ```
 
-```{r ecdf}
+# Resultados
+
+## Estadísticas descriptivas
+
+La figura AKF muestra la cobertura de la prueba y la cantidad de estudiantes evaluaddos por municipio. Resaltan las principales ciudades sin embargo la poca cobertura en la región suroriental del país es notoria.
+
+```{r Colmaps_tamano, include=FALSE}
+colmaps::colmap(map = municipios, data = descriptivo_municipios, var = "Estudiantes", data_id = "id_municipio", map_id = "id", autocomplete = TRUE) -> mapa_cantidad
+
+```
+
+```{r mapa_1}
+mapa_cantidad
+
+```
+
+Figura AKF: Cantidad de estudiantes evaluados por municipio.
+
+A su vez la figura PJF muestra el puntaje total promedio por municipio. Intuitivamente los municipios con mayores puntajes se ubican en la zona central del país.
+
+```{r Colmaps_puntaje, include = FALSE}
+colmaps::colmap(map = municipios, data = descriptivo_municipios, var = "Puntaje", data_id = "id_municipio", map_id = "id", autocomplete = TRUE) + scale_fill_continuous(high = "#fee8c8", low = "#b30000") -> mapa_desemp
+
+```
+```{r Mapa_desempe}
+mapa_desemp
+
+```
+
+
+Figura PJF: Puntaje total promedio por municipio.
+
+## Puntajes por municipio
+
+Para comprender el panorama de los puntajes por municipio se realizan dos visualizaciones: un boxplot, y un rasterplot. En el primero cada municipio es representado por una caja, no obstante la cantidad de municipios hace imposible reconocerlos y el gráfico sólo sirve para observar la diversidad de los municipios, como se ve en la figura EPN. 
+
+```{r}
 evaluated_ecdf <- function(categories, values){
-  
+
   # a vector with sorted and unique values
   unique(values) -> .
   sort(.) -> ordenados
-  
+
   # a list of functions, one function per category
   ecdf_categories <- tapply(X = values, INDEX = categories, FUN = ecdf)
-  
+
   # a data.frame with the evaluations of the functions in the sorted values
-  sapply(X = ecdf_categories, FUN = function(x, y){x(y)}, y = ordenados) -> .
+  sapply(X = ecdf_categories, FUN = function(x, y){x(y)},
+    y = ordenados) -> .
   t(.) ->.
   data.frame(.)->.
   set_colnames(., ordenados)
 }
 
-ecdf_eval <- Saber11 %$% evaluated_ecdf(categories = id_municipio, values = TOTAL)
+```
 
-# categories = Saber11$id_municipio
-# values = Saber11$TOTAL
+
+```{r initial_box_plot, fig.width = 8, fig.height = 2.5}
+Saber11 %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
+  theme(axis.ticks = element_blank(), axis.text.x = element_blank(), panel.background = element_blank()) +
+  xlab("") +
+  ylab("") -> general_box_plot
+
+general_box_plot
 
 ```
+
+Figura EPN: Boxplot de puntajes de municipios.
+
+El rasterplot representa cada municipio con una línea que va de oscuro a claro, aquí tampoco es posible distinguir cada municipio, sólo permite observar la diversidad de los mismos, como se ve en la figura NBV.
+
+```{r initial_raster_plot, fig.width = 8, fig.height = 2.5}
+Saber11 %$% evaluated_ecdf(categories = id_municipio, values = TOTAL) -> ecdf_eval
+
+ecdf_eval %>% mutate(id_municipio = rownames(.)) %>%
+  melt(id.vars = c("id_municipio")) -> dff_to_plot
+
+dff_to_plot %>% 
+  ggplot +
+  aes(y = variable, x = id_municipio, fill = value) +
+  geom_raster() +
+  theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
+  xlab("") +
+  ylab("") -> general_raster_plot
+
+general_raster_plot
+
+```
+
+Figura NBV: Rasterplot de puntajes de municipios.
+
+## Generación de grupos
+
+En las gráficas se observa la diversidad de los municipios en términos de resultados en la prueba Saber 11. El paso siguente consiste en aplicar los métodos presentados con el fin de agrupar los municipios según el desempeño de sus estudiantes.
+
+J-nubes produce como primer resultado un árbol, se trata de una estructura jerárquica de agrupación generada mediante el método de ward.
+
+```{r}
+to_nubepuntos <- function(a){
+  data.frame(value = a, weight = 1/length(a)) -> nubepuntos
+ class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+}
+
+```
+
+```{r}
+collapsa_nubes <- function(nube_list){
+  
+  sum(unlist(lapply(nube_list, nrow))) -> n_total
+  lapply(nube_list, function(nube){
+    nube$weight <- nube$weight*nrow(nube)/n_total
+    nube}) -> .
+  do.call(rbind, .) -> nubepuntos
+    class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+
+}
+
+list_outer <- function(a,b, fun) {
+  outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
+}
+
+list_auto <- function(a, fun){list_outer(a, a, fun)}
+
+auto <- function(a, fun){fun(a, a)}
+
+```
+
+```{r}
+D_def <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  # sqrt(min(nrow(nube_0), nrow(nube_1))) * distan_np(tmp[order(tmp$value),])
+  distan_def(tmp[order(tmp$value),])
+}
+
+D5 <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  sqrt(min(nrow(nube_0), nrow(nube_1))) * distan_np(tmp[order(tmp$value),])
+}
+
+```
+
+```{r}
+#J nubes
+Saber11 %$% split(TOTAL, id_municipio) %>% lapply(to_nubepuntos) -> nubes
+```
+
+```{r, eval = FALSE}
+# nubes %>% list_auto(D5) %>% as.dist -> dis_matriz
+nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz_2
+
+save(dis_matriz_2, file = "dis_matriz.rda")
+
+```
+
+```{r}
+load(file = "dis_matriz.rda")
+```
+
+```{r, fig.width = 8, fig.height = 2.5}
+dis_matriz_2 %>% hclust(method = "ward.D") -> tree
+
+# plot(tree)
+
+ggdendrogram(tree, rotate = TRUE) + theme(axis.text.y = element_blank())
+
+```
+
+
+```{r}
+numero_grupos <- 10
+
+```
+
+
+Se construyen `r numero_grupos` grupos, cuyos nombres `r letters[1:numero_grupos]` corresponden con su nivel educativo, siendo `r letters[1]` el grupo de municipios con mejor desempeño en las pruebas Saber 11 para el año 2014 y `r letters[numero_grupos]` el grupo de municipios con puntajes totales más bajos. La tabla MBJ
+
+```{r}
+tree %>% cutree(numero_grupos) -> grupos_municipios
+
+```
+
+```{r, eval=FALSE}
+k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbral = 0.1, iter_max = 100){
+  
+  if(is.null(grupos_iniciales)) {
+    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+    
+    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  } else{
+    split(lista_nubes, grupos_iniciales) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  antes <- 0
+  ahora <- 1000
+  iter_actual <- 0
+  while(abs(antes - ahora) > umbral & iter_actual < iter_max){
+    antes <- ahora
+    list_outer(centros, lista_nubes, D5) -> dist_matriz
+    letters[apply(dist_matriz, 2, which.min)] -> grupos
+    sum(apply(dist_matriz, 2, min)) -> ahora
+    split(lista_nubes, grupos) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    iter_actual <- iter_actual + 1
+  }
+  
+  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  
+}
+
+# ep_means(lista_nubes, 5)
+# 
+# lapply(1:100, function(i){rnorm(i)}) %>% lapply(to_nubepuntos) -> datos
+# 
+# lapply(1:10, function(i){rnorm(rpois(1, 100), 50)}) %>% lapply(to_nubepuntos) -> centros
+# 
+# list_outer(datos, datos, dist_nubes) -> ppp
+
+```
+
+```{r, eval=FALSE}
+  #K nubes
+ Saber11 %$% split(TOTAL, id_municipio) %>% lapply(to_nubepuntos) %>% k_clouds(grupos_iniciales = grupos_municipios, iter_max = 2) -> K_nubes_municipios
+
+```
+
+```{r}
+
+ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
+
+letters[llave[grupos_municipios]] -> grupos_municipios_2
+
+# ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios_2), FUN = mean)
+
+```
+
+
+```{r, fig.width = 4.5}
+ggplot(data.frame(grupos_municipios = grupos_municipios_2), aes(factor(1), fill = grupos_municipios)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+
+```
+
+Figura RCD: Representación de grupos de municipios.
+
+```{r}
+grupos_municipios_2 %>% table %>% as.data.frame %>% mutate(p = percent(Freq/length(grupos_municipios_2))) %>% setNames(c("Categoría", "Cantidad", "Porcentaje")) %>% kable
+
+```
+
+Tabla MBJ: Cantidades de municipios por grupo y porcentajes.
+
+
+## Estadísticas del resultado
+
+El resultado es una categorización robusta que agrupa a los municipios no sólo a través de su promedio sino haciendo uso completo de los datos de cada uno. Para evidenciar esto, resultan particularmente adecuadas las aproximaciones visuales nteriormente mostradas. Resulta notorio el efecto del método al comparar el gráfico de caja global con su análogo agrupado en la figura PPP.
+
+```{r ACP}
+ecdf_eval %>%
+  FactoMineR::PCA(graph = FALSE) -> ACP_de_municipios
+
+RESULTADO <- data.frame(
+  id = municipios_50$id_municipio,
+  x = ACP_de_municipios$ind$coord[, 1],
+  y = ACP_de_municipios$ind$coord[, 2],
+  z = ACP_de_municipios$ind$coord[, 3],
+  N = municipios_50$N,
+  grupo = as.character(grupos_municipios_2),
+  stringsAsFactors = FALSE
+  )
+
+# RESULTADO <- merge(x = RESULTADO, y = municipios@data, by.x = "id", by.y = "id")
+
+# qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO) + theme_minimal()
+#plot(ACP_de_municipios, label="none", axes = c(1,2))
+#plot(ACP_de_municipios, choix = "var") #para ver la correlación de las variables
+```
+
+```{r initial_box_plot, fig.width = 8, fig.height = 2.5}
+```
+
+```{r box_plot_2, fig.width = 8, fig.height = 2.5}
+merge(Saber11, RESULTADO, by.x = "id_municipio", by.y = "id") -> dff_to_plot_2
+
+dff_to_plot_2 %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
+  theme(axis.ticks = element_blank(), axis.text.x = element_blank(), panel.background = element_blank()) +
+  xlab("") +
+  ylab("") +
+  facet_grid(~ grupo, scales = "free_x", space = "free_x")
+
+
+```
+
+Figura PPP: Gráficos de caja por municipio. Superior: panorama global; infereior: agrupado.
+
+Así mismo al revisar el rasterplot agrupado las diferencias son notorias, figura QQQ.
+
+```{r dff_to_plot}
+dff_to_plot <- ecdf_eval %>% mutate(id_municipio = rownames(.),
+                                    grupo = grupos_municipios_2) %>%
+  melt(id.vars = c("id_municipio", "grupo")) %>% arrange(grupo)
+
+```
+
+```{r initial_raster_plot, fig.width = 8, fig.height = 2.5}
+```
+
+
+```{r raster_plot2, fig.width = 8, fig.height = 2.5}
+dff_to_plot %>%
+  ggplot +
+  aes(y = variable, x = id_municipio, fill = value) +
+  geom_raster() +
+  theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
+  xlab("") +
+  ylab("")  +
+  facet_grid(~ grupo, scale = "free_x", space = "free_x")
+
+```
+
+Figura QQQ: Rasterplot por municipio. Superior: panorama global; infereior: agrupado.
+
+```{r density_plot2, fig.width = 8, fig.height = 2.5, eval=FALSE}
+dff_to_plot_2 %>% 
+    ggplot +
+    aes(x = TOTAL, group = id_municipio, colour = grupo) +
+    geom_density() +
+    xlab("") +
+    ylab("") + theme_minimal() +
+    theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position = "bottom") -> general_density_plot
+
+general_density_plot
+
+```
+
+```{r density_plot3, fig.width=4, fig.height=8, eval=FALSE}
+general_density_plot +
+  facet_wrap(~ grupo, ncol = 1)
+
+```
+
+Resulta pertinente utilizar un ACP como herramienta de visualización. En la figura PRP se pued observar la dispersión d los municipios y sus diferentes grupos. Los municipios de alto rendimiento en las pruebas Saber 11 se encuentran en el flanco derecho, mientras que aquellos en el flanco izquierdo presentan los puntajes más bajos.
+
+```{r, fig.height=5, fig.width=8}
+qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO) + theme_minimal()
+
+```
+
+Figura PRP: ACP de los municipios.
+
+Al respecto resulta pertinente realizar una visualización geográfica. La figura PQQ muestra la estratificación realizada. Esta concuerda con la versión descriptiva mostrada al principio del capítulo (figuraPJF), donde los municipios de la región central presentan de manera persistente mejores desempeños en la prueba Saber 11.
+
+```{r Colmaps_todo}
+RESULTADO %<>% mutate(gr = as.ordered(grupo))
+
+colmaps::colmap(map = municipios, data = RESULTADO, var = "gr", map_id = "id", data_id = "id", autocomplete = TRUE)
+
+```
+
+Figura PQQ: Mapa de municipios estratificado
+
+```{r Kruskal-Wallis, fig.height=2.5, fig.width=8}
+totales <- Saber11 %$% split(x = TOTAL, f = id_municipio)
+
+list_for_kwtest<-split(totales, grupos_municipios_2)
+
+lapply(X = list_for_kwtest, FUN = function(x){kruskal.test(x)$p.value}) %>% 
+  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
+
+kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
+  geom_bar(stat = "identity") + 
+  geom_abline(intercept = 0.005, slope = 0)
+
+```
+
+
+
+
+## aquí voy
+
+
+
+
+
 
 ```{r ecdf_CvM_distance}
 # Funcion de distancia entre vectores para aplicar a los totales de los municipios
@@ -245,116 +640,6 @@ ecdf_eval %>% kmeans(10)  %$%
 
 # nombres_grupos[grupos_municipios] -> grupos_municipios
 
-ggplot(data.frame(grupos_municipios = grupos_municipios), aes(factor(1), fill = grupos_municipios)) +
-  geom_bar(width = 1) +
-  coord_polar(theta = "y")
-
-grupos_municipios %>% table 
-
-```
-
-```{r ACP}
-ACP_de_municipios <- ecdf_eval %>%
-  FactoMineR::PCA(graph = FALSE)
-
-RESULTADO <- data.frame(
-  id = municipios_50$id_municipio,
-  x = ACP_de_municipios$ind$coord[, 1],
-  y = ACP_de_municipios$ind$coord[, 2],
-  z = ACP_de_municipios$ind$coord[, 3],
-  N = municipios_50$N,
-  grupo = as.character(grupos_municipios),
-  stringsAsFactors = FALSE
-  )
-
-RESULTADO <- merge(x = RESULTADO, y = municipios@data, by.x = "id", by.y = "id")
-
-qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO)
-#plot(ACP_de_municipios, label="none", axes = c(1,2))
-#plot(ACP_de_municipios, choix = "var") #para ver la correlación de las variables
-```
-
-```{r raster_plot}
-dff_to_plot <- ecdf_eval %>% mutate(id_municipio = rownames(.),
-                                    grupo = grupos_municipios) %>%
-  melt(id.vars = c("id_municipio", "grupo")) %>% arrange(grupo)
-
-dff_to_plot %>%
-  ggplot +
-  aes(y = variable, x = id_municipio, fill = value) +
-  geom_raster() +
-  theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
-  xlab("") +
-  ylab("") -> general_raster_plot
-
-general_raster_plot
-
-```
-
-```{r raster_plot2}
-general_raster_plot +
-  facet_grid(~ grupo, scale = "free_x", space = "free_x")
-
-```
-
-```{r box_plot}
-merge(Saber11, RESULTADO, by.x = "id_municipio", by.y = "id") -> dff_to_plot
-
-dff_to_plot %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
-  theme(axis.ticks = element_blank(), axis.text.x = element_blank(), panel.background = element_blank()) +
-  xlab("") +
-  ylab("") -> general_box_plot
-
-general_box_plot
-
-```
-
-```{r box_plot2}
-general_box_plot +
-  facet_grid(~ grupo, scales = "free_x", space = "free_x")
-
-
-```
-
-
-```{r density_plot}
-
-  dff_to_plot %>% 
-    ggplot +
-    aes(x = TOTAL, colour = id_municipio) +
-    geom_density() +
-    theme(axis.ticks = element_blank(), axis.text = element_blank(), legend.position="none") +
-    xlab("") +
-    ylab("") -> general_density_plot
-
-general_density_plot
-
-```
-
-```{r density_plot2}
-general_density_plot +
-  facet_wrap(~ grupo, ncol = 2)
-
-```
-
-```{r Colmaps_todo}
-colmaps::colmap(map = municipios, data = RESULTADO, var = "grupo", map_id = "id", data_id = "id", autocomplete = TRUE)
-
-```
-
-
-
-```{r Kruskal-Wallis}
-
-list_for_kwtest<-split(totales, grupos_municipios)
-
-lapply(X = list_for_kwtest, FUN = function(x){kruskal.test(x)$p.value}) %>% 
-  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
-
-kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
-  geom_bar(stat = "identity") + 
-  geom_abline(intercept = 0.005, slope = 0) +
-  ggtitle("P valores Kruskall Wallis para los grupos")
 
 ```
 
