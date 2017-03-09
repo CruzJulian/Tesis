@@ -11,17 +11,6 @@ linkcolor: blue
 
 ---
 
- - Introducción
- - Metodología
-  - Examen saber pro: Por qué esta base sirve para el problema?
-  - Accesibilidad de los datos
-  - Variables
-  - Muestra
-  - Software (paquete? Rmd? Anexo? Nebulae?)
-  - Análisis estadístico: Preprocesamiento y análisis explicados
- - Resultados
-  - Hacer!
-
 ```{r setup, echo=FALSE, include=FALSE}
 # library("grid")
 library("magrittr")
@@ -39,18 +28,17 @@ library("scales")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
 
 options(stringsAsFactors = TRUE)
 
 ```
 
-
 # Introducción
 
 En el capítulo anterior se presentaron los resultados correspondientes a varios procesos de simulación que permitieron escoger la distancia apropiada para este tipo de datos y construir los algoritmos J-nubes y K-nubes, el primero de agregación jerárquica y el segundo basado en k-means. El presente capítulo emplea estos procedimientos en un conjunto de datos reales con el objeto de observar su comportamiento, desempeño e idoneidad, y de evidenciar uno de sus posibles usos.
 
-Se toman para este apartado los datos corespondientes a la prueba de educación básica secundaria Saber 11, realizada por el Instituto Colombiano de Evaluación de la Educación, ICFES, de manera semestral y con cobertura nacional. El problema planteado consiste en encontrar categorías a nivel municipal que agrupen municipios con condiciones educativas similares usando el desempeño de sus estudiantes en la prueba.
+Se toman, para este apartado, los datos corespondientes a la prueba de educación básica secundaria Saber 11, realizada por el Instituto Colombiano de Evaluación de la Educación, ICFES, de manera semestral y con cobertura nacional. El problema planteado consiste en encontrar categorías a nivel municipal que agrupen municipios con condiciones educativas similares usando el desempeño de sus estudiantes en la prueba.
 
 Según la Divipola actualmente el territorio nacional se encuentra dividido en 1101 municipios. 
 
@@ -60,6 +48,8 @@ colmaps::colmap(map = municipios)
 ```
 
 Figura PMM: Municipios de Colombia.
+
+Una agrupación robusta de municipios a partir de sus condiciones educativas puede resolver inquietudes de política pública, mejorar la distribución de los recursos, y direccionar y focalizar programas específicos hacia municipios y territorios de intervención prioritaria.
 
 # Metodología
 
@@ -196,7 +186,6 @@ Figura PJF: Puntaje total promedio por municipio.
 
 ## Puntajes por municipio
 
-Para comprender el panorama de los puntajes por municipio se realizan dos visualizaciones: un boxplot, y un rasterplot. En el primero cada municipio es representado por una caja, no obstante la cantidad de municipios hace imposible reconocerlos y el gráfico sólo sirve para observar la diversidad de los municipios, como se ve en la figura EPN. 
 
 ```{r}
 evaluated_ecdf <- function(categories, values){
@@ -218,6 +207,7 @@ evaluated_ecdf <- function(categories, values){
 
 ```
 
+Para comprender el panorama de los puntajes por municipio se realizan dos visualizaciones: un boxplot, y un rasterplot. En el primero cada municipio es representado por una caja, no obstante la cantidad de municipios hace imposible reconocerlos y el gráfico sólo resulta útil para observar la diversidad de los municipios, como se ve en la figura EPN. 
 
 ```{r initial_box_plot, fig.width = 8, fig.height = 2.5}
 Saber11 %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
@@ -231,7 +221,7 @@ general_box_plot
 
 Figura EPN: Boxplot de puntajes de municipios.
 
-El rasterplot representa cada municipio con una línea que va de oscuro a claro, aquí tampoco es posible distinguir cada municipio, sólo permite observar la diversidad de los mismos, como se ve en la figura NBV.
+El rasterplot representa cada municipio con una línea que va de oscuro a claro, aquí tampoco es posible distinguir cada municipio, no obstante, permite observar la diversidad de los mismos, como se ve en la figura NBV.
 
 ```{r initial_raster_plot, fig.width = 8, fig.height = 2.5}
 Saber11 %$% evaluated_ecdf(categories = id_municipio, values = TOTAL) -> ecdf_eval
@@ -253,11 +243,10 @@ general_raster_plot
 
 Figura NBV: Rasterplot de puntajes de municipios.
 
+Ambas visualizaciones presentan un panorama diverso en cuanto a los distintos desempeños y muy comprimido debido a la cantidad de municipios. Ambas visualizaciones han sido diseñadas con el fin de evidenciar la fuerte diferencia que hay entre un panorama inicial, con alteraciones casi aleatorias, y uno agregado. Dejando claro el anorama actual de los datos es factible pasar a la implementación propiamente dicha de los métodos presentados.
+
 ## Generación de grupos
 
-En las gráficas se observa la diversidad de los municipios en términos de resultados en la prueba Saber 11. El paso siguente consiste en aplicar los métodos presentados con el fin de agrupar los municipios según el desempeño de sus estudiantes.
-
-J-nubes produce como primer resultado un árbol, se trata de una estructura jerárquica de agrupación generada mediante el método de ward.
 
 ```{r}
 to_nubepuntos <- function(a){
@@ -290,6 +279,8 @@ list_auto <- function(a, fun){list_outer(a, a, fun)}
 auto <- function(a, fun){fun(a, a)}
 
 ```
+
+En las gráficas anteriores, EPN y NBV se observa la diversidad de los municipios en términos de resultados en la prueba Saber 11. El paso siguente consiste en aplicar los métodos presentados con el fin de agrupar los municipios según el desempeño de sus estudiantes. J-nubes produce como primer resultado un primer árbol, se trata de una estructura jerárquica de agrupación generada mediante el método de ward. Este árbol, en la figura GGB, constituye un valioso insumo para determinar el número de grupos en que se quiere dividir a los municipios.
 
 ```{r}
 D_def <- function(nube_0, nube_1){
@@ -328,6 +319,7 @@ save(dis_matriz_2, file = "dis_matriz.rda")
 
 ```{r}
 load(file = "dis_matriz.rda")
+
 ```
 
 ```{r, fig.width = 8, fig.height = 2.5}
@@ -339,6 +331,7 @@ ggdendrogram(tree, rotate = TRUE) + theme(axis.text.y = element_blank())
 
 ```
 
+Figura GGB: árbol de agrupación jerárquica generado por J-nubes.
 
 ```{r}
 numero_grupos <- 10
@@ -346,7 +339,7 @@ numero_grupos <- 10
 ```
 
 
-Se construyen `r numero_grupos` grupos, cuyos nombres `r letters[1:numero_grupos]` corresponden con su nivel educativo, siendo `r letters[1]` el grupo de municipios con mejor desempeño en las pruebas Saber 11 para el año 2014 y `r letters[numero_grupos]` el grupo de municipios con puntajes totales más bajos. La tabla MBJ
+Por medio del método J-nubes se construyen `r numero_grupos` grupos iniciales que se usan como punto de partida para K-nubes. De esta forma se consolidan `r numero_grupos` grupos cuyos nombres `r letters[1:numero_grupos]` corresponden con su nivel educativo, siendo `r letters[1]` el grupo de municipios con mejor desempeño en las pruebas Saber 11 para el año 2014 y `r letters[numero_grupos]` el grupo de municipios con puntajes totales más bajos. La tabla MBJ muestra las composiciones porcentuales de cada uno de los grupos. Se observa como los grupos más vastos son los que agrupan municipios de desempeños medios; mientras los grupos extremos, con muy altos o muy bajos rendimientos, son poco poblados.
 
 ```{r}
 tree %>% cutree(numero_grupos) -> grupos_municipios
@@ -383,41 +376,50 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
   
 }
 
-# ep_means(lista_nubes, 5)
-# 
-# lapply(1:100, function(i){rnorm(i)}) %>% lapply(to_nubepuntos) -> datos
-# 
-# lapply(1:10, function(i){rnorm(rpois(1, 100), 50)}) %>% lapply(to_nubepuntos) -> centros
-# 
-# list_outer(datos, datos, dist_nubes) -> ppp
+# lista_nubes <- nubes
+# n_grupos <- NULL
+# grupos_iniciales <- grupos_municipios
+# umbral <- 0.1
+# iter_max <- 10
 
 ```
 
 ```{r, eval=FALSE}
   #K nubes
- Saber11 %$% split(TOTAL, id_municipio) %>% lapply(to_nubepuntos) %>% k_clouds(grupos_iniciales = grupos_municipios, iter_max = 2) -> K_nubes_municipios
+ k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = 10) -> K_nubes_municipios
+
+save(K_nubes_municipios, file = "K_nubes_municipios.rda")
 
 ```
 
 ```{r}
+load("K_nubes_municipios.rda")
+```
 
-ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
 
-letters[llave[grupos_municipios]] -> grupos_municipios_2
+```{r}
+# ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
+
+# letters[llave[grupos_municipios]] -> grupos_municipios_2
+
+ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(K_nubes_municipios$Grupo), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
+
+
+letters[llave[K_nubes_municipios$Grupo]] -> grupos_municipios_2
 
 # ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios_2), FUN = mean)
 
 ```
 
 
-```{r, fig.width = 4.5}
+```{r, fig.width = 4.5, eval=FALSE, include=FALSE}
 ggplot(data.frame(grupos_municipios = grupos_municipios_2), aes(factor(1), fill = grupos_municipios)) +
   geom_bar(width = 1) +
   coord_polar(theta = "y")
 
+# Figura RCD: Representación de grupos de municipios.
 ```
 
-Figura RCD: Representación de grupos de municipios.
 
 ```{r}
 grupos_municipios_2 %>% table %>% as.data.frame %>% mutate(p = percent(Freq/length(grupos_municipios_2))) %>% setNames(c("Categoría", "Cantidad", "Porcentaje")) %>% kable
@@ -427,9 +429,9 @@ grupos_municipios_2 %>% table %>% as.data.frame %>% mutate(p = percent(Freq/leng
 Tabla MBJ: Cantidades de municipios por grupo y porcentajes.
 
 
-## Estadísticas del resultado
+## Resultado
 
-El resultado es una categorización robusta que agrupa a los municipios no sólo a través de su promedio sino haciendo uso completo de los datos de cada uno. Para evidenciar esto, resultan particularmente adecuadas las aproximaciones visuales nteriormente mostradas. Resulta notorio el efecto del método al comparar el gráfico de caja global con su análogo agrupado en la figura PPP.
+El resultado es una categorización robusta que agrupa a los municipios no sólo a través de su promedio sino haciendo uso completo de los datos de cada uno. Las aproximaciones visuales anteriormente mostradas fueron diseñadas particular mente rara evidenciar esto. Resulta notorio el efecto del método al comparar el gráfico de caja global con su análogo agrupado en la figura PPP.
 
 ```{r ACP}
 ecdf_eval %>%
@@ -467,9 +469,14 @@ dff_to_plot_2 %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
 
 ```
 
-Figura PPP: Gráficos de caja por municipio. Superior: panorama global; infereior: agrupado.
+Figura PPP: Gráficos de caja por municipio. Superior: panorama global; inferior: agrupado.
 
 Así mismo al revisar el rasterplot agrupado las diferencias son notorias, figura QQQ.
+
+
+```{r initial_raster_plot, fig.width = 8, fig.height = 2.5}
+```
+
 
 ```{r dff_to_plot}
 dff_to_plot <- ecdf_eval %>% mutate(id_municipio = rownames(.),
@@ -477,10 +484,6 @@ dff_to_plot <- ecdf_eval %>% mutate(id_municipio = rownames(.),
   melt(id.vars = c("id_municipio", "grupo")) %>% arrange(grupo)
 
 ```
-
-```{r initial_raster_plot, fig.width = 8, fig.height = 2.5}
-```
-
 
 ```{r raster_plot2, fig.width = 8, fig.height = 2.5}
 dff_to_plot %>%
@@ -515,9 +518,9 @@ general_density_plot +
 
 ```
 
-Resulta pertinente utilizar un ACP como herramienta de visualización. En la figura PRP se pued observar la dispersión d los municipios y sus diferentes grupos. Los municipios de alto rendimiento en las pruebas Saber 11 se encuentran en el flanco derecho, mientras que aquellos en el flanco izquierdo presentan los puntajes más bajos.
+Resulta pertinente utilizar un ACP como herramienta de visualización. En la figura PRP se pued observar la dispersión de los municipios y sus diferentes grupos. Los municipios de alto rendimiento en las pruebas Saber 11 se encuentran en el flanco derecho, mientras que aquellos en el flanco izquierdo presentan los puntajes más bajos.
 
-```{r, fig.height=5, fig.width=8}
+```{r, fig.height=4, fig.width=8}
 qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO) + theme_minimal()
 
 ```
@@ -535,6 +538,10 @@ colmaps::colmap(map = municipios, data = RESULTADO, var = "gr", map_id = "id", d
 
 Figura PQQ: Mapa de municipios estratificado
 
+## Validación
+
+La labor de validación de los procedimientos se realiza vía Kruskall-Wallis. Se toma cada uno de los grupos de municipios y se aplica esta prueba; se espera que, si las condiciones distribucionales han sido capturadas por el método de agrupación, la prueba no encuentre diferencias estadísticamente significativas al interior de los grupos. No obstante, como se muestra en la figura TYY, esto no ocurre para todos los grupos.
+
 ```{r Kruskal-Wallis, fig.height=2.5, fig.width=8}
 totales <- Saber11 %$% split(x = TOTAL, f = id_municipio)
 
@@ -545,105 +552,15 @@ lapply(X = list_for_kwtest, FUN = function(x){kruskal.test(x)$p.value}) %>%
 
 kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
   geom_bar(stat = "identity") + 
-  geom_abline(intercept = 0.005, slope = 0)
+  geom_abline(intercept = 0.005, slope = 0) + theme_minimal()
 
 ```
 
+Figura TYY: P valores de la prueba Kruskal-Wallis en cada grupo.
 
+# Conclusión
 
-
-## aquí voy
-
-
-
-
-
-
-```{r ecdf_CvM_distance}
-# Funcion de distancia entre vectores para aplicar a los totales de los municipios
-
-fun_distance <- function(a, b, ...){
-  valores <- sort(unique(c(a, b)))
-  n <- length(valores)
-  diff_x <- diff(valores)
-
-  diff_2_y <- sapply(X = 1:(n-1),
-                     FUN = function(x, v, a, b){
-                       mean(v[x] >= a) - mean(v[x] >= b)
-                     },
-                     v = valores, a = a, b = b,
-                     USE.NAMES = FALSE)
-
-  drop(diff_x %*% diff_2_y^2)
-}
-
-```
-
-```{r dist_matrix, cache = TRUE}
-# Función para calcular la matriz de distancias
-
-# distance_matrix_f <- function(categories, values){
-#   
-#   unique(categories) -> .
-#   length(.) -> n_categories
-#   
-#   values_by_cat <- split(x = values, f = categories)
-# 
-#   dist_matrix <- matrix(nrow = n_categories, ncol = n_categories,
-#                       dimnames = list(names(values_by_cat), names(values_by_cat)))
-#   
-#   dist_matrix[lower.tri(dist_matrix)] <- 
-#     combn(values_by_cat, m = 2, FUN = function(x){fun_distance(x[[1]], x[[2]])})
-# 
-#  as.dist(dist_matrix)
-# 
-# }
-# 
-# dist_matrix <- nuevo_saber_11 %$% distance_matrix_f(categories = id_Municipio, values = Total)
-
-# Partir los totales por municipio
- totales <- Saber11 %$% split(x = TOTAL, f = id_municipio)
-# 
-# dist_matrix <- matrix(nrow = nrow(municipios_50), ncol = nrow(municipios_50),
-#                       dimnames = list(names(totales), names(totales)))
-# 
-# dist_matrix[lower.tri(dist_matrix)] <- totales %>%
-#   combn(m = 2, FUN = function(x){fun_distance(x[[1]], x[[2]])})
-# 
-# dist_matrix %<>% as.dist
-
-# To reaload the dist_matrix
- opts_knit$set("output.dir"= getwd())
- knitr::load_cache(label = "dist_matrix", object = "dist_matrix")
-```
-
-```{r agrupamiento}
-# clustering_municipios <- dist_matrix %>%
-  # hclust(method = "ward.D2") # Agruparlo con el método de ward
-
-#plot(clustering_municipios, label=FALSE)
-# grupo <- c(Pionero = 5, Suficiente = 2, Regular = 1, Insuficiente = 4, 
-#            Prioritario = 3, Otro = 6)
-
-numero_grupos<-10
-# grupos_municipios <- clustering_municipios %>% cutree(k = numero_grupos)
-
-# ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% factor(ordered = TRUE, labels = LETTERS[1:numero_grupos]) -> nombres_grupos 
-
-# ecdf_eval %>% kmeans(aggregate(., by=list(grupos_municipios),FUN=mean)[,-1])  %$% 
-#   cluster -> 
-#   grupos_municipios
-
-ecdf_eval %>% kmeans(10)  %$% 
-  cluster -> 
-  grupos_municipios
-
-# nombres_grupos[grupos_municipios] -> grupos_municipios
-
-
-```
-
-
+??
 
 
 # Referencias
