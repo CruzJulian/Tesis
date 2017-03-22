@@ -65,7 +65,6 @@ Con el fin de promover el uso de estos datos el ICFES otorga becas de investigac
 
 Estos datos resultan muy útiles para evaluar la metodología propuesta. No es del todo posible comparar el desempeño de los municipios colombianos usando únicamente el promedio de los puntajes de la prueba. El problema a resolver consiste consiste en encontrar categorías a nivel municipal que agrupen los municipios de Colombia con condiciones educativas similares usando el desempeño de sus estudiantes en la prueba Saber 11 del ICFES. En este caso los datos están conformados por dos variables: un puntaje global de la prueba Saber 11, variable continua y el municipio, variable categórica con 1101 categorias, según Divipola; donde cada registro corresponde a un estudiante que presentó la prueba. Se trata de dos variables, el problema consiste en agrupar las categorías de la variable nominal con base en similaridades de sus valores alcanzados en la variable continua.
 
-
 ## Software
 
 Para la descarga, preprocesamiento y procesamiento de los datos se utiliza [R](https://cran.r-project.org/) [@R], un lenguaje y entorno de programación libre enfocado en estadística, constituido por un paquete base y paquetes adicionales. En este momento hay 7069 paquetes oficiales, del número de paquetes no oficiales no hay estmación. Un tutorial [aquí](http://bogota-r.github.io/intro/)
@@ -176,6 +175,7 @@ A su vez la figura PJF muestra el puntaje total promedio por municipio. Intuitiv
 colmaps::colmap(map = municipios, data = descriptivo_municipios, var = "Puntaje", data_id = "id_municipio", map_id = "id", autocomplete = TRUE) + scale_fill_continuous(high = "#fee8c8", low = "#b30000") -> mapa_desemp
 
 ```
+
 ```{r Mapa_desempe}
 mapa_desemp
 
@@ -307,18 +307,24 @@ D5 <- function(nube_0, nube_1){
 ```{r}
 #J nubes
 Saber11 %$% split(TOTAL, id_municipio) %>% lapply(to_nubepuntos) -> nubes
+
 ```
 
 ```{r, eval = FALSE}
 # nubes %>% list_auto(D5) %>% as.dist -> dis_matriz
 nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz_2
 
-save(dis_matriz_2, file = "dis_matriz.rda")
+save(dis_matriz_2, file = "dis_matriz_2.rda")
 
 ```
 
 ```{r}
-load(file = "dis_matriz.rda")
+# load(file = "dis_matriz.rda")
+# dis_matriz_2 -> dis_matriz_1
+load(file = "dis_matriz_2.rda")
+
+# head(dis_matriz_1, 20)
+# head(dis_matriz_2, 20)
 
 ```
 
@@ -364,7 +370,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
   iter_actual <- 0
   while(abs(antes - ahora) > umbral & iter_actual < iter_max){
     antes <- ahora
-    list_outer(centros, lista_nubes, D5) -> dist_matriz
+    list_outer(centros, lista_nubes, D_def) -> dist_matriz
     letters[apply(dist_matriz, 2, which.min)] -> grupos
     sum(apply(dist_matriz, 2, min)) -> ahora
     split(lista_nubes, grupos) -> agrupados
@@ -386,7 +392,11 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
 
 ```{r, eval=FALSE}
   #K nubes
- k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = 10) -> K_nubes_municipios
+# start.time <- Sys.time()
+ k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = 4) -> K_nubes_municipios
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
 
 save(K_nubes_municipios, file = "K_nubes_municipios.rda")
 
@@ -394,6 +404,9 @@ save(K_nubes_municipios, file = "K_nubes_municipios.rda")
 
 ```{r}
 load("K_nubes_municipios.rda")
+
+K_nubes_municipios$Grupo -> grupos_municipios
+
 ```
 
 
@@ -402,10 +415,10 @@ load("K_nubes_municipios.rda")
 
 # letters[llave[grupos_municipios]] -> grupos_municipios_2
 
-ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(K_nubes_municipios$Grupo), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
+ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios), FUN = mean) %$% x %>% rank %>% setNames(letters[1:numero_grupos]) -> llave
 
 
-letters[llave[K_nubes_municipios$Grupo]] -> grupos_municipios_2
+letters[llave[grupos_municipios]] -> grupos_municipios_2
 
 # ecdf_eval %>% apply(MARGIN = 1, FUN = sum) %>% aggregate(., by=list(grupos_municipios_2), FUN = mean)
 
@@ -465,7 +478,6 @@ dff_to_plot_2 %>% ggplot + aes(x = id_municipio, y = TOTAL) + geom_boxplot() +
   xlab("") +
   ylab("") +
   facet_grid(~ grupo, scales = "free_x", space = "free_x")
-
 
 ```
 
