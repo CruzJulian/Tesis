@@ -95,15 +95,52 @@ El supuesto de independencia no es necesario para este teorema, y esto es fácil
 
 Con esto en mente agrupar las funciones de densidad empíricas por su cercanía puede mostrar los comportamientos asintóticos de las nubes de puntos.
 
-### Método de clasificación: K-means
+## Análisis de conglomerados
 
-Como se dijo antes el algoritmo K-Means [@HARTIGAN] es teóricamente equivalente a la estimación vía EM de una mixtura compuesta por $K$ distribuciones normales homocedásticas.
+El análisis de conglomerados, conocido también como clustering, es un procedimiento empleado en la construcción o consolidación de categorías de individuos a partir de sus datos.
 
-En este sentido el algoritmo tiene dos partes. Un paso de estimación, que define el centroide de cada grupo como el promedio de los individuos pertenecientes al mismo y un paso de maximización, que reasigna los individuos al grupo más cercano usando su distancia a los distintos centroides. Estos dos pasos se repiten hasta lograr convergencia.
+El problema del clustering puede enunciarse del siguiente modo: A partir de una base de datos donde cada registro es un individuo y cada campo un atributo es necsario encontrar un nuevo campo que reúna los individuos similares en categorías. Un ejemplo usual para la introducción de estas técnicas es la consolidacióon de especies biologicas: Al emplear métodos de clustering sobre bases de datos de distintos organismos evalúa distintos atributos, se obtiene una categorización que, casi siempre, coincide con la construcción teórica de las especies biológicas; agrupando organismos de estructura similar se construyen conjuntos que recogen, en gran parte, las diferencias estructurales de la población estudiada.
+
+## Medidas de similitud
+
+Para realizar un abordaje de este problema es necesario establecer métricas que reflejen el concepto de similaridad entre individuos. Al respecto, dependiendo de los datos, es posible encontrar una gran colección de distancias, semidistancias y medidas de similitud que pueden, dado el contexto, recoger el concepto intuitivo de cercanía. Algunas de estas son:
+
+ - Distancia Manhattan
+ - Distancia Euclidiana
+ - Distancia de Minkowski
+ - Distancia de Kolmogorov Smirnov
+ - Distancia de Cramer von Misses
+ - Distancia de Jaccard
+ - Distancia de Canberra
+ - Distancia de Mahalanobis
 
 El uso de distancias puede verse afectado por distintas causas, entre ellos el factor de escala de las variables; en el sentido que las variables de mayor escala tienen un mayor peso en el cálculo de las distancias entre individuos. En consecuencia es necesario un tratamiento previo de normalización o estandarización de las mismas. La solución mostrada en Lebart [@LEBART] es tomar como insumo el resultado del ACP, que además de eliminar el ruido inherente a los datos produce ejes de escalas similares provenientes de las variables estandarizadas.
 
-Asimismo es necesario atender detalles como criterios de parada para la convergencia, distancia a usar (euclidiana, manhattan, Crámer-von Mises), el algoritmo EP-Means hace uso de la distancia Earth mover's, sin embargo es necesario realizar pruebas con varias opciones. Una definición correcta de los valores iniciales puede facilitar la convergencia, Lebart propone como valores iniciales los centroides provenientes del método de Ward.
+Para una base de datos es posible obtener una matriz de distancias entre todas las parejas posibles de elementos.
+
+## Clustering Jerárquico
+
+Se explica la construcción de conglomerados jerárquico aglutinante, dejando de lado los algoritmos de separación. La construcción jerárquica de conglomerados es un procedimiento basado en distancias que toma como insumo la matriz de distancias de todas las parejas posibles de los elementos. Inicialmente cada elemento es considerado un grupo de tamaño uno; la iteración se compone de dos pasos.
+
+ - Localizar la menor distancia en la matriz actual y colapsar los dos grupos en un grupo.
+
+ - Calcular la distancia entre este nuevo grupo y los demás, formando una nueva matriz de distancias de orden menor.
+
+En este algoritmo dos grupos colapsan en cada iteración, en un inicio hay tantos grupos como individuos en la base de datos, al final se obtiene un solo grupo de todos los individuos. El procedimiento arroja una estructura jerárquica que da cuenta de los grupos que se construyeron en cada paso.
+
+Para llevar a cabo esta tarea es necesario definir, además de una medida de similaridad entre individuos, otra medida de similaridad, entre grupos, basada en la primera. Algunas posibles medidas de similaridad entre grupos son:
+
+ - Enlace simple.
+ - Enlace compuesto.
+ - Distancia de Ward
+
+La distancia de Ward, a diferencia de las demás, tiene interpretación estadóstica en términos de varianzas y covarianzas. Por esta razón es, en casos estadísticos y econométricos, la más recomendada [@LEBART].
+
+### Método de agrupación K-means
+
+El algoritmo K-Means [@HARTIGAN] es teóricamente equivalente a la estimación vía EM de una mixtura compuesta por $K$ distribuciones normales homocedásticas. En consecuencia, tiene dos partes: Un paso de estimación, que define el centroide de cada grupo como el promedio de los individuos pertenecientes al mismo; y un paso de maximización, que reasigna los individuos al grupo del centroide más cercano usando su distancia a los distintos centroides. Estos dos pasos se repiten hasta lograr convergencia.
+
+
 
 ## Análisis de Componentes Principales
 
