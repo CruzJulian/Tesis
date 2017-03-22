@@ -45,6 +45,11 @@ double EMD(DataFrame df) {
 }
 
 // [[Rcpp::export]]
+double corregir(int n_1, int n_2, double d){
+  return sqrt((d*d*d + fmin(n_1, n_2)*d)/(d*d + 1));
+}
+
+// [[Rcpp::export]]
 double distan_def(DataFrame df) {
   
   // access the columns
@@ -68,6 +73,6 @@ double distan_def(DataFrame df) {
   }
   
   // return a distance
-  return sqrt(fmin(n_act, n_oth)*dis);
+  return corregir(n_act, n_oth, dis);
 }
 
