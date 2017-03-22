@@ -111,6 +111,29 @@ dist_grande <- dist_nubes(n1_grande, n2_grande)
 
 data.frame(n1_grande, n2_grande) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(title = "Nubes grandes", caption = paste("Distancia entre nubes:", round(dist_grande, 2)))
 
+# start.time <- Sys.time()
+# dist_nubes(n1_grande, n2_grande)
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
+# 
+# start.time <- Sys.time()
+# D_def(n1_grande, n2_grande)
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
+# 
+# start.time <- Sys.time()
+# dist_nubes(n1_peque, n2_peque)
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
+# 
+# start.time <- Sys.time()
+# D_def(n1_peque, n2_peque)
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
 
 ```
 
@@ -143,7 +166,7 @@ distancias1 %>%
   data.frame(X = 1:100, Y = exp(coef1[1])*(1:100)^coef1[2]) %>% 
   ggplot + geom_point(aes(x = X, y = .)) +
   geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
-  labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución normal")
+  labs(x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución normal")
 
 #, caption = TeX("Distancias medias por tamaño para\nuna distribución normal estándar: $h(x) \\propto \\frac{1}{n_s}$")
 
@@ -161,7 +184,7 @@ distancias2 %>%
   data.frame(X = 1:100, Y = exp(coef2[1])*(1:100)^coef2[2]) %>% 
   ggplot + geom_point(aes(x = X, y = .)) + 
   geom_line(aes(x = X, y = Y), colour = "#0000aa") + theme_minimal() + 
-  labs(title = "Distancias medias por tamaño", x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución uniforme")
+  labs(x = "Tamaño", y = "Distancia media", caption = "Distancias medias por tamaño para\nuna distribución uniforme")
 # , caption = TeX("Distancias medias por tamaño para\nuna distribución uniforme: $h(x) \\propto \\frac{1}{n_s}$")
 ```
 
