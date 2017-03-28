@@ -392,11 +392,11 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
 
 ```{r, eval=FALSE}
   #K nubes
-# start.time <- Sys.time()
- k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = 4) -> K_nubes_municipios
-# end.time <- Sys.time()
-# time.taken <- end.time - start.time
-# time.taken
+start.time <- Sys.time()
+k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = ) -> K_nubes_municipios
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
 
 save(K_nubes_municipios, file = "K_nubes_municipios.rda")
 
