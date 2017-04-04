@@ -12,6 +12,8 @@ linkcolor: blue
 
 ---
 
+ - Fundamentar el ACP: Por qué y cómo se hace un ACP a las funciones empíricas?
+
 El presente capítulo presenta un estudio en condiciones controladas de las implicaciones prácticas de los componentes teóricos presentados en el capítulo anterior. Siguiendo este orden de ideas es necesario examinar detenidamente las propiedades de las nubes de puntos y de sus posibles semidistancias. Diversas preguntas son respondidas mediante una serie de simlaciones, haciendo uso de la distancia de Minkowski de segundo orden entre funciones, en adelante notada $L_2$; obteniendo como resultado la implementación de los algoritmos J-nubes y K-nubes, que corresponden a la aplicación de conglomerados jerárquicos y de K-means sobre nubes de puntos respectivamente.
 
 El trabajo en condiciones controladas se divide en dos partes, la primera caracteriza la distancia $L_2$ entre funciones, aborda el problema del tamaño y consigue controlarlo generando una semidistancia entre nubes de puntos; la segunda hace uso de esta herramienta para observar el comportamiento de las nubes de puntos al aplicar métodos de agrupación basados en distancias.
