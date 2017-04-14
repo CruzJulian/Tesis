@@ -561,9 +561,11 @@ Simul_tabla <- function(sigma){
   Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
     setNames(c("Tratamiento", "Media", "Grupo Inicial", "K Nubes", "J Nubes", "EP Means", "LSD", "Duncan")) -> tabla
   
-datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point()  + theme_minimal() -> pca_gr
+datos %$% evaluated_ecdf(X, Y) -> ecdf_datos
 
-  list(gr, tabla, pca_gr)
+ecdf_datos %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(unique(datos[c("X", "grupo")])) %>% ggplot + aes(x = Dim.1, y = Dim.2, colour = grupo) + geom_point()  + theme_minimal() -> pca_gr
+
+  list(gr, tabla, pca_gr, ecdf_datos)
   
 }
 
@@ -572,6 +574,8 @@ datos %$% evaluated_ecdf(X, Y) %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.d
 
 
 ```{r}
+set.seed(34567)
+
 lapply(S, Simul_tabla) -> Resultados
 
 ```
@@ -623,6 +627,8 @@ Como se ve en as simulaciones realizadas, el procedimiento que mejor clasifica l
 # Anexo: Resultados
 
 ```{r}
+para_ecsago <- paste("simulacion_", 1:5, ".csv", sep = "")
+
 i <- 1
 ```
 
@@ -640,6 +646,8 @@ kable(Resultados[[i]][[2]])
 
 ```{r, fig.width = 4, fig.height = 2.5}
 Resultados[[i]][[3]]
+
+write.table(Resultados[[i]][[4]], para_ecsago[i], sep = ";", row.names = FALSE, dec = ",")
 
 ```
 
@@ -662,6 +670,8 @@ kable(Resultados[[i]][[2]])
 ```{r, fig.width = 4, fig.height = 2.5}
 Resultados[[i]][[3]]
 
+write.table(Resultados[[i]][[4]], para_ecsago[i], sep = ";", row.names = FALSE, dec = ",")
+
 ```
 
 ```{r}
@@ -682,6 +692,8 @@ kable(Resultados[[i]][[2]])
 
 ```{r, fig.width = 4, fig.height = 2.5}
 Resultados[[i]][[3]]
+
+write.table(Resultados[[i]][[4]], para_ecsago[i], sep = ";", row.names = FALSE, dec = ",")
 
 ```
 
@@ -704,6 +716,8 @@ kable(Resultados[[i]][[2]])
 ```{r, fig.width = 4, fig.height = 2.5}
 Resultados[[i]][[3]]
 
+write.table(Resultados[[i]][[4]], para_ecsago[i], sep = ";", row.names = FALSE, dec = ",")
+
 ```
 
 ```{r}
@@ -724,6 +738,8 @@ kable(Resultados[[i]][[2]])
 
 ```{r, fig.width = 4, fig.height = 2.5}
 Resultados[[i]][[3]]
+
+write.table(Resultados[[i]][[4]], para_ecsago[i], sep = ";", row.names = FALSE, dec = ",")
 
 ```
 
