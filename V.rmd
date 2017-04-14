@@ -1,5 +1,5 @@
 ---
-title: "Aplicación: Datos Genómicos"
+title: "Aplicación: Phytophthora"
 author: "Julian Cruz, Jennifer Segura"
 output: 
   pdf_document:
