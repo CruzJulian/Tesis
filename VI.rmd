@@ -11,13 +11,29 @@ csl: apa.csl
 linkcolor: blue
 ---
 
- - Sobre ep means, el problema de la distancia
+ - Sobre ep means, 
+ - el problema de la distancia
  - el problema del tamaño
- - sobre la simulación
+ - sobre la simulación (qué?)
  - sobre la implementación multivariada
- - sobre la microestadística
- - sobre los mnicippios
+ - sobre los mnicipios
  - sobre los departamentos
 
 
-A través de los capitulos anteriores se ha realizado un vistazo sucinto a la fundamentación teórica y aplicación controlada y no controlada de los métodos propuestos.
+A través de los capitulos anteriores se ha realizado un examen sucinto de los métodos porpuestos; su fundamentación teórica, aplicación controlada y no controlada. Estos métodos constituyen una aplicación particuar de las ciencias estadísticas cuyo nombre es difuso; agrupación de grupos, clustering de grupos, clustering estratificado, estratificación de grupos, entre otros resultan nombres apropiados para la denominación de este conjunto de técnicas que buscan caracterizar conjuntos de conjuntos de datos mediante su categorización. El nombre más apropiado según los autores resulta ser agregación estocástica: la muestra está conformada por individuos que se reúnen en comunidades, o clanes, o nubes, cada una de estas nubes tiene propiedades estocásticas, refejadas en sus funciones de densidad, distribución y probabilidad; y la tarea de estos métodos consiste en agrupar las nubes según sus estas propiedades. La agregación estocástica, por consiguiente, es el estudio estructurado de las distintas particiones de las nubes de puntos muestrales, su idoneidad teórica y las técnicas, actuales y posibles, para realizar dichas particiones.
+
+De manera metarórica es posible construir un discurso en donde la información está ordenada en forma de capas o sustratos siendo el primer sustrato el de los individuos, donde se ha tomado las mediciones primarias; una segunda capa concerniente a comunidades, clanes o nubes, conformadas por los individuos; y una última capa formada por la información global procesada referente a toda la muestra y en el caso inferencial, a toda la población.
+
+La presente disertación aborda 4 aspectos relevantes referentes a los hallazgos realizados, desemboca en el análisis del trabajo futuro requerido finalizando con unas conclusiones de todo el ejercicio.
+
+## Microestadística
+
+¿Qué sucedería si en vez de realizaf un modelo general de los datos, realizamos un modelo para cada uno de los conglomerados obtenidos?
+
+Microestadística es el nombre que el autor ha sugerido para el amplio raudal de propuestas posibles referentes al análisis de las particiones estocásticas de la muestra. Cada clase o partición presenta características probabilísticas específicas, por lo cual es totalmente pertinente que el ajuste de los modelos estadísticos ocurra al interior de cada una de las clases. En otras palabras, la microestadística consiste en insertar el análisis de la información en la capa de los clanes, comunidades o nubes; emulando, los modelos jerárquicos presentados en [@Allenby2005].
+
+## Implementación multivariada
+
+En el recorrido realizado en este documento, se han presentado aplicaciones todas de tipo univariado. Esto podría dar a entender que los métodos han sido diseñados en torno a problemas univariados; no obstante, el soporte teórico expuesto en el capítulo II es realizado sobre espacios de Banach, sin distingo de espacios uni o multivariados. La implementación de tipo multivariado requiere tanto de un problema multivariante, i.e. las pruebas Saber 11 por municipio con puntajes de lenguaje y matemáticas, como de unas capacidades computacionales óptimas, en el sentido de que si bien el el cálculo de las distancias fue programado en c++ (no en R), en los dos casos mostrados, Saber 11 y Phytophthora, fue necesario un lapso de más de 4 horas para tener resultados.
+
+
