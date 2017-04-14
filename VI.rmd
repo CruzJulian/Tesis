@@ -1,0 +1,23 @@
+---
+title: "Capítulo final"
+author: "Julian Cruz"
+output: 
+  pdf_document:
+    keep_tex: true
+    toc: true
+    number_sections: true
+bibliography: Biblio.bib
+csl: apa.csl
+linkcolor: blue
+---
+
+ - Sobre ep means, el problema de la distancia
+ - el problema del tamaño
+ - sobre la simulación
+ - sobre la implementación multivariada
+ - sobre la microestadística
+ - sobre los mnicippios
+ - sobre los departamentos
+
+
+A través de los capitulos anteriores se ha realizado un vistazo sucinto a la fundamentación teórica y aplicación controlada y no controlada de los métodos propuestos.
