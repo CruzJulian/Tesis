@@ -4,8 +4,11 @@ author: "Julian Cruz, Jennifer Segura"
 output: 
   pdf_document:
     keep_tex: true
-    toc: false
+    toc: true
     number_sections: true
+bibliography: Biblio.bib
+csl: apa.csl
+linkcolor: blue
 ---
 
 # Introducción
@@ -14,7 +17,7 @@ El proceso de expresión génica consiste en la manifestación de un gen o grupo
 
 Dadas las caracteristicas de los datos que se obtienen en los experimentos de microarreglos se pueden presentar datos con ruido y outliers. Además la cercanía entre los genes pueden interferir en la identificación de los mismos y por ello representan un desafío a nivel estadistico y computacional al momento de aplicar metodologías para identificar genes expresados diferencialmente [@Jiang2004]. 
 
-Teniendo en cuenta las caracteristicas de los datos es posible aplicar metodologías de clustering que permitan entender las funciones de los genes, la regulación génica y los procesos celulares, además los genes que presenten patrones similares de expresión pueden ser agrupados junto con las funciones celulares que estos desempeñen [@Jiang2004]. 
+Adicionalmente es posible aplicar metodologías de clustering que permitan entender las funciones de los genes, la regulación génica y los procesos celulares, además los genes que presenten patrones similares de expresión pueden ser agrupados junto con las funciones celulares que estos desempeñen [@Jiang2004]. 
 
 # Antecedentes
 
@@ -54,27 +57,17 @@ La utilización de tecnicas de clustering para el analisis de expresión diferen
 
 4. A nivel biológico podría no ser de interés los clusters de los genes, pero sí la relación entre los clusters y la relación de los genes dentro del mismo clusters, por lo tanto los algoritmos deben ser capaces de particionar los datos sino que también de mostrar una estructura gráfica del cluster.
 
-## Agrupación estocástica
+## Análisis de expresión diferencial.
 
-Pendiente^[Esto está pendiente]
+El análisis de expresión diferencial consiste en el uso de técnicas estadísticas con el fin de encontrar genes diferencialmente expresados. Mediante las técnicas mencionadas es posible realizar mediciones de un gen en dos o más condiciones distintas, teniendo como objetivo establecer si estas mediciones presentan cambios estadísticamente significativos explicados por las distintas condiciones; un gen con cambios estadísticamente significativos en distintas condiciones se denomina diferencialmente expresado.
 
-## Análisis de Componentes Principales
+En este sentido, es adecuado plantear una prueba de hipótesis de localización, con el fin de evaluar las diferencias mencionadas; cuya sensibilidad depende de la cantidad de mediciones que se realizan en cada condición. Sin embargo, usualmente los conjuntos de datos corresponden a la estructura anterior replicada en grandes cantidades de genes (diez, quince, veinte mil genes).
 
-Pendiente^[Esto está pendiente]
+En este panorama el uso de pruebas de hipótesis a nivel individual pierde vigencia; la estructura teórica del concepto de significancia debilita la realización pruebas de hipótesis en tales cantidades; pues, el aumento en el número de pruebas conduce al aumento del error tipo I, requiriendo correcciones como la de Bonferroni [@BONFERRONI], y, en general, estimulando la creación de estrategias apropiadas para abordar el problema en toda su complejidad.
 
-## Método de clasificación: K-means
+Una de las propuestas más recientes en detección de genes diferencialmente expresados es el método SAM (Significance Analysis of Microarrays). A partir de un conjunto de genes de un experimento de mircroarreglos, SAM calcula un $d_i$ para cada gen $i$, y mide la relación entre la expresión génica y la variable respuesta, utilizando permutaciones repetidas de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste $\delta$, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
 
-Pendiente^[Esto está pendiente]
-
-## Teorema de Glivenko Cantelli
-
-Pendiente^[Esto está pendiente]
-
-## Metodologías a comparar para el análisis de expresión diferencial.
-
-El análisis de la expresión diferencial ha presentado diferentes propuestas para el análisis de expresión tales como el método SAM (Significance Analysis of Microarrays) que es una técnica estadística para encontrar genes diferencialmente expresados, la entrada para esta metodología es un conjunto de genes de un experimento de mircroarreglos, SAM calcula un di para cada gen i, y mide la relación entre la expresión génica y la variable respuesta, utilizando permutaciones repetidas de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste delta, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
-
-Otra metodología propuesta es  Artificial Components Detection of Differentially Expressed Genes que provee un análisis multivariado para la detección de genes expresados diferencialmente. Esta utiliza componentes artificiales y cierra los datos por componentes principales pero con la interpretación exacta en términos de expresión génica diferencial controlando los FDR (false Discovery rate), utilizando los componentes artificiales como estadísticos de prueba para la detección de genes. También se calcula los límites de confianza para iniciar el FDR y el uso de relaciones de inercia como evaluaciones adicionales [@Acosta2015].
+Otra propuesta es acde (Artificial Components Detection of Differentially Expressed Genes) que provee un análisis multivariado para la detección de genes expresados diferencialmente. Esta utiliza componentes artificiales omo estadísticos de prueba para la detección de genes diferencialmente expresados facilitando la interpretación exacta en términos de expresión génica diferencial y controlando los FDR (false Discovery rate). Adicionalmente calcula los límites de confianza para iniciar el FDR y el uso de relaciones de inercia [@Acosta2015].
 
 # Materiales y métodos
 
@@ -120,15 +113,26 @@ Todo el análisis se realiza en el software estadístico R [@R] usando paquetes 
 
 ## Propuesta de análisis.
 
-La propuesta metodológica se basa en la aplicación del algoritmo EP-Means sobre los datos de expresión genética. Como ya se explicó, este algoritmo presenta propiedades dseables. Dado que es no paramétrico no exige normalización sobre los datos, además es aplicable tanto en el caso discreto como en el caso continuo. La aplicación del algoritmo EP-Means sobre los datos *phytophthora*, en su cuarta medición, en cada uno de los tratamientos, pretende generar grupos intrahomogeneos como se muestra en la figura 1. Esto genera clusters para cada una de las condiciones. Para saber si un gen tiene expresión diferencial, se aplica el test de Kolmogorov - Smirnov [@KS] en los grupos a los que pertenece.
+Entonces, el análisis propuesto para los datos comprende los siguientes puntos.
 
-![Figura 1](figura1.png)
+ - **Visualización:** Es necesario encontrar estrategias de visualización adecuadas para evaluar el desempeño de los métodos evalueados. En este sentido el acde resulta una herramienta propicia para la visualización de los resultados.
+ - **SAM:** La expresión diferencial de los genes es evaluada mediante el método SAM ya mencionado.
+ - **J-nubes:** El algoritmo J-nubes es usado para evaluar la expresión diferencial en genes.
+
+Los resultados obtenidos usando J-nubes son comparados con los obtenidos mediante SAM; no con el objeto de establecer cuál se comporta mejor sino de verificar la identificación correcta de los genes suponiendo correctos los resultados de SAM.
+
+La aplicación del algoritmo J-nubes a los datos descritos requiere la prepareación adecuada de los mismos. Cada gen en cada condición es considerado una nube de puntos; así, siendo $n$ genes y $p$ condiciones se tiene $n\times p$ nubes de puntos. Este conjunto de nubes de puntos produce una matriz de distancias^[son distancias entre nubes de puntos con nombre propio de cramervonmises corregidas, corregir o alcarar o algo.] de $(n\times p)^2$ entradas, esta matriz es insumo del algoritmo J-nubes que, como se ha explicado, corresponde al método de Ward de mínima varianza para agregación jerárquica. Empleando el diagrama de árbol se escoge un número $k$ de grupos cuya homogeneidad interna se evalúa a la luz de la prueba Kruskal-Wallis. La figura PPX da un repaso a este primer paso de agregación.
+
+Utilizando la prueba de Mann-Whitney-Whilcoxon es posible realizar todas las comparaciones posibles de los grupos conformados, corrigiendo según Bonferroni. De esta manera se comparan los valores un gen $i$ en una condición $j_1$ con sus valores en otra condición $j_2$ estableciendo su pertenencia a grupos $g_1$ y $g_2$ significativamente distintos o no.
+
+![Figura PPX: Diagrama de análisis](figura1.png)
 
 La validación de los grupos se realiza mediante el test de Kruskall Wallis [@KWTEST] y se comparan con los resultados provenientes de SAM y de acde.
 
 # Resultados 
 
 ```{r}
+set.seed(34567)
 Muestra <- phytophthora[[4]]
 names_datos <- names(Muestra)
 des <- rep(c(1,2), each = 8)
@@ -137,8 +141,7 @@ Muestra[sample(nrow(Muestra), tamano),] -> Muestra
 
 ```
 
-El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. Por facilidad computacional se selecciona una mestra de tamaño `r tamano`. Todos los análisis se realizan sobre esta.
-
+El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. Por facilidad computacional se selecciona una muestra de tamaño `r tamano`. Todos los análisis se realizan sobre esta.
 
 ```{r}
 boxplot_phytophthora <- function(i){
@@ -193,6 +196,7 @@ La metodología plantea el cálculo de componentes artificiales, que en el caso 
 Muestra %>% 
   ac(design = des) %>% as.data.frame -> 
   Muestra_ac
+
 ```
 
 Las figuras muestran la densidad estimada y el histograma.
@@ -248,7 +252,7 @@ stpPI$dgenes %>% table %>% "/"(tamano) %>% setNames(c("Inhibidos", "No expresado
 ## Aplicación EP-Means
 
 ```{r}
-n.clusters <- 40
+n.clusters <- 20
 
 ```
 
@@ -297,15 +301,6 @@ D_def <- function(nube_0, nube_1){
   distan_def(tmp[order(tmp$value),])
 }
 
-D5 <- function(nube_0, nube_1){
-  rbind(
-    cbind(nube_0, binary = 0),
-    cbind(nube_1, binary = 1)
-  ) -> tmp
-  
-  sqrt(min(nrow(nube_0), nrow(nube_1))) * distan_np(tmp[order(tmp$value),])
-}
-
 ```
 
 ```{r}
@@ -322,13 +317,13 @@ muestra_nueva %$% split(value, cond_gen) %>% lapply(to_nubepuntos) -> nubes
 ```
 
 ```{r, eval = FALSE}
-start.time <- Sys.time()
-nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
+# start.time <- Sys.time()
+# nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
 
-save(dis_matriz, file = "gen_dis_matriz.rda")
+# save(dis_matriz, file = "gen_dis_matriz.rda")
 
 ```
 
@@ -347,11 +342,11 @@ tree %>% cutree(n.clusters) -> grupos_genes
 ```
 
 ```{r}
-totales <- muestra_nueva %$% split(value, cond_gen)
+muestra_nueva %$% split(value, cond_gen) -> totales
 
-list_for_kwtest<-split(totales, grupos_genes)
+list_for_kwtest <- split(totales, grupos_genes)
 
-lapply(X = list_for_kwtest, FUN = function(x){kruskal.test(x)$p.value}) %>% 
+lapply(X = list_for_kwtest, FUN = function(x){ifelse(length(x) == 1,1,kruskal.test(x)$p.value)}) %>% 
   unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
 
 kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
@@ -360,7 +355,10 @@ kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
 
 ```
 
+
 ```{r}
+parejas <- choose(n.clusters, 2)
+
 grupos_genes %>% data.frame(grupo = ., cond_gen = names(.)) %>% merge(muestra_nueva) -> muestra_agrupada
 
 muestra_agrupada %$% split(value, grupo) -> agrupados
@@ -369,69 +367,84 @@ boxplot(agrupados)
 
 agrupados %>% list_auto(function(x,y){"[["(wilcox.test(x,y, exact = FALSE), "p.value")}) -> pvalues
 
-pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = . < 0.00125) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Diferencias\nsignificativas")
+pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = . < 0.05/parejas) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Diferencias\nsignificativas")
 
-function(nombre_gen){
-unique(muestra_agrupada[muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_"),c("cond_gen", "grupo")]) %>% "[["("grupo") %>% "["(pvalues, .)
-} # aquíi voy
-# nombre_gen <- "1-1-2.2.18.8"
+gen_p_value <- function(nombre_gen){
+muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_") %>% "["(muestra_agrupada,.,c("cond_gen", "grupo")) %>% unique %>% "[["("grupo") -> cuales
+"["(pvalues, cuales[1], cuales[2])
+} 
+
+Muestra %>% rownames %>% lapply(gen_p_value) %>% unlist -> resultado
+
+mutate(Muestra_ac, Res = resultado) %>% ggplot + aes(x = psi1, y = psi2, colour = factor(Res < 0.05/parejas, labels = c("Iguales", "Diferentes"))) + geom_point() + geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  scale_color_discrete(name = "Expresión") +
+  theme_minimal()
 
 
-Muestra %>% "["(1:8) %>% mutate(gen = rownames(.)) %>% melt("gen") %>% split(.[["gen"]]) %>% str %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster1")) -> km_1
 
-mutate(km_1, gen = rownames(km_1)) -> km_1
+table(resultado < 0.05/parejas)
 
-Muestra[,9:16] %>% mutate(gen = rownames(.)) %>%melt %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster2")) -> km_2
+```
 
-mutate(km_2, gen = rownames(km_2)) -> km_2
-
-Muestra %>% mutate(gen = rownames(.)) %>% merge(km_1, by = "gen") %>% merge(km_2, by = "gen") -> Resultado
+```{r}
+# Muestra %>% "["(1:8) %>% mutate(gen = rownames(.)) %>% melt("gen") %>% split(.[["gen"]]) %>% str %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster1")) -> km_1
+# 
+# mutate(km_1, gen = rownames(km_1)) -> km_1
+# 
+# Muestra[,9:16] %>% mutate(gen = rownames(.)) %>%melt %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster2")) -> km_2
+# 
+# mutate(km_2, gen = rownames(km_2)) -> km_2
+# 
+# Muestra %>% mutate(gen = rownames(.)) %>% merge(km_1, by = "gen") %>% merge(km_2, by = "gen") -> Resultado
 
 ```
 
 Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 1 (Inoculados).
 
 ```{r, include = TRUE}
-sapply(1:40, 
-       function(i){
-         Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9] %>% t %>%
-           melt %$% kruskal.test(value~Var2)$p.value
-       })
+# sapply(1:40, 
+#        function(i){
+#          Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9] %>% t %>%
+#            melt %$% kruskal.test(value~Var2)$p.value
+#        })
 
 ```
 
 Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 2 (No inoculados).
 
 ```{r, include = TRUE}
-sapply(1:40, 
-       function(i){
-         Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17] %>% t %>%
-           melt %$% kruskal.test(value~Var2)$p.value
-       })
+# sapply(1:40, 
+#        function(i){
+#          Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17] %>% t %>%
+#            melt %$% kruskal.test(value~Var2)$p.value
+#        })
 
 ```
 
 ```{r}
-lapply(1:tamano, 
-       function(i){
-         ks.test(
-           unlist(Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9]), 
-           unlist(Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17]),
-           exact = FALSE
-         )$p.value
-       }) %>% unlist -> pval
+# lapply(1:tamano, 
+#        function(i){
+#          ks.test(
+#            unlist(Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9]), 
+#            unlist(Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17]),
+#            exact = FALSE
+#          )$p.value
+#        }) %>% unlist -> pval
+
 ```
 
-La prueba de Kolmogorov Smirnov se realia repetidamente sobre los grupos, permitiendo encontrar diferencias estadísticamente significativas para cada uno de los genes. Sin embargo en este caso resulta demasiado loberal, rechazando casi todos los casos `r mean(pval*n.clusters< 0.05)` incluso después del uso de la corrección de Bonferoni [@DUNN]. La gráfica muestra la poca proporción de genes no rechazados.
+La prueba de Kolmogorov Smirnov se realia repetidamente sobre los grupos, permitiendo encontrar diferencias estadísticamente significativas para cada uno de los genes. Sin embargo en este caso resulta demasiado loberal, rechazando casi todos los casos **##** incluso después del uso de la corrección de Bonferoni [@DUNN]. La gráfica muestra la poca proporción de genes no rechazados.
 
 ```{r, include = TRUE}
-Resultado[2:17] %>% ac(design = des) %>% 
-  as.data.frame %>% mutate(P = factor(pval*n.clusters< 0.05, labels = c("Iguales", "Diferentes"))) %>% ggplot + 
-  aes(x = psi1, y = psi2, colour = P) + geom_point() + 
-  geom_hline(yintercept = 0) + 
-  geom_vline(xintercept = 0) + 
-  scale_color_discrete(name = "Expresión") +
-  theme_minimal()
+# Resultado[2:17] %>% ac(design = des) %>% 
+#   as.data.frame %>% mutate(P = factor(pval*n.clusters< 0.05, labels = c("Iguales", "Diferentes"))) %>% ggplot + 
+#   aes(x = psi1, y = psi2, colour = P) + geom_point() + 
+#   geom_hline(yintercept = 0) + 
+#   geom_vline(xintercept = 0) + 
+#   scale_color_discrete(name = "Expresión") +
+#   theme_minimal()
+
 ```
 
 ## SAM (Significance analysis of microarrays)
@@ -465,12 +478,14 @@ Muestra_ac %>%
   geom_vline(xintercept = 0) + 
   scale_color_discrete(name = "Expresión") +
   theme_minimal()
+
 ```
 
 La proporción de genes expresados es bastante diferente a los mostrados anteriormente.
 
 ```{r}
 factor(samr.pvalues.from.perms(samr.obj$tt, samr.obj$ttstar) < 0.05, labels = c("Iguales", "Diferentes")) %>% table %>% "/"(tamano)
+
 ```
 
 
@@ -478,7 +493,7 @@ factor(samr.pvalues.from.perms(samr.obj$tt, samr.obj$ttstar) < 0.05, labels = c(
 
 Durante la aplicacion de los métodos se evidenciaron algunas dificultades respecto al algoritmo EP-Means. El costo computacional del mismo hizo imposible el trabajo con el conjunto de datos completo, en consecuencia fue necesario tomar una muestra aleatoria de los datos. La poca eficiencia del algoritmo puede deberse a distintas causas, entre ellas el constante cálculo de la distancia entre funciones empíricas, que implica integración numérica. 
 
-El proceso de detección de diferencias estadísticamente significativas en los genes no presenta una exactitud deseable. No resulta acertado suponer que el `r mean(pval*n.clusters< 0.05)*100` porciento de los genes son diferencialmente expresados. Esto se debe al tamaño de los clusters, ya que cada cluster reune cientos de datos, lo cual aumenta la probabilidad de rechazo.
+El proceso de detección de diferencias estadísticamente significativas en los genes no presenta una exactitud deseable. No resulta acertado suponer que el **##** porciento de los genes son diferencialmente expresados. Esto se debe al tamaño de los clusters, ya que cada cluster reune cientos de datos, lo cual aumenta la probabilidad de rechazo.
 
 # Conclusiones
 
