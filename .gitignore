@@ -5,6 +5,7 @@
 .html
 *.pdf
 *.tex
+*.csv
 III_cache
 III.html
 III_files
