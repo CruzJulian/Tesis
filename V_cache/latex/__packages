@@ -1,0 +1,14 @@
+base
+impute
+matrixStats
+samr
+boot
+acde
+FactoMineR
+reshape2
+knitr
+dplyr
+magrittr
+ggplot2
+Rcpp
+ggdendro
