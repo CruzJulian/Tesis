@@ -1,0 +1,51 @@
+---
+title: "Reciclaje"
+author: "CruzJulian"
+date: "15 de abril de 2017"
+output: html_document
+---
+
+
+## Discusión
+
+
+Durante la aplicacion de los métodos se evidenciaron algunas dificultades respecto al algoritmo EP-Means. El costo computacional del mismo hizo imposible el trabajo con el conjunto de datos completo, en consecuencia fue necesario tomar una muestra aleatoria de los datos. La poca eficiencia del algoritmo puede deberse a distintas causas, entre ellas el constante cálculo de la distancia entre funciones empíricas, que implica integración numérica. 
+
+El proceso de detección de diferencias estadísticamente significativas en los genes no presenta una exactitud deseable. No resulta acertado suponer que el **##** porciento de los genes son diferencialmente expresados. Esto se debe al tamaño de los clusters, ya que cada cluster reune cientos de datos, lo cual aumenta la probabilidad de rechazo.
+
+# Conclusiones
+
+- El uso del algoritmo EP-Means es computacionalmente más costoso que SAM y acde.
+
+- El algoritmo EP-Means detecta expresión genética en el 83% de los genes, lo cual no es acertado. SAM y acde resultan bastante más conservadores y por ende más convincentes.
+
+# texto guía
+
+El Análisis de Componentes Principales es un método no supervisado que busca resumir un conjunto de variables en ejes factoriales mediante una transformación ortogonal. Debido a que estas transformaciones ortogonales son isomorfismos, el número de ejes factoriales posible corresponde al número de variables incluidas en el conjunto de interés.
+
+Los ejes factoriales reúnen el total de la variabilidad del conjunto de datos de forma descendente, así el primero recoge la mayor varianza posible, el segundo reúne una variabilidad menor que el primero pero contiene la mayor varianza restante y así sucesivamente. Estos ejes son calculados bajo la restricción de ortogonalidad, obteniendo un conjunto de ejes ortogonales. La cantidad de ejes factoriales a conservar depende de la proporción de variabilidad que el investigador necesite recoger.
+
+Este análisis tiene tres usos comunes en la literatura; los ejes factoriales recogen de manera descendente la varianza de los datos, por consiguiente es posible tomar un número reducido de ejes cubriendo un porcentaje importante de la información presente en los datos, disminuyendo la dimensión de los mismos. En este mismo sentido el uso de los ejes factoriales para interpretación gráfica de los datos proporciona visualizaciones óptimas e intuitivas. Por último, si las variables presentan correlaciones fuertes, es posible dar interpretación a los ejes factoriales y crear indicadores que midan aspectos específicos que no tienen una expresión explícita en la base de datos. [@Jolliffe2002]
+
+
+El algoritmo K-Means [@HARTIGAN] es teóricamente equivalente a la estimación vía EM de una mixtura compuesta por $K$ distribuciones normales homocedásticas.
+
+En este sentido el algoritmo tiene dos partes. Un paso de estimación, que define el centroide de cada grupo como el promedio de los individuos pertenecientes al mismo y un paso de maximización, que reasigna los individuos al grupo más cercano usando su distancia a los distintos centroides. Estos dos pasos se repiten hasta lograr convergencia.
+
+El uso de distancias puede verse afectado por distintas causas, entre ellos el factor de escala de las variables; en el sentido que las variables de mayor escala tienen un mayor peso en el cálculo de las distancias entre individuos. En consecuencia es necesario un tratamiento previo de normalización o estandarización de las mismas. La solución mostrada en Lebart [@LEBART] es tomar como insumo el resultado del ACP, que además de eliminar el ruido inherente a los datos produce ejes de escalas similares provenientes de las variables estandarizadas.
+
+Asimismo es necesario atender detalles como criterios de parada para la convergencia, distancia a usar (euclidiana, manhattan, Crámer-von Mises), el algoritmo EP-Means hace uso de la distancia Earth mover's, sin embargo es necesario realizar pruebas con varias opciones. Una definición correcta de los valores iniciales puede facilitar la convergencia, Lebart propone como valores iniciales los centroides provenientes del método de Ward.
+
+El teorema de Glivenko Cantelli es el eje teórico del algoritmo. Establece la convergencia de la función empírica de densidad acumulada a la función de densidad acumulada teórica.
+
+Sea $\{X\}_i, i = 1...m$ una muestra aleatoria con función de distribución acumulada $F$. La función de distribución empírica para el conjunto de v.a se define por:
+
+\[F_n(x) = \frac{1}{n}\sum\limits_{i=1}{m} I_{(-\infty, x]} (X_i) \]
+
+Donde $I_A$ es la función indicadora en el conjunto $A$. Para cada $x$ fijo $F_n(x)$ es una secuencia de variables aleatorias las cuales convergen de manera casi segura a  $F(x)$.
+
+El supuesto de independencia no es necesario para este teorema, y esto es fácilmente se observa que la misma conclusión se da cuando la secuencia de variables aleatorias es estrictamente una secuencia estacionaria y ergódica [@GCTHEO].
+
+Con esto en mente agrupar las funciones de densidad empíricas por su cercanía puede mostrar los comportamientos asintóticos de las nubes de puntos.
+
+
