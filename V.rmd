@@ -63,7 +63,7 @@ El análisis de expresión diferencial consiste en el uso de técnicas estadíst
 
 En este sentido, es adecuado plantear una prueba de hipótesis de localización, con el fin de evaluar las diferencias mencionadas; cuya sensibilidad depende de la cantidad de mediciones que se realizan en cada condición. Sin embargo, usualmente los conjuntos de datos corresponden a la estructura anterior replicada en grandes cantidades de genes (diez, quince, veinte mil genes).
 
-En este panorama el uso de pruebas de hipótesis a nivel individual pierde vigencia; la estructura teórica del concepto de significancia debilita la realización pruebas de hipótesis en tales cantidades; pues, el aumento en el número de pruebas conduce al aumento del error tipo I, requiriendo correcciones como la de Bonferroni [@BONFERRONI], y, en general, estimulando la creación de estrategias apropiadas para abordar el problema en toda su complejidad.
+En este panorama el uso de pruebas de hipótesis a nivel individual pierde vigencia; la estructura teórica del concepto de significancia debilita la realización pruebas de hipótesis en tales cantidades; pues, el aumento en el número de pruebas conduce al aumento del error tipo I, requiriendo correcciones como la de Bonferoni [@DUNN], y, en general, estimulando la creación de estrategias apropiadas para abordar el problema en toda su complejidad.
 
 Una de las propuestas más recientes en detección de genes diferencialmente expresados es el método SAM (Significance Analysis of Microarrays). A partir de un conjunto de genes de un experimento de mircroarreglos, SAM calcula un $d_i$ para cada gen $i$, y mide la relación entre la expresión génica y la variable respuesta, utilizando permutaciones repetidas de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste $\delta$, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
 
@@ -93,11 +93,12 @@ library("ggplot2")
 library("Rcpp")
 library("ggdendro")
 
+
 data("phytophthora")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE)
+opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5, fig.height = 5)
 
 ```
 
@@ -123,11 +124,9 @@ Los resultados obtenidos usando J-nubes son comparados con los obtenidos mediant
 
 La aplicación del algoritmo J-nubes a los datos descritos requiere la prepareación adecuada de los mismos. Cada gen en cada condición es considerado una nube de puntos; así, siendo $n$ genes y $p$ condiciones se tiene $n\times p$ nubes de puntos. Este conjunto de nubes de puntos produce una matriz de distancias^[son distancias entre nubes de puntos con nombre propio de cramervonmises corregidas, corregir o alcarar o algo.] de $(n\times p)^2$ entradas, esta matriz es insumo del algoritmo J-nubes que, como se ha explicado, corresponde al método de Ward de mínima varianza para agregación jerárquica. Empleando el diagrama de árbol se escoge un número $k$ de grupos cuya homogeneidad interna se evalúa a la luz de la prueba Kruskal-Wallis. La figura PPX da un repaso a este primer paso de agregación.
 
-Utilizando la prueba de Mann-Whitney-Whilcoxon es posible realizar todas las comparaciones posibles de los grupos conformados, corrigiendo según Bonferroni. De esta manera se comparan los valores un gen $i$ en una condición $j_1$ con sus valores en otra condición $j_2$ estableciendo su pertenencia a grupos $g_1$ y $g_2$ significativamente distintos o no.
-
 ![Figura PPX: Diagrama de análisis](figura1.png)
 
-La validación de los grupos se realiza mediante el test de Kruskall Wallis [@KWTEST] y se comparan con los resultados provenientes de SAM y de acde.
+Utilizando la prueba de Mann-Whitney-Whilcoxon es posible realizar todas las comparaciones posibles de los grupos conformados, corrigiendo según Bonferroni. De esta manera se comparan los valores un gen $i$ en una condición $j_1$ con sus valores en otra condición $j_2$ estableciendo su pertenencia a grupos $g_1$ y $g_2$ significativamente distintos o no. La validación de los grupos se realiza mediante el test de Kruskall Wallis [@KWTEST] y se comparan con los resultados provenientes de SAM y de acde.
 
 # Resultados 
 
@@ -144,17 +143,6 @@ Muestra[sample(nrow(Muestra), tamano),] -> Muestra
 El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. Por facilidad computacional se selecciona una muestra de tamaño `r tamano`. Todos los análisis se realizan sobre esta.
 
 ```{r}
-boxplot_phytophthora <- function(i){
-  nm <- names(phytophthora)
-  par(font=1, las = 1, mar = rep(2, 4), mar = c(2, 6, 2, 2))
-  boxplot(
-    phytophthora[[i]], main = nm[i], pch = 20,
-    outline = FALSE, col="lightblue", cex.names = 0.2, 
-    cex.names = 0.2, axes = FALSE, border = "#72A3B3", horizontal = TRUE)
-  axis(2, at = 1:16, labels = names_datos)
-  axis(1)
-}
-
 evaluated_ecdf <- function(categories, values){
 
   # a vector with sorted and unique values
@@ -176,16 +164,22 @@ evaluated_ecdf <- function(categories, values){
 
 Como se dijo, se analizan únicamente los datos correspondientes a la última inoculación. A continuación vemos en un diagrama de caja el comportamiento de los datos.
 
-```{r, fig.height = 3.4, echo = FALSE, include = TRUE}
-boxplot_phytophthora(4)
+```{r, fig.height = 3.5, fig.width=8, echo = FALSE, include = TRUE}
+  par(font=1, las = 1, mar = c(2, 6, 2, 2))
+boxplot(phytophthora[[4]], outline = FALSE, col="lightblue", cex.names = 0.2, 
+    cex.names = 0.2, axes = FALSE, border = "#225566", horizontal = TRUE)
+  axis(2, at = 1:16, labels = names_datos)
+  axis(1)
 
 ```
 
+Figura XTV: Mediciones realizadas en plantas infectadas y no infectadas.
+
 En la gráfica se observan las distintas mediciones, se tienen 8 mediciones en plantas infectadas y otras 8 en plantas no infectadas.
 
-## ACDE (Artificial Components Detection of Differentially Expressed Genes)
+## acde (Artificial Components Detection of Differentially Expressed Genes)
 
-La metodología plantea el cálculo de componentes artificiales, que en el caso de dos condiciones quedan definidos por la siguiente expresión:
+La metodología acde [@Acosta2015] plantea el cálculo de componentes artificiales, que en el caso de dos condiciones quedan definidos por la siguiente expresión:
 
 \begin{gather}
 \psi_1(x_i) = \sqrt{p} x_i \\
@@ -199,43 +193,41 @@ Muestra %>%
 
 ```
 
-Las figuras muestran la densidad estimada y el histograma.
+De esta forma los valores quedan resumidos en los ejes de los componentes artificiales $psi_1$ y $psi_2$. La figura XMM muestran la densidad estimada y el histograma en cada uno de los componentes artificiales.
 
-```{r, fig.height = 3.5, include = TRUE}
+```{r, fig.height = 2.5, fig.width=8, include = TRUE}
 Muestra_ac %>% 
   ggplot + aes(x = psi1, y = ..density..) +
-  geom_histogram(binwidth = 1) +
-  geom_density(colour = "#333399") +
+  geom_histogram(binwidth = 1, fill = "#224466", alpha = 0.5) +
+  geom_density(colour = "#335566") + labs(x = "", y = "") +
 theme_minimal()
 
 ```
 
-Se muestra además la proyección de los genes en sus componentes artificiales.
-
-```{r, fig.height = 3.5, include=TRUE}
-Muestra_ac %>% ggplot + 
-  aes(x = psi1, y = psi2) + geom_point() + 
-  geom_hline(yintercept = 0) + 
-  geom_vline(xintercept = 0) + 
-  theme_minimal()
+```{r, fig.height = 2.5, fig.width=8, include = TRUE}
+Muestra_ac %>% 
+  ggplot + aes(x = psi2, y = ..density..) +
+  geom_histogram(binwidth = 1, fill = "#224466", alpha = 0.5) +
+  geom_density(colour = "#335566") + labs(x = "", y = "") +
+theme_minimal()
 
 ```
 
-## Expresión
+Figura XMM: Densidad estimada e histograma de los valores generados.
 
-La función `stp` realiza el procedimiento de Single Time Point Analysis, que determina un $\alpha^*$ óptimo que controla la taza de falsos positivos (FDR).
+Es notorio como mientras el primer componente artificial presenta valores muy cercanos a cero y una coa muy pesada a derecha, el segundo componente presenta ambas colas pesadas y una gran concentración de los datos en el centro de la distribución. Esto queda explicado en el gráfico bivariado de los componentes, figura XPG, donde se examina la proyección de los genes en sus componentes artificiales; amén del resultado del procedimiento de Single Time Point Analysis, que determina un $\alpha^*$ óptimo que controla la taza de falsos positivos (FDR), determinando genes expresados, inhibidos y remanentes.
 
-```{r, fig.width = 8, fig.height = 3.5, include = TRUE}
+```{r, fig.width = 8, fig.height = 2.5, include = TRUE}
 Muestra %>% stp(des, BCa = FALSE) -> stpPI
 Muestra_ac %>% ggplot + 
   aes(x = psi1, y = psi2, colour = stpPI$dgenes) + 
   geom_point() + geom_hline(yintercept = 0) + 
   geom_vline(xintercept = 0) + 
   scale_color_manual(
-    values = c("#ff0000", "#000000", "#00ff00"), 
+    values = c("#aa0000", "#000000", "#00aa00"), 
     name="Expresión",
     breaks=c("up-reg.", "no-diff.", "down-reg."),
-    labels=c("Expresados", "No expresados", "Inhibidos")
+    labels=c("Expresados", "Remanentes", "Inhibidos")
   ) +
   theme_minimal()
 
@@ -248,8 +240,9 @@ stpPI$dgenes %>% table %>% "/"(tamano) %>% setNames(c("Inhibidos", "No expresado
 
 ```
 
+Esta es la herramienta de visualización mediante la cual se examinan los resultados debidos a la aplicación del algoritmo propuesto J-nubes y de SAM.
 
-## Aplicación EP-Means
+## Aplicación J-nubes
 
 ```{r}
 n.clusters <- 20
@@ -268,17 +261,17 @@ to_nubepuntos <- function(a){
 ```
 
 ```{r}
-collapsa_nubes <- function(nube_list){
-  
-  sum(unlist(lapply(nube_list, nrow))) -> n_total
-  lapply(nube_list, function(nube){
-    nube$weight <- nube$weight*nrow(nube)/n_total
-    nube}) -> .
-  do.call(rbind, .) -> nubepuntos
-    class(nubepuntos) <- c("data.frame", "nubepuntos")
-  nubepuntos
-
-}
+# collapsa_nubes <- function(nube_list){
+#   
+#   sum(unlist(lapply(nube_list, nrow))) -> n_total
+#   lapply(nube_list, function(nube){
+#     nube$weight <- nube$weight*nrow(nube)/n_total
+#     nube}) -> .
+#   do.call(rbind, .) -> nubepuntos
+#     class(nubepuntos) <- c("data.frame", "nubepuntos")
+#   nubepuntos
+# 
+# }
 
 list_outer <- function(a,b, fun) {
   outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
@@ -327,7 +320,7 @@ muestra_nueva %$% split(value, cond_gen) %>% lapply(to_nubepuntos) -> nubes
 
 ```
 
-```{r}
+```{r, fig.width=8, fig.height=2.5, include = TRUE}
 load(file = "gen_dis_matriz.rda")
 
 dis_matriz %>% hclust(method = "ward.D") -> tree
@@ -341,13 +334,17 @@ tree %>% cutree(n.clusters) -> grupos_genes
 
 ```
 
-```{r}
+Figura XLS: Dendrograma de los genes arrojado por el algoritmo J-nubes.
+
+Es necesario corroborar que los grupos psoeen homogeneidad interna. Como criterio para esta tarea utiliza la pruba de Kruskal-Wallis en cada grupo con una significancia individual de $\alpha/k$, que en este caso es igual a `r 0.05/n.clusters` para completar una significancia de $\alpha = 0.05$ en el procedimiento general. La figura XPQ mestra el p valor obtenido en cada grupo.
+
+```{r, fig.width=8, fig.height=2.5, include = TRUE}
 muestra_nueva %$% split(value, cond_gen) -> totales
 
-list_for_kwtest <- split(totales, grupos_genes)
+list_for_kwtest <- split(totales, as.factor(grupos_genes))
 
 lapply(X = list_for_kwtest, FUN = function(x){ifelse(length(x) == 1,1,kruskal.test(x)$p.value)}) %>% 
-  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
+  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = reorder(as.factor(rownames(.)), as.numeric(rownames(.)), mean)) -> kwtest_pvalues
 
 kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
   geom_bar(stat = "identity") + 
@@ -355,19 +352,32 @@ kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
 
 ```
 
+Figura XPQ: Valores p de la prueba Kruskal-Wallis en cada uno de los grupos.
 
-```{r}
-parejas <- choose(n.clusters, 2)
+Entonces, es posible afirmar que la partición obtenida está coonformada por clases internamente homogéneas. La figura XHG muestra la composición de los grupos. Llegado este punto, es necesario establecer el comportamiento entre grupos, detectando cuáles de ellos son estaditicamente distintos entre sí mediante la prueba de Mann-Whitney-Wilcoxon, aplicada a todas las posibles parejas; es decir $\binom{k}{2}$ veces.
 
+```{r, fig.width=8, fig.height=2.5, include = TRUE}
 grupos_genes %>% data.frame(grupo = ., cond_gen = names(.)) %>% merge(muestra_nueva) -> muestra_agrupada
+
+muestra_agrupada %>% ggplot + aes(x = as.factor(grupo), y = value) + geom_boxplot() + theme_minimal()
 
 muestra_agrupada %$% split(value, grupo) -> agrupados
 
-boxplot(agrupados)
+# boxplot(agrupados)
+
+
+```
+
+Figura XHG: boxplot de los grupos formados mediante el algoritmo J-nubes.
+
+Es en últimas mediante la prueba de Mann-Whitney-Wilcoxon que se realiza la comparción entre nubes de puntos correspondientes a genes en distintas condiciones. La figura XVB muesta los grupos que resultan distintos entre sí y los que no, con una significancia individual de $0.05/\binom{k}{2}$ que garantiza una significancia de $\alpha = 0.05$ en el procedimiento completo.
+
+```{r, fig.width=6, fig.height=3, include = TRUE}
+parejas <- choose(n.clusters, 2)
 
 agrupados %>% list_auto(function(x,y){"[["(wilcox.test(x,y, exact = FALSE), "p.value")}) -> pvalues
 
-pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = . < 0.05/parejas) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Diferencias\nsignificativas")
+pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = factor(. < 0.05/parejas, labels = c("Iguales", "Diferentes"))) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal() + labs(x ="", y = "", fill = "Diferencias significativas") + theme(legend.position = "bottom") + coord_fixed()
 
 gen_p_value <- function(nombre_gen){
 muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_") %>% "["(muestra_agrupada,.,c("cond_gen", "grupo")) %>% unique %>% "[["("grupo") -> cuales
@@ -376,76 +386,28 @@ muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_
 
 Muestra %>% rownames %>% lapply(gen_p_value) %>% unlist -> resultado
 
+```
+
+Figura XVB: Diferencias estadísticamente significativas entre los grupos.
+
+Entonces, para comparar datos de distintas condiciones asociados a un mismo gen basta establecer si estos se encuentran en grupos con diferencias estadísticamente significativas o no. De esta forma es posible construir el diagrama correspondiente a la figura XMQ, que muestra los genes expresados y los no expresados. Las proporciones correspondientes se encuentran en la tabla XKJ.
+
+```{r, fig.width=8, fig.height=2.5, include = TRUE}
 mutate(Muestra_ac, Res = resultado) %>% ggplot + aes(x = psi1, y = psi2, colour = factor(Res < 0.05/parejas, labels = c("Iguales", "Diferentes"))) + geom_point() + geom_hline(yintercept = 0) + 
   geom_vline(xintercept = 0) + 
   scale_color_discrete(name = "Expresión") +
   theme_minimal()
 
+```
 
+Figura XMQ: genes expresados y los no expresados.
 
-table(resultado < 0.05/parejas)
+```{r, include=TRUE}
+(resultado > 0.05/parejas) %>% as.numeric %>% "+"(1) %>% "["(c("Expresados", "No expresados"), .) %>% table() %>% prop.table() %>% as.data.frame() %>% kable
 
 ```
 
-```{r}
-# Muestra %>% "["(1:8) %>% mutate(gen = rownames(.)) %>% melt("gen") %>% split(.[["gen"]]) %>% str %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster1")) -> km_1
-# 
-# mutate(km_1, gen = rownames(km_1)) -> km_1
-# 
-# Muestra[,9:16] %>% mutate(gen = rownames(.)) %>%melt %$% evaluated_ecdf(categories = gen, values = value) %>% PCA(graph = FALSE) %$% ind %$% coord %>% kmeans(n.clusters) %$% cluster %>% as.data.frame %>% setNames(c("cluster2")) -> km_2
-# 
-# mutate(km_2, gen = rownames(km_2)) -> km_2
-# 
-# Muestra %>% mutate(gen = rownames(.)) %>% merge(km_1, by = "gen") %>% merge(km_2, by = "gen") -> Resultado
-
-```
-
-Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 1 (Inoculados).
-
-```{r, include = TRUE}
-# sapply(1:40, 
-#        function(i){
-#          Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9] %>% t %>%
-#            melt %$% kruskal.test(value~Var2)$p.value
-#        })
-
-```
-
-Los siguientes son los valores de la prueba Kruskal-Wallis para los grupos formados en la condición 2 (No inoculados).
-
-```{r, include = TRUE}
-# sapply(1:40, 
-#        function(i){
-#          Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17] %>% t %>%
-#            melt %$% kruskal.test(value~Var2)$p.value
-#        })
-
-```
-
-```{r}
-# lapply(1:tamano, 
-#        function(i){
-#          ks.test(
-#            unlist(Resultado[which(Resultado$cluster1 == Resultado$cluster1[i]),2:9]), 
-#            unlist(Resultado[which(Resultado$cluster2 == Resultado$cluster2[i]),10:17]),
-#            exact = FALSE
-#          )$p.value
-#        }) %>% unlist -> pval
-
-```
-
-La prueba de Kolmogorov Smirnov se realia repetidamente sobre los grupos, permitiendo encontrar diferencias estadísticamente significativas para cada uno de los genes. Sin embargo en este caso resulta demasiado loberal, rechazando casi todos los casos **##** incluso después del uso de la corrección de Bonferoni [@DUNN]. La gráfica muestra la poca proporción de genes no rechazados.
-
-```{r, include = TRUE}
-# Resultado[2:17] %>% ac(design = des) %>% 
-#   as.data.frame %>% mutate(P = factor(pval*n.clusters< 0.05, labels = c("Iguales", "Diferentes"))) %>% ggplot + 
-#   aes(x = psi1, y = psi2, colour = P) + geom_point() + 
-#   geom_hline(yintercept = 0) + 
-#   geom_vline(xintercept = 0) + 
-#   scale_color_discrete(name = "Expresión") +
-#   theme_minimal()
-
-```
+Tabla XKJ: Proporciones de expresióon génica encontradas.
 
 ## SAM (Significance analysis of microarrays)
 
@@ -463,10 +425,13 @@ samr.obj<-samr(data, resp.type="Two class unpaired", nperms=100)
 
 Así mismo se aplica el análisis SAM sobre los genes de la muestra. Al realizar un Q-Q plot para los resultados del análisis se observan los genes diferenciados e inhibidos.
 
-```{r, include = TRUE}
+```{r, fig.width=5, fig.height=3.5, include = TRUE}
 delta=.4
 samr.plot(samr.obj,delta)
+
 ```
+
+Figura XCR: Q-Q plot de los resultados del análisis SAM.
 
 La siguiente gráfica muestra el valor $t$ en cada uno de los genes.
 
