@@ -11,6 +11,7 @@ csl: apa.csl
 linkcolor: blue
 ---
 
+ - Métodos estadísticos sobre grandes conjuntos de datos
  - Sobre ep means, 
  - el problema de la distancia
  - el problema del tamaño
