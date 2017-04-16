@@ -12,6 +12,10 @@ linkcolor: blue
 ---
 
  - Métodos estadísticos sobre grandes conjuntos de datos
+ - insights sobre el ejercicio investigativo
+    - Política de datos
+    - Uso de github
+    - incrustacion con los avances a nivel local.
  - Sobre ep means, 
  - el problema de la distancia
  - el problema del tamaño
