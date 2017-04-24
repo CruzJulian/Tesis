@@ -1,15 +1,18 @@
 ---
-title: "Aplicación: Saber 11"
-output: 
-  pdf_document:
-    keep_tex: true
-    toc: true
-    number_sections: true
-bibliography: Biblio.bib
+title: 'Aplicación: Saber 11'
 csl: apa.csl
 linkcolor: blue
-
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+bibliography: Biblio.bib
 ---
+
+ - Cuadrar t-SNE
 
 ```{r setup, echo=FALSE, include=FALSE}
 # library("grid")
@@ -29,7 +32,7 @@ library("RColorBrewer")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
 
 options(stringsAsFactors = TRUE)
 
@@ -358,6 +361,12 @@ load(file = "dis_matriz_2.rda")
 # head(dis_matriz_1, 20)
 # head(dis_matriz_2, 20)
 
+library("tsne")
+
+tsne(dis_matriz_2) -> tsne_plot
+
+# plot(tsne_plot)
+
 ```
 
 ```{r, fig.width = 8, fig.height = 2.5}
@@ -579,16 +588,22 @@ general_density_plot +
 
 ```
 
-### ACP
+### Visualización
 
 Como se menciona en el capítulo anterior, las funciones de probabilidad empírica, a pesar de ser estimaciones de parámetros infinitodimensionales, se encuentran en un espacio finitodimensional. Conforme a esto, se presenta un análisis de componentes principales de las funciones de probabilidad empírica. En la figura PRP se pued observar la dispersión de los municipios y sus diferentes grupos. Los municipios de alto rendimiento en las pruebas Saber 11 se encuentran en el flanco derecho, mientras que aquellos en el flanco izquierdo presentan los puntajes más bajos.
 
 ```{r, fig.height=4, fig.width=8}
 qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO) + labs(x = "e1", y = "e2") + theme_minimal()
 
+
 ```
 
 Figura PRP: ACP de los municipios.
+
+```{r}
+tsne_plot %>% set_colnames(c("xx", "yy")) %>% cbind(RESULTADO) %>% ggplot + aes(x = xx, y = yy, colour = grupo) + geom_point() + theme_minimal()
+
+```
 
 Analizar la dispersión de los grupos resulta importante para entender el comportamiento de los mismos. En la figura PRP, es fácil observar cómo la configuración de la nube de puntos presenta extremos muy diseminados al mismo tiempo que espacios centrales densos. Esto genera que los grupos más extremos, `r letters[c(1,2,9,10)]` sean notoriamente menos homogéneos que los grupos centrales. 
 
