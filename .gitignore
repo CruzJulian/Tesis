@@ -12,3 +12,6 @@ III_files
 IV_cache
 V_cache
 *.html
+IV_files
+*.txt
+*.xlsx
