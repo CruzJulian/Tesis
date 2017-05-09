@@ -35,7 +35,8 @@ double EMD(DataFrame df) {
   double actecdf = weight[0], otherecdf = 0, actbin = binary[0], dis = 0;
   
   for(i = 1; i < n; i++){
-    dis += (value[i] - value[i-1])*abs(actecdf - otherecdf);
+//    dis += (value[i] - value[i-1])*(actecdf - otherecdf)*(actecdf - otherecdf);
+    dis += (value[i] - value[i-1])*std::abs(actecdf - otherecdf);
     if(binary[i] == actbin){actecdf += weight[i];}
     if(binary[i] == 1 - actbin){otherecdf += weight[i];}
   }
