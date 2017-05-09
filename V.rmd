@@ -1,77 +1,29 @@
 ---
-title: "Aplicación: Phytophthora"
-author: "Julian Cruz, Jennifer Segura"
-output: 
-  pdf_document:
-    keep_tex: true
-    toc: true
-    number_sections: true
-bibliography: Biblio.bib
+title: 'Aplicación: _Phytophthora_'
+author: "Julian Cruz, Jennifer Vélez"
 csl: apa.csl
+output:
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
 linkcolor: blue
+bibliography: Biblio.bib
 ---
 
 # Introducción
 
-Dando continuidad al documento global, el presente capítulo aparece como una segunda iniciativa de implementación con datos reales; con el fin de establecer y consolidar la idea de muchas y diversas implementaciones de los métodos propuestos. El capítulo corresponde a una incursión en el área de la estadistica genómica, en particular el abordaje del problema de expresión diferencial en genes, que será explicado en detalle más adelante. Es pertinente aclarar que los métodos J-nubes y K-nubes no fueron diseñados en el ámbito teórico de la estadística genómica, por lo que no son propiamente métodos genómicos; sin embargo, su aplicación puede contribuir a resolver el problema de la expresión diferencial.
+Dando continuidad al documento global, el presente capítulo aparece como una segunda iniciativa de implementación con datos reales; con el fin de establecer y consolidar la idea de muchas y diversas implementaciones de los métodos propuestos. El capítulo corresponde a una incursión en el área de la estadistica genómica, en particular el abordaje del problema de expresión diferencial en genes. Es pertinente aclarar que los métodos J-nubes y K-nubes no fueron diseñados en el ámbito teórico de la genómica, por lo que no son  métodos propios de estadística genómica; sin embargo, su aplicación puede contribuir a resolver el problema de la expresión diferencial.
 
-El proceso de expresión génica consiste en la manifestación de un gen o grupo de genes que se van a transcribir y traducir; a su vez, el análisis de la expresión génica se define como la determinación de patrones de genes expresados a nivel de la transcripción bajo circunstancias específicas o en células específicas [@Information]. Para el estudio de la expresión génica existen dos tecnologías: la secuenciación del RNA y el análisis de microarreglos, siendo este último el que presenta en la actualidad una cantidad mayor de propuestas de análisis, debido a que es más popular que la de secuenciación del RNA (RNAseq) [@Zhao2014].
+El análisis de expresión diferencial consiste en el uso de técnicas estadísticas con el fin de encontrar genes diferencialmente expresados. Un gen puede comportarse de diferentes maneras en diferentes situaciones; entre las características que pueden cambiar está el nivel de transcripción. Así, cuando existen cambios estadísticamente significativos en los niveles de transcripción de un gen debidos a circunstancias específicas se denomina diferencialmente expresado [@Herraez2012]. Mediante el análisis de microarreglos es posible medir los niveles de transcripción de un gen en dos o más condiciones distintas; así, en cada circunstancia se realizan varias mediciones y mediante pruebas de hipótesis se logra establecer si existen o no diferencias estadísticamente significativas debidas a estas condiciones [@Zhao2014].
 
-Dadas las caracteristicas de los datos que se obtienen en los experimentos de microarreglos se pueden presentar datos con ruido y outliers. Además la cercanía entre los genes pueden interferir en la identificación de los mismos y por ello representan un desafío a nivel estadistico y computacional al momento de aplicar metodologías para identificar genes expresados diferencialmente [@Jiang2004]. 
-
-Adicionalmente es posible aplicar metodologías de clustering que permitan entender las funciones de los genes, la regulación génica y los procesos celulares, además los genes que presenten patrones similares de expresión pueden ser agrupados junto con las funciones celulares que estos desempeñen [@Jiang2004]. 
-
-Así pues el propósito de este capítulo es abordar el problema de la expresión diferencial mediante el método J-nubes, comparando los resultados obtenidos con el método SAM (Significance Analysis of Microarrays) [@Chu2011] y haciendo uso de acde (Artificial Components Detection of Differentially Expressed Genes) [@Acosta2015] como visualización. Primero se explora el tema de clustering en datos genómicos, desarrollado en gran parte usando microarrays; luego se presentan los métodos, aclarando en detalle el ejercicio; una breve sección de resultados conduce a un análisis sucinto de los mismos.
-
-# Antecedentes
-
-## Microarreglos 
-
-El análisis de microarreglos es una técnica de biología molecular desarrollada en los años 90 que ha estado enfocada en el análisis de colecciones de datos genéticos y se ha utilizado para monitorear la expresión génica de miles de genes de forma paralela, utilizando matrices para análisis miles de transcritos génicos y dando la posibilidad de responder a una amplia gama de problemas biológicos, como la identificación de genes expresados diferencialmente entre tejidos enfermos y sanos, a evolución de la regulación génica y la respuesta a fármacos entre otros. Los experimentos aplicados con mayor frecuencia son microarreglos con cDNA (Copia de ADN) y los microarreglos de nucleótidos conocidos como oligochip [@Jiang2004][@Zhao2014].
-
-La técnica pretende medir el nivel de expresión del ADN por medio de la relación entre la señal de prueba de la muestra y la muestra control, que han sido previamente marcadas con un fluorocromo. Tanto la muestra como el control son marcados con fluorocromos y montados en un chip leído a través de una plataforma de microarreglos [@Jiang2004].
-
-Generalmente los experimentos de microarreglos cuentan con datos de 1000 a 10000 genes (pueden ser más, ya que los chips pueden ser diseñados) pero con un número de muestras usualmente menores a 100 [@Jiang2004].
-
-Entre las limitaciones de estas técnicas está el background de la hibridización, que limita la exactitud de las mediciones de expresión particularmente a los transcritos de baja frecuencia, los datos muchas veces son susceptibles al ruido dado que las mediciones dependen de la emisión de luz de las sondas marcadas y pueden generar de por sí falsos positivos. La identificación clara de outliers que son datos  obtenidos por respuesta experimental de los organismos a las condiciones expuestas se ve limitada por el ruido experimental de los datos [@Jiang2004][@Zhao2014]. 
-
-## Clustering en datos genéticos
-
-Existen tres modelos de clustering que han sido aplicados para el análisis de datos de microarrelgos, tales modelos como son [@Jiang2004]: 
-
-1. Clustering basado en genes, donde los genes son tratados como objetos mientras que las muestras (o condiciones) son tratadas como características y cada grupo corresponde a un fenotipo. 
-
-2. Clustering basado en la muestra: Las muestras son tratadas como objetos y los genes como características.
-
-3. Subespacio de clustering: Donde se toman los clusters formados por un subset de genes de una muestra, esto dado al principio biológico de que solo un grupo pequeño de genes participan en cualquier proceso celular de interés y se lleva a cabo por un subconjunto de muestras.
-
-## Medidas de proximidad.
-
-Entre las medidas de proximidad utilizadas para este tipo de análisis se encuentran: la distancia eclidiana, que presenta el inconveniente de que no puntúa bien los datos escalonados de expresión génica. El coeficiente de Pearson es el la medida más popular para el análisis de este tipo de datos pues ofrece una medición efectiva para los datos de expresión génica pero no es robusto con los outliers y puede generar falsos positivos cuando se asigna un puntaje de alta similariadad. Otra media es la correlación de Jackknife que elimina los outliers evitando la “dominación” pero implica la enumeración de diferentes combinaciones de características para luego eliminarlas, lo que hace que computacionalmente sea costo.  Finalmente esta la correlación de Sperman ya que no requiere una distribución Gaussiana y es muy robusta para trabajar los outliers pero presenta el inconveniente de la perdida de datos [@Jiang2004].   
-
-## Desafíos del clustering de genes. 
-
-La utilización de tecnicas de clustering para el analisis de expresión diferencial en datos obtenidos a partir de microarreglos son [@Jiang2004]:
-
-1. Los algoritmos a utilizar deben depender lo menos posible del conocimiento previo, para poder visualizar las estructuras de los datos y poder visualizar la distribución de los mismos.
-
-2. Los datos de microarreglos contienen mucho ruido, por lo tanto los algoritmos deben ser capaces de extraer información útil en esa condición.
-
-3. Los datos están altamente conectados entre sí,  por lo tanto los algoritmos deben ser capaces de manejar esta situación.
-
-4. A nivel biológico podría no ser de interés los clusters de los genes, pero sí la relación entre los clusters y la relación de los genes dentro del mismo clusters, por lo tanto los algoritmos deben ser capaces de particionar los datos sino que también de mostrar una estructura gráfica del cluster.
-
-## Análisis de expresión diferencial.
-
-El análisis de expresión diferencial consiste en el uso de técnicas estadísticas con el fin de encontrar genes diferencialmente expresados. Mediante las técnicas mencionadas es posible realizar mediciones de un gen en dos o más condiciones distintas, teniendo como objetivo establecer si estas mediciones presentan cambios estadísticamente significativos explicados por las distintas condiciones; un gen con cambios estadísticamente significativos en distintas condiciones se denomina diferencialmente expresado.
-
-En este sentido, es adecuado plantear una prueba de hipótesis de localización, con el fin de evaluar las diferencias mencionadas; cuya sensibilidad depende de la cantidad de mediciones que se realizan en cada condición. Sin embargo, usualmente los conjuntos de datos corresponden a la estructura anterior replicada en grandes cantidades de genes (diez, quince, veinte mil genes [@Jiang2004]).
+Para evaluar las diferencias estadísticas entre las mediciones de cada condición se suele plantear una prueba de hipótesis de localización; cuya sensibilidad depende de la cantidad de mediciones que se realizan en cada condición. En este sentido se habla de una prueba de hipótesis por cada gen evaluado; escenario que se complica al aumentar el número de genes en perjuicio de la potencia de las pruebas. Maxime si se tiene en cuenta que usualmente los conjuntos de datos corresponden a esta estructura replicada en grandes cantidades de genes (diez, quince, veinte mil genes [@Jiang2004]).
 
 En este panorama el uso de pruebas de hipótesis a nivel individual pierde vigencia; la estructura teórica del concepto de significancia debilita la realización pruebas de hipótesis en tales cantidades; pues, el aumento en el número de pruebas conduce al aumento del error tipo I, requiriendo correcciones como la de Bonferoni [@DUNN], y, en general, estimulando la creación de estrategias apropiadas para abordar el problema en toda su complejidad.
 
-Una de las propuestas más recientes en detección de genes diferencialmente expresados es el método SAM. A partir de un conjunto de genes de un experimento de mircroarreglos, el método calcula un $d_i$ para cada gen $i$, y mide la relación entre la expresión génica y la variable respuesta, iterando sobre permutaciones de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste $\delta$, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
+Una de las propuestas más recientes en detección de genes diferencialmente expresados es el método SAM. A partir de un conjunto de genes de un experimento de microarreglos, el método calcula un $d_i$ para cada gen $i$, y mide la relación entre la expresión génica y la variable respuesta, iterando sobre permutaciones de los datos para determinar si la expresión de un gen se relaciona significativamente con la respuesta; el punto de corte de la significancia está determinado por un parámetro de ajuste $\delta$, definido por el usuario en base a la tasa de falsos positivos [@Chu2011]. 
 
-Otra propuesta es acde  que provee un análisis multivariado para la detección de genes expresados diferencialmente. Esta utiliza componentes artificiales omo estadísticos de prueba para la detección de genes diferencialmente expresados facilitando la interpretación exacta en términos de expresión génica diferencial y controlando los FDR (false Discovery rate). Adicionalmente calcula los límites de confianza para iniciar el FDR y el uso de relaciones de inercia [@Acosta2015].
+Otra propuesta es el análisis de componentees artificiales acde [@Acosta2015] que provee un análisis multivariado para la detección de genes expresados diferencialmente. Esta utiliza componentes artificiales como estadísticos de prueba para la detección de genes diferencialmente expresados facilitando la interpretación exacta en términos de expresión génica diferencial y controlando los FDR (False Discovery Rate). Adicionalmente calcula los límites de confianza para iniciar el FDR y el uso de relaciones de inercia.
 
 # Materiales y métodos
 
@@ -103,14 +55,11 @@ data("phytophthora")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5, fig.height = 5)
+opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5.5, fig.height = 5)
 
 ```
 
-
-Gene expression data for 16 tomato plants (line IL6-2) in field conditions. 8 of these plants were inoculated with Phytophthora infestans, and the other 8 were mock-inoculated with sterile water. Leaf tissue samples from each replicate were taken at 12 hours before and 12, 36 and 60 hours after inoculation. We refer to 12 hours before inoculation as the h0 time point. Expression levels were obtained for 13440 genes.
-
-Los datos `phytophthora` contienen 4 matrices (`r names(phytophthora)`) de datos de expresión génica para 16 plantas de tomate (línea IL6-2) en condiciones de campo, publicados en la libreria ACDE [@Acosta2015]. 8 plantas fueron inoculadas con Phytophthora infestans y otras 8 fueron inoculadas con agua estéril. Se tomaron muestras de tejido foliar de cada réplica 12 horas antes de la inoculación y 12, 36 y 60 horas después de la inoculación. Se ha etiquetado la muestra tomada 12 horas antes de la inoculación como el punto de tiempo 0h. Los niveles de expresión fueron obtenidos para 13440 genes.
+Los datos _`Phytophthora`_ contienen 4 matrices (`r names(phytophthora)`) de datos de expresión génica para 16 plantas de tomate (línea IL6-2) en condiciones de campo, publicados en la libreria `acde` [@Acosta2015]. 8 plantas fueron inoculadas con Phytophthora infestans y otras 8 fueron inoculadas con agua estéril. Se tomaron muestras de tejido foliar de cada réplica 12 horas antes de la inoculación y 12, 36 y 60 horas después de la inoculación. Se ha etiquetado la muestra tomada 12 horas antes de la inoculación como el punto de tiempo 0h. Los niveles de expresión fueron obtenidos para 13440 genes.
 
 En este estudio se analizan únicamente los datos correspondientes a la última medición, 60 horas después de la inoculación.
 
@@ -137,12 +86,17 @@ Utilizando la prueba de Mann-Whitney-Whilcoxon es posible realizar todas las com
 # Resultados 
 
 ```{r}
-set.seed(34567)
+# set.seed(34567)
 Muestra <- phytophthora[[4]]
+id_gen <- as.character(rownames(Muestra))
 names_datos <- names(Muestra)
 des <- rep(c(1,2), each = 8)
-tamano <- 1000
-Muestra[sample(nrow(Muestra), tamano),] -> Muestra
+# tamano <- 1000
+# Muestra[sample(nrow(Muestra), tamano),] -> Muestra
+
+Muestra %>% as.list %>% split(des) %>% lapply(data.frame, id_gen, stringsAsFactors = FALSE) %>% lapply(melt, "id_gen") %>% Map(data.frame, ., condi = unique(des)) %>%  do.call(rbind, .) -> datos
+
+remove(phytophthora)
 
 ```
 
@@ -166,20 +120,22 @@ evaluated_ecdf <- function(categories, values){
   set_colnames(., ordenados)
 }
 
+# datos %>% mutate(gen_cond = paste(id_gen, condi, sep = "_")) %$% evaluated_ecdf(gen_cond, value) -> gen_ecdf
+
 ```
 
 Como se dijo, se analizan únicamente los datos correspondientes a la última inoculación. A continuación vemos en un diagrama de caja el comportamiento de los datos.
 
 ```{r, fig.height = 3.5, fig.width=8, echo = FALSE, include = TRUE}
   par(font=1, las = 1, mar = c(2, 6, 2, 2))
-boxplot(phytophthora[[4]], outline = FALSE, col="lightblue", cex.names = 0.2, 
-    cex.names = 0.2, axes = FALSE, border = "#225566", horizontal = TRUE)
+boxplot(Muestra, outline = FALSE, col= c(rep("lightblue", 8), rep("#ddaa99", 8)), cex.names = 0.2, 
+    cex.names = 0.2, axes = FALSE, border = c(rep("#225566", 8), rep("darkred", 8)), horizontal = TRUE)
   axis(2, at = 1:16, labels = names_datos)
   axis(1)
 
 ```
 
-Figura XTV: Mediciones realizadas en plantas infectadas y no infectadas.
+Figura XTV: Mediciones realizadas en plantas infectadas (rojo) y no infectadas (azul).
 
 En la gráfica se observan las distintas mediciones, se tienen 8 mediciones en plantas infectadas y otras 8 en plantas no infectadas.
 
@@ -239,10 +195,12 @@ Muestra_ac %>% ggplot +
 
 ```
 
+Figura XPG: Proyección de los genes sobre los componentes artificiales mostrando el resultado de Single Time Point Analysis.
+
 Las frecuencias relativas de expresión, inhibición y no expresión están dadas en la siguiente tabla:
 
-```{r}
-stpPI$dgenes %>% table %>% "/"(tamano) %>% setNames(c("Inhibidos", "No expresados", "Expresados")) %>% as.data.frame %>% kable
+```{r, include=TRUE}
+stpPI$dgenes %>% table %>% prop.table %>% setNames(c("Inhibidos", "No expresados", "Expresados")) %>% as.data.frame %>% kable
 
 ```
 
@@ -267,17 +225,17 @@ to_nubepuntos <- function(a){
 ```
 
 ```{r}
-# collapsa_nubes <- function(nube_list){
-#   
-#   sum(unlist(lapply(nube_list, nrow))) -> n_total
-#   lapply(nube_list, function(nube){
-#     nube$weight <- nube$weight*nrow(nube)/n_total
-#     nube}) -> .
-#   do.call(rbind, .) -> nubepuntos
-#     class(nubepuntos) <- c("data.frame", "nubepuntos")
-#   nubepuntos
-# 
-# }
+collapsa_nubes <- function(nube_list){
+
+  sum(unlist(lapply(nube_list, nrow))) -> n_total
+  lapply(nube_list, function(nube){
+    nube$weight <- nube$weight*nrow(nube)/n_total
+    nube}) -> .
+  do.call(rbind, .) -> nubepuntos
+    class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+
+}
 
 list_outer <- function(a,b, fun) {
   outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
@@ -301,6 +259,64 @@ D_def <- function(nube_0, nube_1){
 }
 
 ```
+
+```{r, eval=FALSE}
+k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbral = 0.1, iter_max = 100){
+  
+  if(is.null(grupos_iniciales)) {
+    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+    
+    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  } else{
+    split(lista_nubes, grupos_iniciales) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  antes <- 0
+  ahora <- 1000
+  iter_actual <- 0
+  while(abs(antes - ahora) > umbral & iter_actual < iter_max){
+    antes <- ahora
+    list_outer(centros, lista_nubes, D_def) -> dist_matriz
+    letters[apply(dist_matriz, 2, which.min)] -> grupos
+    sum(apply(dist_matriz, 2, min)) -> ahora
+    split(lista_nubes, grupos) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    iter_actual <- iter_actual + 1
+    print(ahora)
+  }
+  
+  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  
+}
+
+# lista_nubes <- nubes
+# n_grupos <- NULL
+# grupos_iniciales <- grupos_municipios
+# umbral <- 0.1
+# iter_max <- 10
+
+```
+
+```{r, eval=FALSE}
+  #K nubes
+datos %>% mutate(gen_cond = paste(id_gen, condi, sep = "_")) %$% split(value, gen_cond) %>% lapply(to_nubepuntos) -> nubes
+
+start.time <- Sys.time()
+k_clouds(nubes, n_grupos = n.clusters, iter_max = 2) -> K_nubes_genes
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
+
+save(K_nubes_genes, file = "K_nubes_genes.rda")
+
+```
+
+
+
+
+
 
 ```{r}
 list(cond_1 = 1:8, cond_2 = 9:16) %>% 
@@ -326,7 +342,7 @@ muestra_nueva %$% split(value, cond_gen) %>% lapply(to_nubepuntos) -> nubes
 
 ```
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 load(file = "gen_dis_matriz.rda")
 
 dis_matriz %>% hclust(method = "ward.D") -> tree
@@ -344,7 +360,7 @@ Figura XLS: Dendrograma de los genes arrojado por el algoritmo J-nubes.
 
 Es necesario corroborar que los grupos psoeen homogeneidad interna. Como criterio para esta tarea utiliza la pruba de Kruskal-Wallis en cada grupo con una significancia individual de $\alpha/k$, que en este caso es igual a `r 0.05/n.clusters` para completar una significancia de $\alpha = 0.05$ en el procedimiento general. La figura XPQ mestra el p valor obtenido en cada grupo.
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 muestra_nueva %$% split(value, cond_gen) -> totales
 
 list_for_kwtest <- split(totales, as.factor(grupos_genes))
@@ -362,10 +378,10 @@ Figura XPQ: Valores p de la prueba Kruskal-Wallis en cada uno de los grupos.
 
 Entonces, es posible afirmar que la partición obtenida está coonformada por clases internamente homogéneas. La figura XHG muestra la composición de los grupos. Llegado este punto, es necesario establecer el comportamiento entre grupos, detectando cuáles de ellos son estaditicamente distintos entre sí mediante la prueba de Mann-Whitney-Wilcoxon, aplicada a todas las posibles parejas; es decir $\binom{k}{2}$ veces.
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 grupos_genes %>% data.frame(grupo = ., cond_gen = names(.)) %>% merge(muestra_nueva) -> muestra_agrupada
 
-muestra_agrupada %>% ggplot + aes(x = as.factor(grupo), y = value) + geom_boxplot() + theme_minimal()
+muestra_agrupada %>% ggplot + aes(x = as.factor(grupo), y = value) + geom_boxplot() + theme_minimal() + labs(x = "Grupo", y = "")
 
 muestra_agrupada %$% split(value, grupo) -> agrupados
 
@@ -378,12 +394,12 @@ Figura XHG: boxplot de los grupos formados mediante el algoritmo J-nubes.
 
 Es en últimas mediante la prueba de Mann-Whitney-Wilcoxon que se realiza la comparción entre nubes de puntos correspondientes a genes en distintas condiciones. La figura XVB muesta los grupos que resultan distintos entre sí y los que no, con una significancia individual de $0.05/\binom{k}{2}$ que garantiza una significancia de $\alpha = 0.05$ en el procedimiento completo.
 
-```{r, fig.width=6, fig.height=3, include = TRUE}
+```{r, fig.width=6, fig.height=2.8, include = TRUE}
 parejas <- choose(n.clusters, 2)
 
 agrupados %>% list_auto(function(x,y){"[["(wilcox.test(x,y, exact = FALSE), "p.value")}) -> pvalues
 
-pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = factor(. < 0.05/parejas, labels = c("Iguales", "Diferentes"))) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal() + labs(x ="", y = "", fill = "Diferencias significativas") + theme(legend.position = "bottom") + coord_fixed()
+pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = factor(. < 0.05/parejas, labels = c("Iguales", "Diferentes"))) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal() + labs(x ="", y = "", fill = "") + theme(legend.position = "bottom") + coord_fixed()
 
 gen_p_value <- function(nombre_gen){
 muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_") %>% "["(muestra_agrupada,.,c("cond_gen", "grupo")) %>% unique %>% "[["("grupo") -> cuales
@@ -398,7 +414,7 @@ Figura XVB: Diferencias estadísticamente significativas entre los grupos.
 
 Entonces, para comparar datos de distintas condiciones asociados a un mismo gen basta establecer si estos se encuentran en grupos con diferencias estadísticamente significativas o no. De esta forma es posible construir el diagrama correspondiente a la figura XMQ, que muestra los genes expresados y los no expresados. Las proporciones correspondientes se encuentran en la tabla XKJ.
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 mutate(Muestra_ac, Res = resultado) %>% ggplot + aes(x = psi1, y = psi2, colour = factor(Res < 0.05/parejas, labels = c("Iguales", "Diferentes"))) + geom_point() + geom_hline(yintercept = 0) + 
   geom_vline(xintercept = 0) + 
   scale_color_discrete(name = "Expresión") +
@@ -427,7 +443,7 @@ data <- list(
   genenames = paste("g", as.character(1:nrow(Muestra)), sep = ""), 
   logged2 = TRUE)
 
-samr.obj<-samr(data, resp.type="Two class unpaired", nperms=100)
+samr.obj<-samr(data, resp.type="Two class unpaired", nperms=1000)
 
 ```
 
@@ -443,7 +459,7 @@ Figura XCR: Q-Q plot de los resultados del análisis SAM.
 
 Haciendo uso, de nuevo, de los componentes artificiales es posible visualizar los genes; clasificados en expresados y no expresados gracias a los p valores calculados mediante SAM en la figura XZZ.
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 sam_pvalues <- samr.pvalues.from.perms(samr.obj$tt, samr.obj$ttstar)
 
 Muestra_ac %>% 
@@ -471,16 +487,16 @@ Tabla XIY: Proporciones de expresión génica encontradas mediante SAM.
 
 Los p-valores encontrados mediante J-nubes y los encontrados mediante SAM presentan un coeficiente de correlación de `r cor(resultado,sam_pvalues)`; una correlación fuerte, positiva y estadísticamente significativa. La figura XMY ilustra la relación entre ambos.
 
-```{r, fig.width=8, fig.height=2.5, include = TRUE}
+```{r, fig.width=8, fig.height=2.8, include = TRUE}
 data.frame(J_nubes_p = resultado, SAM_p = sam_pvalues) %>% ggplot + aes(x = SAM_p, y = J_nubes_p) + stat_density2d(aes(alpha=..level.., fill = ..level..), geom="polygon", bins = 20) + ylim(-.5, 1.5) + theme_minimal() + labs(x="SAM: p-valores", y = "J-nubes: p-valores") + geom_point(size = 0.2) + theme(legend.position = "none") + geom_vline(xintercept = 0.05, colour = "#224455") + scale_fill_gradient(low = "#dddd00", high = "#dd0000")
 
 ```
 
-Figura XMY: Scaterplot de pvalores de ambas técnicas. Es necesario agregar estimaciones de densidad bivariada para visualizar el peso de las regiones, dado que los puntos se superponen. La línea vertical se ubica en un $\alpha = 0.5$ destacando que casi todos los genes diferencialmente expresados detectados por SAM fueron también detectados por J-nubes.
+Figura XMY: Scaterplot de pvalores de ambas técnicas. Es necesario agregar estimaciones de densidad bivariada para visualizar el peso de las regiones, dado que los puntos se superponen. La línea vertical se ubica en un $\alpha = 0.5$ destacando que todos los genes diferencialmente expresados detectados por SAM fueron también detectados por J-nubes.
 
 Resulta pertinente además realizar una tabla de contingencia de la expresión diferencial en ambos métodos.
 
-```{r}
+```{r, include=TRUE}
 table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table()
 
 ```
