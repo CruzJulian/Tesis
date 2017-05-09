@@ -12,8 +12,6 @@ output:
 bibliography: Biblio.bib
 ---
 
- - Cuadrar t-SNE
-
 ```{r setup, echo=FALSE, include=FALSE}
 # library("grid")
 library("magrittr")
@@ -32,7 +30,7 @@ library("RColorBrewer")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
 
 options(stringsAsFactors = TRUE)
 
@@ -361,11 +359,16 @@ load(file = "dis_matriz_2.rda")
 # head(dis_matriz_1, 20)
 # head(dis_matriz_2, 20)
 
+```
+
+```{r, eval = FALSE}
 library("tsne")
 
 tsne(dis_matriz_2) -> tsne_plot
 
 # plot(tsne_plot)
+
+save(tsne_plot, file = "tsne_plot.rda")
 
 ```
 
@@ -408,7 +411,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
   }
   
   antes <- 0
-  ahora <- 1000
+  minimo <- ahora <- 10000
   iter_actual <- 0
   while(abs(antes - ahora) > umbral & iter_actual < iter_max){
     antes <- ahora
@@ -417,10 +420,15 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
     sum(apply(dist_matriz, 2, min)) -> ahora
     split(lista_nubes, grupos) -> agrupados
     lapply(agrupados, collapsa_nubes) -> centros
+    if(ahora < minimo){
+      grupos_min <- grupos
+      centros_min <- centros
+      }
     iter_actual <- iter_actual + 1
+    print(ahora)
   }
   
-  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  data.frame(trt = names(lista_nubes), Grupo = grupos_min)
   
 }
 
@@ -435,7 +443,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
 ```{r, eval=FALSE}
   #K nubes
 start.time <- Sys.time()
- k_clouds(nubes, grupos_iniciales = grupos_municipios, iter_max = 6) -> K_nubes_municipios
+k_clouds(nubes, grupos_iniciales = grupos_municipios, umbral = 0, iter_max = 60) -> K_nubes_municipios
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
@@ -601,7 +609,9 @@ qplot(x = x, y = y, colour = grupo, size = N, data = RESULTADO) + labs(x = "e1",
 Figura PRP: ACP de los municipios.
 
 ```{r}
-tsne_plot %>% set_colnames(c("xx", "yy")) %>% cbind(RESULTADO) %>% ggplot + aes(x = xx, y = yy, colour = grupo) + geom_point() + theme_minimal()
+load("tsne_plot.rda")
+
+tsne_plot %>% set_colnames(c("xx", "yy")) %>% cbind(RESULTADO) %>% ggplot + aes(x = xx, y = yy, colour = grupo, size = N) + geom_point() + theme_minimal()
 
 ```
 
