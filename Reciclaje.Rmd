@@ -49,3 +49,54 @@ El supuesto de independencia no es necesario para este teorema, y esto es fácil
 Con esto en mente agrupar las funciones de densidad empíricas por su cercanía puede mostrar los comportamientos asintóticos de las nubes de puntos.
 
 
+
+
+# Introducción
+
+
+El proceso de expresión génica consiste en la manifestación de un gen o grupo de genes en sus procesos de transcripción y traducción; a su vez, el análisis de la expresión génica se define como la determinación de patrones de genes expresados a nivel de la transcripción bajo circunstancias específicas o en células específicas [@Herraez2012]. Para el estudio de la expresión génica existen dos tecnologías: la secuenciación del RNA y el análisis de microarreglos, siendo este último el que presenta en la actualidad una cantidad mayor de propuestas de análisis debido a que se trata de tecnología pionera en secuenciación del RNA (RNAseq) [@Zhao2014].
+
+Dadas las caracteristicas de los datos que se obtienen en los experimentos de microarreglos se pueden presentar datos con ruido y outliers. Además la cercanía entre los genes pueden interferir en la identificación de los mismos y por ello representan un desafío a nivel estadistico y computacional al momento de aplicar metodologías para identificar genes expresados diferencialmente [@Jiang2004]. 
+
+Adicionalmente es posible aplicar metodologías de clustering que permitan entender las funciones de los genes, la regulación génica y los procesos celulares, además los genes que presenten patrones similares de expresión pueden ser agrupados junto con las funciones celulares que estos desempeñen [@Jiang2004]. 
+
+Así pues el propósito de este capítulo es abordar el problema de la expresión diferencial mediante el método J-nubes, comparando los resultados obtenidos con el método SAM (Significance Analysis of Microarrays) [@Chu2011] y haciendo uso de acde (Artificial Components Detection of Differentially Expressed Genes) [@Acosta2015] como visualización. Primero se explora el tema de clustering en datos genómicos, desarrollado en gran parte usando microarrays; luego se presentan los métodos, aclarando en detalle el ejercicio; una breve sección de resultados conduce a un análisis sucinto de los mismos.
+
+# Antecedentes
+
+## Microarreglos 
+
+El análisis de microarreglos es una técnica de biología molecular desarrollada en los años 90 que ha estado enfocada en el análisis de colecciones de datos genéticos y se ha utilizado para monitorear la expresión génica de miles de genes de forma paralela, utilizando matrices para análisis miles de transcritos génicos y dando la posibilidad de responder a una amplia gama de problemas biológicos, como la identificación de genes expresados diferencialmente entre tejidos enfermos y sanos, a evolución de la regulación génica y la respuesta a fármacos entre otros. Los experimentos aplicados con mayor frecuencia son microarreglos con cDNA (Copia de ADN) y los microarreglos de nucleótidos conocidos como oligochip [@Jiang2004][@Zhao2014].
+
+La técnica pretende medir el nivel de expresión del ADN por medio de la relación entre la señal de prueba de la muestra y la muestra control, que han sido previamente marcadas con un fluorocromo. Tanto la muestra como el control son marcados con fluorocromos y montados en un chip leído a través de una plataforma de microarreglos [@Jiang2004].
+
+Generalmente los experimentos de microarreglos cuentan con datos de 1000 a 10000 genes (pueden ser más, ya que los chips pueden ser diseñados) pero con un número de muestras usualmente menores a 100 [@Jiang2004].
+
+Entre las limitaciones de estas técnicas está el background de la hibridización, que limita la exactitud de las mediciones de expresión particularmente a los transcritos de baja frecuencia, los datos muchas veces son susceptibles al ruido dado que las mediciones dependen de la emisión de luz de las sondas marcadas y pueden generar de por sí falsos positivos. La identificación clara de outliers que son datos  obtenidos por respuesta experimental de los organismos a las condiciones expuestas se ve limitada por el ruido experimental de los datos [@Jiang2004][@Zhao2014]. 
+
+## Clustering en datos genéticos
+
+Existen tres modelos de clustering que han sido aplicados para el análisis de datos de microarrelgos, tales modelos como son [@Jiang2004]: 
+
+1. Clustering basado en genes, donde los genes son tratados como objetos mientras que las muestras (o condiciones) son tratadas como características y cada grupo corresponde a un fenotipo. 
+
+2. Clustering basado en la muestra: Las muestras son tratadas como objetos y los genes como características.
+
+3. Subespacio de clustering: Donde se toman los clusters formados por un subset de genes de una muestra, esto dado al principio biológico de que solo un grupo pequeño de genes participan en cualquier proceso celular de interés y se lleva a cabo por un subconjunto de muestras.
+
+## Medidas de proximidad.
+
+Entre las medidas de proximidad utilizadas para este tipo de análisis se encuentran: la distancia eclidiana, que presenta el inconveniente de que no puntúa bien los datos escalonados de expresión génica. El coeficiente de Pearson es el la medida más popular para el análisis de este tipo de datos pues ofrece una medición efectiva para los datos de expresión génica pero no es robusto con los outliers y puede generar falsos positivos cuando se asigna un puntaje de alta similariadad. Otra media es la correlación de Jackknife que elimina los outliers evitando la “dominación” pero implica la enumeración de diferentes combinaciones de características para luego eliminarlas, lo que hace que computacionalmente sea costo.  Finalmente esta la correlación de Sperman ya que no requiere una distribución Gaussiana y es muy robusta para trabajar los outliers pero presenta el inconveniente de la perdida de datos [@Jiang2004].   
+
+## Desafíos del clustering de genes. 
+
+La utilización de tecnicas de clustering para el analisis de expresión diferencial en datos obtenidos a partir de microarreglos son [@Jiang2004]:
+
+1. Los algoritmos a utilizar deben depender lo menos posible del conocimiento previo, para poder visualizar las estructuras de los datos y poder visualizar la distribución de los mismos.
+
+2. Los datos de microarreglos contienen mucho ruido, por lo tanto los algoritmos deben ser capaces de extraer información útil en esa condición.
+
+3. Los datos están altamente conectados entre sí,  por lo tanto los algoritmos deben ser capaces de manejar esta situación.
+
+4. A nivel biológico podría no ser de interés los clusters de los genes, pero sí la relación entre los clusters y la relación de los genes dentro del mismo clusters, por lo tanto los algoritmos deben ser capaces de particionar los datos sino que también de mostrar una estructura gráfica del cluster.
+
