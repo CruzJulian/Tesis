@@ -1,15 +1,14 @@
 ---
 title: "Métodos y resultados"
 author: "Julian Cruz"
-output: 
-  pdf_document:
-    keep_tex: true
-    toc: false
-    number_sections: true
-bibliography: Biblio.bib
 csl: apa.csl
+output:
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
 linkcolor: blue
-
+bibliography: Biblio.bib
 ---
 
  - Fundamentar el ACP: Por qué y cómo se hace un ACP a las funciones empíricas?
@@ -98,7 +97,7 @@ dist_nubes <- function(nube_0, nube_1){
 
 ```
 
-```{r, fig.height=3, fig.width=3}
+```{r, fig.height=3, fig.width=3.3}
 set.seed(2345)
 to_nubepuntos(rnorm(10)) -> n1_peque
 to_nubepuntos(rnorm(10)) -> n2_peque
@@ -146,7 +145,7 @@ Si la semidistancia definida refleja características de tamaño en vez de carac
 
 ## Convergencia
 
-El estudio de montecarlo respecto a la convergencia de la nube de puntos mide la incidencia del tamaño en la distancia $L^2$ entre nubes de puntos. Se realiza de la siguiente manera:
+El estudio de Monte Carlo respecto a la convergencia de la nube de puntos mide la incidencia del tamaño en la distancia $L^2$ entre nubes de puntos. Se realiza de la siguiente manera:
 
  - Para la distribución normal estándar.
  - Generar diez mil nubes de puntos: Cien de tamaño 1, cien de tamaño 2, ... cien de tamaño cien.
@@ -156,7 +155,7 @@ El estudio de montecarlo respecto a la convergencia de la nube de puntos mide la
  - Graficar las distancias meias por tamaño y ajustar una curva opcional.
  - Hacer lo mismo para la distribución uniforme.
 
-```{r, fig.height = 3, fig.width = 3}
+```{r, fig.height = 3, fig.width = 3.3}
 lapply(1:100, function(x){
   1:100 %>% lapply(function(y){rnorm(n = x, mean = 0, sd = 1)}) %>% lapply(to_nubepuntos)
   }) -> nubes1
@@ -298,7 +297,7 @@ lapply(
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
 dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
@@ -306,42 +305,40 @@ Figura HRR: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = 1$. Esta es la v
 
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
 Figura HRJ: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$. Visualización de la matriz de distancias corrigiendo por la suma de los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
 Figura HRV: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$. Visualización de la matriz de distancias corrigiendo por el máximo entre los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
 Figura HRQ: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$. Visualización de la matriz de distancias corregida la suma de los tamaños al cuadrado. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
 Figura HRL: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$. Visualización de la matriz de distancias corregida mediante el mínimo de los tamaños. Los valores altos, que se encontraban en un principio asociados a tamaños bajos ahora se relacionan con tamaños altos. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "")
-
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
 
 ```
 
@@ -354,6 +351,7 @@ Que se presenta para datos normales:
 
 ```{r}
 dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.normal) ~ log(min_12) + log(max_12), data = .) %>% summary
+
 ```
 
 Y para datos uniformes:
@@ -362,7 +360,7 @@ Y para datos uniformes:
 dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.uniforme) ~ log(min_12) + log(max_12), data = .) %>% summary
 ```
 
-Ambos modelos ratifican la cercanía de $\beta_1$ a $\frac{-1}{2}$ además de la posibilidad de pasar por alto una corrección con respecto al máximo. En este sentido la distancia a usar queda definida así:
+Ambos modelos ratifican la cercanía de $\beta_1$ a $\frac{-1}{2}$ además de la posibilidad de pasar por alto una corrección con respecto al máximo. En este sentido la distancia a usar queda definida así:^[Bueno, acá es donde toca explicar la cosa]
 
 ## Criterio de Cramer-von Misses generalizado controlado por tamaño entre
 nubes de puntos
@@ -377,7 +375,7 @@ Como ya se mencionó, $\mathtt{d}$ no es una distancia: nubes de puntos equivale
 
 La estructura de similitud entre objetos permite la aplicación de algoritmos de agrupación basados en distancias, semidistancias y criterios de similitud. Haciendo uso del criterio definido se estructuran algoritmos de agrupación entre nubes de puntos: J-nubes, que hace referencia a algoritmos de agrupación jerárquica y K-nubes, basado en K-means. Ambos algoritmos deberían agrupar las nubes de puntos de acuerdo a similitudes en su medida de probabilidad empírica, reflejando estructuras distribucionales más que características paramétricas.
 
-En esta sección se presenta un estudio de montecarlo comparativo que muestra resultados de los métodos propuestos J-nubes y K-nubes en paralelo con abordajes más tradicionales como las prueba de Duncan y LSD de Fisher. Para tal fin se simulan 200 datos para 20 tratamientos con distribución $N(\mu_i, \sigma_i)$ según la tabla~\ref{T3}.
+En esta sección se presenta un estudio de Monte Carlo comparativo que muestra resultados de los métodos propuestos J-nubes y K-nubes en paralelo con abordajes más tradicionales como las prueba de Duncan y LSD de Fisher. Para tal fin se simulan 200 datos para 20 tratamientos con distribución $N(\mu_i, \sigma_i)$ según la tabla~\ref{T3}.
 
 \begin{table}[htb!]
 \centering
