@@ -13,6 +13,7 @@ linkcolor: blue
 
  - Métodos estadísticos sobre grandes conjuntos de datos
  - insights sobre el ejercicio investigativo
+    - Visualización permanente
     - Política de datos
     - Uso de github
     - incrustacion con los avances a nivel local.
