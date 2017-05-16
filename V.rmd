@@ -55,7 +55,7 @@ data("phytophthora")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5.5, fig.height = 5)
+opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5.5, fig.height = 5.1)
 
 ```
 
@@ -91,16 +91,16 @@ Muestra <- phytophthora[[4]]
 id_gen <- as.character(rownames(Muestra))
 names_datos <- names(Muestra)
 des <- rep(c(1,2), each = 8)
-# tamano <- 1000
+tamano <- 1000
 # Muestra[sample(nrow(Muestra), tamano),] -> Muestra
 
-Muestra %>% as.list %>% split(des) %>% lapply(data.frame, id_gen, stringsAsFactors = FALSE) %>% lapply(melt, "id_gen") %>% Map(data.frame, ., condi = unique(des)) %>%  do.call(rbind, .) -> datos
+Muestra %>% as.list %>% split(des) %>% lapply(data.frame, id_gen, stringsAsFactors = FALSE) %>% lapply(melt, "id_gen") %>% Map(data.frame, ., condi = unique(des)) %>%  do.call(rbind, .) %>% mutate(gen_cond = paste(id_gen, condi, sep = "_")) -> datos
 
 remove(phytophthora)
 
 ```
 
-El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. Por facilidad computacional se selecciona una muestra de tamaño `r tamano`. Todos los análisis se realizan sobre esta.
+El conjunto de datos tiene `r nrow(phytophthora[[4]])` elementos. El procedimiento consiste en la aplicación de J-nubes a una muestra de tamaño `r tamano`; que permite extraer los centroides iniciales. Estos se introducen en el algoritmo K-nubes, que realiza la clasificación completa.
 
 ```{r}
 evaluated_ecdf <- function(categories, values){
@@ -261,13 +261,16 @@ D_def <- function(nube_0, nube_1){
 ```
 
 ```{r, eval=FALSE}
-k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbral = 0.1, iter_max = 100){
+k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, centros_iniciales = NULL, umbral = 0.1, iter_max = 100){
   
   if(is.null(grupos_iniciales)) {
-    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
-    
-    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
-  } else{
+    if(is.null(centros_iniciales)){
+      sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+      centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+    } else {
+      centros <- centros_iniciales
+    }
+  }else{
     split(lista_nubes, grupos_iniciales) -> agrupados
     lapply(agrupados, collapsa_nubes) -> centros
     
@@ -299,53 +302,31 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbr
 
 ```
 
-```{r, eval=FALSE}
-  #K nubes
-datos %>% mutate(gen_cond = paste(id_gen, condi, sep = "_")) %$% split(value, gen_cond) %>% lapply(to_nubepuntos) -> nubes
+```{r}
+datos %$% split(value, gen_cond) %>% lapply(to_nubepuntos) -> nubes
 
+nubes %>% length %>% sample(tamano) %>% "["(nubes, .) -> muestra_nubes
+
+```
+
+
+```{r, eval = FALSE}
 start.time <- Sys.time()
-k_clouds(nubes, n_grupos = n.clusters, iter_max = 2) -> K_nubes_genes
+muestra_nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-save(K_nubes_genes, file = "K_nubes_genes.rda")
+save(dis_matriz, file = "gen_dis_matriz.rda")
 
 ```
 
 
-
-
-
-
-```{r}
-list(cond_1 = 1:8, cond_2 = 9:16) %>% 
-  lapply(
-    function(cual){
-      "["(Muestra, cual) -> x
-      setNames(x, letters[1:8]) -> x
-      mutate(x, gen = rownames(x))
-      }) %>% Map(data.frame, ., cond = c("cond_1", "cond_2"), stringsAsFactors = FALSE) %>% do.call(rbind, .) %>% melt(c("cond", "gen")) %>% mutate(cond_gen = paste(cond, gen, sep = "_")) -> muestra_nueva
-
-muestra_nueva %$% split(value, cond_gen) %>% lapply(to_nubepuntos) -> nubes
-
-```
-
-```{r, eval = FALSE}
-# start.time <- Sys.time()
-# nubes %>% list_auto(D_def) %>% as.dist -> dis_matriz
-# end.time <- Sys.time()
-# time.taken <- end.time - start.time
-# time.taken
-
-# save(dis_matriz, file = "gen_dis_matriz.rda")
-
-```
-
-```{r, fig.width=8, fig.height=2.8, include = TRUE}
+```{r, include = TRUE}
 load(file = "gen_dis_matriz.rda")
 
 dis_matriz %>% hclust(method = "ward.D") -> tree
+
 
 # plot(tree)
 
@@ -358,15 +339,48 @@ tree %>% cutree(n.clusters) -> grupos_genes
 
 Figura XLS: Dendrograma de los genes arrojado por el algoritmo J-nubes.
 
+```{r, eval=FALSE}
+  #K nubes
+
+# start.time <- Sys.time()
+# k_clouds(muestra_nubes, n_grupos = n.clusters, umbral = 0, iter_max = 50) -> K_nubes_genes
+# end.time <- Sys.time()
+# time.taken <- end.time - start.time
+# time.taken
+
+muestra_nubes %>% split(grupos_genes) %>% lapply(collapsa_nubes) -> centros_ini
+
+# nubes %>% length %>% sample(500) %>% "["(nubes, .) -> muestra_nubes
+
+start.time <- Sys.time()
+k_clouds(nubes, n_grupos = n.clusters, centros_iniciales = centros_ini, umbral = 0, iter_max = 5) -> K_nubes_genes
+end.time <- Sys.time()
+time.taken <- end.time - start.time
+time.taken
+
+save(K_nubes_genes, file = "K_nubes_genes.rda")
+
+```
+
+
+```{r}
+load("K_nubes_genes.rda")
+
+K_nubes_genes %$% as.character(Grupo) -> grupos_genes
+
+```
+
+
 Es necesario corroborar que los grupos psoeen homogeneidad interna. Como criterio para esta tarea utiliza la pruba de Kruskal-Wallis en cada grupo con una significancia individual de $\alpha/k$, que en este caso es igual a `r 0.05/n.clusters` para completar una significancia de $\alpha = 0.05$ en el procedimiento general. La figura XPQ mestra el p valor obtenido en cada grupo.
 
 ```{r, fig.width=8, fig.height=2.8, include = TRUE}
-muestra_nueva %$% split(value, cond_gen) -> totales
+nubes %>% lapply("[[", "value") -> totales
+# muestra_nubes %>% lapply("[[", "value") -> totales
 
 list_for_kwtest <- split(totales, as.factor(grupos_genes))
 
 lapply(X = list_for_kwtest, FUN = function(x){ifelse(length(x) == 1,1,kruskal.test(x)$p.value)}) %>% 
-  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = reorder(as.factor(rownames(.)), as.numeric(rownames(.)), mean)) -> kwtest_pvalues
+  unlist %>% data.frame %>% setNames("P_value") %>% mutate(grupo = rownames(.)) -> kwtest_pvalues
 
 kwtest_pvalues %>% ggplot + aes(x = grupo, y = P_value) +
   geom_bar(stat = "identity") + 
@@ -379,11 +393,11 @@ Figura XPQ: Valores p de la prueba Kruskal-Wallis en cada uno de los grupos.
 Entonces, es posible afirmar que la partición obtenida está coonformada por clases internamente homogéneas. La figura XHG muestra la composición de los grupos. Llegado este punto, es necesario establecer el comportamiento entre grupos, detectando cuáles de ellos son estaditicamente distintos entre sí mediante la prueba de Mann-Whitney-Wilcoxon, aplicada a todas las posibles parejas; es decir $\binom{k}{2}$ veces.
 
 ```{r, fig.width=8, fig.height=2.8, include = TRUE}
-grupos_genes %>% data.frame(grupo = ., cond_gen = names(.)) %>% merge(muestra_nueva) -> muestra_agrupada
+merge(datos, K_nubes_genes, by.x = "gen_cond", by.y = "trt") -> muestra_agrupada
 
-muestra_agrupada %>% ggplot + aes(x = as.factor(grupo), y = value) + geom_boxplot() + theme_minimal() + labs(x = "Grupo", y = "")
+muestra_agrupada %>% ggplot + aes(x = Grupo, y = value) + geom_boxplot() + theme_minimal() + labs(x = "Grupo", y = "")
 
-muestra_agrupada %$% split(value, grupo) -> agrupados
+muestra_agrupada %$% split(value, Grupo) -> agrupados
 
 # boxplot(agrupados)
 
@@ -402,7 +416,7 @@ agrupados %>% list_auto(function(x,y){"[["(wilcox.test(x,y, exact = FALSE), "p.v
 pvalues %>% as.vector %>% data.frame(expand.grid(1:nrow(pvalues),1:nrow(pvalues))) %>% mutate(valor = factor(. < 0.05/parejas, labels = c("Iguales", "Diferentes"))) %>% ggplot + aes(x = Var1, y = Var2, fill = valor) + geom_raster() + theme_minimal() + labs(x ="", y = "", fill = "") + theme(legend.position = "bottom") + coord_fixed()
 
 gen_p_value <- function(nombre_gen){
-muestra_agrupada$cond_gen %in% paste(c("cond_1", "cond_2"), nombre_gen, sep = "_") %>% "["(muestra_agrupada,.,c("cond_gen", "grupo")) %>% unique %>% "[["("grupo") -> cuales
+muestra_agrupada$gen_cond %in% paste(nombre_gen, 1:2, sep = "_") %>% "["(muestra_agrupada,.,c("gen_cond", "Grupo")) %>% unique %>% "[["("Grupo") -> cuales
 "["(pvalues, cuales[1], cuales[2])
 } 
 
@@ -488,7 +502,7 @@ Tabla XIY: Proporciones de expresión génica encontradas mediante SAM.
 Los p-valores encontrados mediante J-nubes y los encontrados mediante SAM presentan un coeficiente de correlación de `r cor(resultado,sam_pvalues)`; una correlación fuerte, positiva y estadísticamente significativa. La figura XMY ilustra la relación entre ambos.
 
 ```{r, fig.width=8, fig.height=2.8, include = TRUE}
-data.frame(J_nubes_p = resultado, SAM_p = sam_pvalues) %>% ggplot + aes(x = SAM_p, y = J_nubes_p) + stat_density2d(aes(alpha=..level.., fill = ..level..), geom="polygon", bins = 20) + ylim(-.5, 1.5) + theme_minimal() + labs(x="SAM: p-valores", y = "J-nubes: p-valores") + geom_point(size = 0.2) + theme(legend.position = "none") + geom_vline(xintercept = 0.05, colour = "#224455") + scale_fill_gradient(low = "#dddd00", high = "#dd0000")
+data.frame(J_nubes_p = resultado, SAM_p = sam_pvalues) %>% ggplot + aes(x = SAM_p, y = J_nubes_p) + stat_density2d(aes(alpha=..level.., fill = ..level..), geom="polygon", bins = 20) + ylim(-.5, 1.5) + theme_minimal() + labs(x="SAM: p-valores", y = "K-nubes: p-valores") + geom_point(size = 0.2) + theme(legend.position = "none") + geom_vline(xintercept = 0.05, colour = "#224455") + scale_fill_gradient(low = "#dddd00", high = "#dd0000")
 
 ```
 
@@ -497,7 +511,7 @@ Figura XMY: Scaterplot de pvalores de ambas técnicas. Es necesario agregar esti
 Resulta pertinente además realizar una tabla de contingencia de la expresión diferencial en ambos métodos.
 
 ```{r, include=TRUE}
-table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table()
+table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table() %>% as.data.frame() %>% mutate(Freq = percent(Freq)) %>% kable
 
 ```
 
