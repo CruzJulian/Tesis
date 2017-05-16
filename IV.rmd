@@ -3,8 +3,6 @@ title: 'Aplicación: Saber 11'
 csl: apa.csl
 linkcolor: blue
 output:
-  html_document:
-    toc: yes
   pdf_document:
     keep_tex: yes
     number_sections: yes
