@@ -5,6 +5,29 @@ date: "15 de abril de 2017"
 output: html_document
 ---
 
+Dado que la restricción $\textbf{S} |_n$ genera una partición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
+
+Adicionalmente, la definición propuesta de nebulosa hace posible establecer una medida sobre $\textbf{S} |_{\mu} = \bigcup\limits_{n = 1}^\infty \textbf{S} |_{\mu,n}$:
+
+\begin{align}
+P^*: &\bigcup\limits_{n=0}^\infty \mathcal{B}^n \longrightarrow \mathbb{R}\\
+&S \mapsto P^*(S) = \sum\limits_{i=1}^\infty \mu(\{i\})P^n(S\cap \textbf{S} |_n) 
+\end{align}
+
+Como corolario, resulta fácil demostrar que $P^*(\textbf{S} |_{\mu,n}) = \mu(\{n\})$.
+
+Como es de esperarse, una función medible $f$ de $(\textbf{S} |_\mu, \sigma(P^*), P^*)$ en un espacio de Banach $\Omega'$ tiene integral $\int f dP^*$. Como consecuencia de los enunciados anteriores es posible representar esta integral como la suma de los valores esperados de sus restricciones de tamaño $n$, $f|_n$. Es decir, $\int f dP^* = \sum_{n=1}^\infty \mu(\{n\}) \int f|_n dP^n$.
+
+Dada una función medible $f$ de $(\Omega, \mathcal{B}, P)$ en un espacio de Banach $\Omega'$ el valor esperado de su proyección $i$-ésima está dado por:
+
+\begin{gather}
+\int\limits_{\textbf{S} |_{\mu}} f \circ X_i dP^* = \sum\limits_{n = i}^\infty \mu(\{n\}) \int\limits_{\textbf{S} |_{\mu, n}} f \circ X_i dP^n = \mu(\mathbb{N}) \int f dP
+\end{gather}
+
+A modo de corolario, el valor esperado del centroide de una nube de puntos coincide con el valor esperado de la medida de probabilidad del espacio de Banach de medida donde toma valores. 
+
+Por otra parte, dada una función medible $f: (\Omega, \mathcal{B}, P) \rightarrow \Omega'$. $\dddot{E}(f\circ s) = \sum_{i=1}^{n_s} p(\{i\})f(s(i))$ y  $E(\dddot{E}|_n \circ f) = \int f dP$. Esto se demuestra fácilmente viendo que $f\circ s$ es una nube de puntos sobre $\Omega'$, lo cual sitúa el problema en el contexto inmediatamente anterior.
+
 
 ## Discusión
 
