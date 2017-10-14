@@ -1,0 +1,181 @@
+---
+title: "Aplicación de algoritmos de agrupamiento a funciones empíricas de densidad acumulada"
+author: "CruzJulian"
+date: "1 de septiembre de 2017"
+output: beamer_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Introducción
+
+##
+
+``En 2007, la humanidad pudo almacenar $2,9 \times 10^{20}$ bytes óptimamente comprimidos, comunicar casi $2 \times 10^{21}$ bytes y llevar a cabo $6.4 \times 10^{18}$ instrucciones por segundo en equipos de uso general.'' \cite{Hilbert60}
+
+##
+
+La ley de Moore, vigente desde su formulación en 1965, expresa que aproximadamente cada dos años se duplica el número de transistores en un
+microprocesador \cite{Moore65}
+
+##
+
+Aren’t we Data Science?
+Column of ASA President Marie Davidian in AmStat News, July, 2013
+
+# Antecedentes
+
+## Problema
+
+![Caso bivariado cuanti-cualitativo](/home/julian/Documentos/Tesis/Sustentacion_img/Fig_01.png)
+
+## Diseño de experimentos
+
+ - ANOVA, MANOVA, MANCOVA
+ - Kruskal Walis
+ - Friedman
+ - Pruebas de comparaciones múltiples
+
+## Diseño de experimentos
+
+ - El tamaño muestral crecce y los p-valores disminuyen.
+ - La cantidad de categorías aumenta y las hipótesis carecen de sentido.
+ - Las pruebas de comparaciones mútiples pierden sensibilidad ante muchas categorías
+
+## Minería de datos
+
+## Minería de datos
+
+ - EP-means
+
+## Herramientas
+
+ - Análisis de Componentes Principales
+ - t-SNE
+ - Distancias
+ - Métodos de agrupación
+
+## Diseño de una propuesta: Requerimientos
+
+El método propuesto debe ser:
+
+ - Libre de distribución: Atar un método a unos supuestos distribucionales supedita su uso a la creación de herramientas para la confirmación de estos supuestos.
+
+ - Robusto frente a la cantidad de datos: Un método diseñado para grandes cantidades de datos no puede tener restricciones en este sentido. 
+
+ - Robusto frente a la cantidad de categorías: Un método diseñado para grandes cantidades de datos debe soportar variables categóricas de muchas categorías.
+
+ - Multivariado: La variable de interés no siempre es univariada, el método debe ser general y abordar casos de datos multivariados.
+
+ - De carácter inferencial: Debe poder imputar las conclusiones tomadas de los datos a la población de donde fueron tomados.
+
+## Diseño de una propuesta: Determinantes
+
+El método propuesto puede ser
+
+ - De fácil visualización: El diseño e implementación de herramientas visuales facilita la comprensión e interpretación de cualquier resultado.
+
+ - Generalizado: Es preferible un método generalizado habilitado para el tratamiento de datos univariados, multivariados y funcionales.
+
+ - Implementado: En lo posible obtener la implementación en software del método propuesto, esta implementación debe estar orientada hacia código abierto.
+
+# Fundamentos
+
+## Modeo teórico de nubes de puntos
+
+ - Definiciones iniciales.
+ - Propiedades.
+ - Teoremas.
+ - Distancias.
+
+# J-Nubes y K-Nubes
+
+## Distancia
+
+La distancia Earth Mover's depende del tamaño muestral, lo que genera un problema en el algoritmo EP-Means. Al respecto se construye una propuesta de criterio de proximidad.
+
+$$\mathtt{d}(s_1, s_2) =  \min\left(\sqrt{\min(n_{s_1}, n_{s_2})\int(f_{s_1} - f_{s_2})^2 d\lambda}, \sqrt{\int(f_{s_1} - f_{s_2})^2 d\lambda} + 1\right)$$
+
+## Métodos de agrupación
+
+Se establecen dos aproximaciones basadas en distancias para agrupar las nubes de puntos.
+
+**J-Nubes:** Que efetúa un clustering jerárquico mediante el método de la unión óptima de subconjuntos de Ward.
+
+**K-Nubes:** Que corresponde a la implementación de un algoritmo $K$-means sobre el conjunto de nubes de puntos.
+
+# Aplicación
+
+## Discusión
+
+## Conclusiones
+
+Mediante el trabajo de investigación fue posible realizar una exploración de base teórica sobre las posibles soluciones del problema en cuestión, analizando los enfoques de diseño de experimentos y minería de datos y, en la medida de lo posible, proponiendo soluciones o herramientas que superen o igualen en desempeño a las actuales.
+
+## Conclusiones
+
+ - Se estableció un trasfondo teórico mediante la formalización matemática del concepto de nubes de puntos y sus propiedades (dimensión, orden y equivalencia).
+ - El análisis las propuestas actuales a la luz del fundamento teórico permitió establecer necesidades específicas que, convertidas en un sistema de requerimientos y determinantes, orientaron el diseño y construcción de herramientas nuevas.
+ - Estas herramientas fueron evaluadas mediante un estudio de simulación, comparando el enfoque de minería de datos con el de diseño de experimentos.
+ - Los métodos propuestos fueron implementados y aplicados en dos conjuntos de datos reales, obteniendo resultados muy satisfactorios.
+ - El software desarrollado y la programación correspondiente a los métodos propuestos se encuentra en el repositorio de la tesis, no hay áun un paquete en R para estos métodos.
+
+## Trabajo futuro
+
+Como ya se ha mencionado el estudio ha generado más incógnitas de las que ha solucionado. La sección de trabajo futuro las recoge y enumera para facilitar a los investigadores interesados en las áreas de minería de datos y nubes de puntos proseguir con la tarea de construir cada vez mejores métodos.
+
+## Trabajo futuro
+
+En lo concerniente al fundamento teórico se propone:
+
+ - Profundizar y establecer la mayor cantidad de propiedades matemáticas de las nubes de puntos.
+ - Mejorar el abordaje que este enfoque realiza a los datos categóricos.
+ - Establecer los alcances y las implicaciones en términos de datos funcionales.
+ - Introducir y recrear otros conceptos propios de las ciencias estadísticas.
+
+## Trabajo futuro
+
+
+En lo que respecta a la definición y uso de distancias entre nubes de puntos e propone:
+
+
+ - Realizar un estudio comparativo implementando diversas distancias.
+ - Establecer las consecuencias que tiene la corrección por tamaño practicada a la semidistancia entre nubes de puntos mostrada. ¿Realmente robustece el proceso? ¿Cuánto?
+ - Estudiar la necesidad de correcciones por tamaño similares o distintas por parte de otras semidistancias entre nubes de puntos.
+
+## Trabajo futuro
+
+
+En lo que toca a los métodos de agrupación se propone:
+
+
+ - Realizar un estudio que evalúe y compare varios métdos de agrupación
+ - Establecer si aumentando o disminuyendo el número de grupos estos se hacen más o menos homogéneos.
+ - Estudiar la convergencia del método J-nubes.
+
+## Trabajo futuro
+
+En otros tópicos se propone:
+
+
+ - Implementar la versión mutivariada de los métodos propuestos.
+ - Verificar la existencia de autocorrelación espacial en la estratificación de los municipios escapa a los objetivos.
+ - Explorar la posibilidad de realizar un modelo para cada uno de los conglomerados obtenidos en vez de un modelo general (microestadística) y estudiar sus consecuencias en estimación de áreas pequeñas.
+ - Realizar una implementación donde la metodología propuesta evalúe de forma diferenciada más de dos condiciones en cada gen.
+
+## Trabajo futuro
+
+ - Estructurar una propuesta donde las mediciones realizadas en cada gen sean de tipo multivariado.
+ - Disponer un estadístico de falsos descubiertos para la implementación en datos genéticos.
+ - Efectuar un análisis más profundo para determinar si realmente se trata de genes expresados no detectados ppor SAM o de falsos positivos encontrados a causa de la implementación realizada.
+ - Examinar si cambios en el número de grupos generan cambios en la cantidad de genes detectados.
+ 
+##
+
+Gracias
+
+
+
+
