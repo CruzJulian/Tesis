@@ -28,7 +28,7 @@ library("RColorBrewer")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = FALSE)
+opts_chunk$set(echo = FALSE, include = TRUE, eval = TRUE, cache = TRUE)
 
 options(stringsAsFactors = TRUE)
 
@@ -609,7 +609,7 @@ Figura PRP: ACP de los municipios.
 ```{r}
 load("tsne_plot.rda")
 
-tsne_plot %>% set_colnames(c("xx", "yy")) %>% cbind(RESULTADO) %>% ggplot + aes(x = xx, y = yy, colour = grupo, size = N) + geom_point() + theme_minimal()
+tsne_plot %>% set_colnames(c("xx", "yy")) %>% cbind(RESULTADO) %>% ggplot + aes(x = xx, y = yy, colour = grupo, size = N) + geom_point() + theme_void() + labs(x = "", y = "")
 
 ```
 

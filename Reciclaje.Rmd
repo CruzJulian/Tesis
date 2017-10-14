@@ -4,6 +4,13 @@ author: "CruzJulian"
 date: "15 de abril de 2017"
 output: html_document
 ---
+De manera metarfórica es posible construir un discurso en donde la
+información está ordenada en forma de capas o sustratos siendo el primer
+sustrato el de los individuos, donde se ha tomado las mediciones
+primarias; una segunda capa concerniente a comunidades, clanes o nubes,
+conformadas por los individuos; y una última capa formada por la
+información global procesada referente a toda la muestra y en el caso
+inferencial, a toda la población.
 
 Dado que la restricción $\textbf{S} |_n$ genera una partición sobre $\textbf{S}$ es posible extender $X_i$ a todo $\textbf{S}$ teniendo en cuenta que $X_i(s)$ no está definido cuando $i > n_s$.
 

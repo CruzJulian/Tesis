@@ -362,8 +362,7 @@ dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 
 
 Ambos modelos ratifican la cercanía de $\beta_1$ a $\frac{-1}{2}$ además de la posibilidad de pasar por alto una corrección con respecto al máximo. En este sentido la distancia a usar queda definida así:^[Bueno, acá es donde toca explicar la cosa]
 
-## Criterio de Cramer-von Misses generalizado controlado por tamaño entre
-nubes de puntos
+## Criterio de Cramer-von Misses generalizado controlado por tamaño entre nubes de puntos
 
 Sean $(\Omega, \mathcal{B})$. Dadas dos nubes de puntos $s_1$ y $s_2$, con sus medidas de probabilidad empírica $P_{s_1}$ y $P_{s_2}$ y sus funciones de densidad general empírica $f_{s_1}$ y $f_{s_2}$ y tamaños $n_{s_1}$ y $n_{s_2}$; se define la función 
 

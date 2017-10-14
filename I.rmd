@@ -25,7 +25,7 @@ linkcolor: blue
   - Gen
   - Esp
  
-El desarrollo tecnológico de los últimos 20 años ha cambiado por completo los conceptos y procesos de análisis de la información. Las cifras son indimensionables: "En 2007, la humanidad pudo almacenar 2,9 × $10^{20}$ bytes óptimamente comprimidos, comunicar casi 2 × $10^{21}$ bytes y llevar a cabo $6.4 × 10^18$ instrucciones por segundo en equipos de uso general."[1] El auge y la consolidación de mecanismos cada vez más sofisticados de recolección de datos exigen la constante creación y actualización de las técnicas estadísticas.
+El desarrollo tecnológico de los últimos 20 años ha cambiado por completo los conceptos y procesos de análisis de la información. Las cifras son indimensionables: "En 2007, la humanidad pudo almacenar $2,9 \times 10^{20}$ bytes óptimamente comprimidos, comunicar casi $2 \times 10^{21}$ bytes y llevar a cabo $6.4 \times 10^18$ instrucciones por segundo en equipos de uso general."[1] El auge y la consolidación de mecanismos cada vez más sofisticados de recolección de datos exigen la constante creación y actualización de las técnicas estadísticas.
 
 De manera simultánea, la capacidad computacional crece rápidamente. La ley de Moore, vigente desde su formulación en 1965, expresa que aproximadamente cada dos años se duplica el número de transistores en un microprocesador [2]. Esto conlleva la aparición de algoritmos y técnicas que, exigiendo mucho más sobre la máquina, permiten extraer información más precisa y útil. Estos avances han conducido a la gestión y almacenamiento de grandes conjuntos de datos; conjuntos cuyo procesamiento y análisis requiere desarrollos teóricos diseñados para este tipo de problemas.
 
