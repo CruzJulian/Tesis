@@ -1,0 +1,133 @@
+---
+title: "Para Paquete"
+author: "Julián Cruz"
+date: "14 de octubre de 2017"
+output: html_document
+---
+
+Esta es la función que toca empaquetar con un ejemplo
+
+
+## Función de distancias
+
+```{r}
+library("Rcpp")
+
+sourceCpp("distancia.cpp")
+
+to_nubepuntos <- function(a){
+  data.frame(value = a, weight = 1/length(a)) -> nubepuntos
+  class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+}
+
+D_def <- function(nube_0, nube_1){
+  rbind(
+    cbind(nube_0, binary = 0),
+    cbind(nube_1, binary = 1)
+  ) -> tmp
+  
+  distan_def(tmp[order(tmp$value),])
+}
+
+
+```
+
+## K-nubes
+
+```{r}
+list_outer <- function(a,b, fun) {
+  outer(a, b, function(x,y) vapply(seq_along(x), function(i) fun(x[[i]], y[[i]]), numeric(1)))
+}
+
+list_auto <- function(a, fun){list_outer(a, a, fun)}
+
+auto <- function(a, fun){fun(a, a)}
+
+collapsa_nubes <- function(nube_list){
+  
+  sum(unlist(lapply(nube_list, nrow))) -> n_total
+  lapply(nube_list, function(nube){
+    nube$weight <- nube$weight*nrow(nube)/n_total
+    nube}) -> .
+  do.call(rbind, .) -> nubepuntos
+  class(nubepuntos) <- c("data.frame", "nubepuntos")
+  nubepuntos
+  
+}
+
+k_nubes <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, umbral = 0.1, iter_max = 100){
+  
+  if(is.null(grupos_iniciales)) {
+    sample(length(lista_nubes), n_grupos, replace = FALSE) -> cuales
+    
+    centros <- setNames(lista_nubes[cuales], LETTERS[1:n_grupos])
+  } else{
+    split(lista_nubes, grupos_iniciales) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    
+  }
+  
+  antes <- 0
+  minimo <- ahora <- 10000
+  iter_actual <- 0
+  while(abs(antes - ahora) > umbral & iter_actual < iter_max){
+    antes <- ahora
+    list_outer(centros, lista_nubes, D_def) -> dist_matriz
+    letters[apply(dist_matriz, 2, which.min)] -> grupos
+    sum(apply(dist_matriz, 2, min)) -> ahora
+    split(lista_nubes, grupos) -> agrupados
+    lapply(agrupados, collapsa_nubes) -> centros
+    if(ahora < minimo){
+      grupos_min <- grupos
+      centros_min <- centros
+    }
+    iter_actual <- iter_actual + 1
+    print(ahora)
+  }
+  
+  data.frame(trt = names(lista_nubes), Grupo = grupos_min)
+  
+}
+
+
+```
+
+## Ejemplo
+
+```{r}
+library("magrittr")
+
+Cuantas_nubes <- rep(4, 5)
+Media <- rep(1:5)
+Desviacion <- rep(c(2, 1, 0.5, 1, 2))
+
+data.frame(
+  Y = c(
+    rnorm(Cuantas_nubes[1]*12, Media[1], Desviacion[1]),
+    rnorm(Cuantas_nubes[2]*12, Media[2], Desviacion[2]),
+    rnorm(Cuantas_nubes[3]*12, Media[3], Desviacion[3]),
+    rnorm(Cuantas_nubes[4]*12, Media[4], Desviacion[4]),
+    rnorm(Cuantas_nubes[5]*12, Media[5], Desviacion[5])
+  ),
+  X = rep(
+    LETTERS[1:sum(Cuantas_nubes)], 
+    each=12),
+  grupo = rep(rep(letters[1:5], Cuantas_nubes), each = 12)
+) -> Datos
+
+```
+
+```{r}
+  # Media
+  Media_trt <- Datos %$% aggregate(Y, list(X), mean) %>% setNames(c("trt", "Media"))
+  
+  #K nubes
+  Datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_nubes(n_grupos = 5, umbral = 0.01) -> CC
+  
+  #J nubes
+  Datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(D_def) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
+
+
+```
+
