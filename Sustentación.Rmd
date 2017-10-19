@@ -1,7 +1,8 @@
 ---
 title: "Aplicación de algoritmos de agrupamiento a funciones empíricas de densidad acumulada"
 author: "CruzJulian"
-date: "1 de septiembre de 2017"
+bibliography: biblio.bib
+csl: apa.csl
 output: beamer_presentation
 ---
 
@@ -13,12 +14,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ##
 
-``En 2007, la humanidad pudo almacenar $2,9 \times 10^{20}$ bytes óptimamente comprimidos, comunicar casi $2 \times 10^{21}$ bytes y llevar a cabo $6.4 \times 10^{18}$ instrucciones por segundo en equipos de uso general.'' \cite{Hilbert60}
+``En 2007, la humanidad pudo almacenar $2,9 \times 10^{20}$ bytes óptimamente comprimidos, comunicar casi $2 \times 10^{21}$ bytes y llevar a cabo $6.4 \times 10^{18}$ instrucciones por segundo en equipos de uso general.''^[Martin Hilbert and Priscila López, The world’s technological capacity to store, communicate, and compute information, Science 332 (2011)]
 
 ##
 
 La ley de Moore, vigente desde su formulación en 1965, expresa que aproximadamente cada dos años se duplica el número de transistores en un
-microprocesador \cite{Moore65}
+microprocesador^[Gordon E. Moore, Cramming more components onto integrated circuits, Electronics 38 (1965)]
 
 ##
 
@@ -40,11 +41,17 @@ Column of ASA President Marie Davidian in AmStat News, July, 2013
 
 ## Diseño de experimentos
 
- - El tamaño muestral crecce y los p-valores disminuyen.
+ - El tamaño muestral crece y los p-valores disminuyen.
  - La cantidad de categorías aumenta y las hipótesis carecen de sentido.
  - Las pruebas de comparaciones mútiples pierden sensibilidad ante muchas categorías
 
 ## Minería de datos
+
+![Función empírica de densidad acumulada](/home/julian/Documentos/Tesis/Sustentacion_img/empirica_1.png)
+
+## Minería de datos
+
+![Funciones empíricas de densidad acumulada](/home/julian/Documentos/Tesis/Sustentacion_img/empirica_2.png)
 
 ## Minería de datos
 
@@ -120,7 +127,7 @@ Mediante el trabajo de investigación fue posible realizar una exploración de b
  - El análisis las propuestas actuales a la luz del fundamento teórico permitió establecer necesidades específicas que, convertidas en un sistema de requerimientos y determinantes, orientaron el diseño y construcción de herramientas nuevas.
  - Estas herramientas fueron evaluadas mediante un estudio de simulación, comparando el enfoque de minería de datos con el de diseño de experimentos.
  - Los métodos propuestos fueron implementados y aplicados en dos conjuntos de datos reales, obteniendo resultados muy satisfactorios.
- - El software desarrollado y la programación correspondiente a los métodos propuestos se encuentra en el repositorio de la tesis, no hay áun un paquete en R para estos métodos.
+ - El software desarrollado y la programación correspondiente a los métodos propuestos se encuentra en el repositorio de la tesis, y la primera versión del pauete de R para estos métodos.
 
 ## Trabajo futuro
 
@@ -171,6 +178,14 @@ En otros tópicos se propone:
  - Disponer un estadístico de falsos descubiertos para la implementación en datos genéticos.
  - Efectuar un análisis más profundo para determinar si realmente se trata de genes expresados no detectados ppor SAM o de falsos positivos encontrados a causa de la implementación realizada.
  - Examinar si cambios en el número de grupos generan cambios en la cantidad de genes detectados.
+
+## Proceso
+
+ - Datos abiertos, software abierto, código abierto, público en GitHub
+ - Replicabilidad.
+ - Herramientas de la universidad, Mendeley, repositorio institucional.
+ - Uso, conocimiento y reconocimiento del conocimiento local.
+ - Paquete de R.
  
 ##
 
