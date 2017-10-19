@@ -104,14 +104,14 @@ to_nubepuntos(rnorm(10)) -> n2_peque
 
 dist_peque <- dist_nubes(n1_peque, n2_peque)
 
-data.frame(n1_peque, n2_peque) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(x = "Valores", y = "Densidad")
+data.frame(n1_peque, n2_peque) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(x = "Valores", y = "FDE")
 
 to_nubepuntos(rnorm(1000, .5)) -> n1_grande
 to_nubepuntos(rnorm(1000)) -> n2_grande
 
 dist_grande <- dist_nubes(n1_grande, n2_grande)
 
-data.frame(n1_grande, n2_grande) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(x = "Valores", y = "Densidad")
+data.frame(n1_grande, n2_grande) %>% ggplot + geom_step(aes(x = value), stat = "ecdf") + geom_step(aes(x = value.1), stat = "ecdf") + theme_minimal() + labs(x = "Valores", y = "FDE")
 
 # start.time <- Sys.time()
 # dist_nubes(n1_grande, n2_grande)
