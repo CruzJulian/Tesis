@@ -47,7 +47,7 @@ double EMD(DataFrame df) {
 
 // [[Rcpp::export]]
 double corregir(int n_1, int n_2, double d){
-  //  return sqrt((d*d*d + fmin(n_1, n_2)*d)/(d*d + 1));
+  //  return min(sqrt(min(N_1, n_2)*d), sqrt(d) + 1);
   return fmin(sqrt(d) + 1, sqrt(fmin(n_1, n_2)*d));
 }
 

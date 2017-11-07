@@ -30,6 +30,7 @@ library("ggplot2")
 library("fpc")
 library("latex2exp")
 library("knitr")
+library("stargazer")
 
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 
@@ -296,8 +297,8 @@ lapply(
 ```
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D0.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
@@ -305,40 +306,40 @@ Figura HRR: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = 1$. Esta es la v
 
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D1.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
 Figura HRJ: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = n_{s_1} + n_{s_2}$. Visualización de la matriz de distancias corrigiendo por la suma de los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D2.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
 Figura HRV: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = \max(n_{s_1}, n_{s_2})$. Visualización de la matriz de distancias corrigiendo por el máximo entre los tamaños. Es notorio como las distancias crecen cuando los tamaños de las nubes de puntos son muy distintos a pesar de provenir de la misma distribución. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D3.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
 Figura HRQ: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = (n_{s_1} + n_{s_2})^2$. Visualización de la matriz de distancias corregida la suma de los tamaños al cuadrado. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D4.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")+ scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
 Figura HRL: Distancia corregida mediante $h(n_{s_1}, n_{s_2}) = \min(n_{s_1}, n_{s_2})$. Visualización de la matriz de distancias corregida mediante el mínimo de los tamaños. Los valores altos, que se encontraban en un principio asociados a tamaños bajos ahora se relacionan con tamaños altos. A la izquierda, se usa una distribución normal estándar; a la derecha, una distribución uniforme.
 
 ```{r, fig.width = 3.5, fig.height = 2.5}
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
-dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.normal) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia") + scale_fill_gradient(high = "#333355", low = "#ffffff")
+dis_frame %>% ggplot + aes(x = Var1, y = Var2, fill = D5.uniforme) + geom_raster() + theme_minimal(base_size = 6) + labs(x ="", y = "", fill = "Distancia") + scale_fill_gradient(high = "#333355", low = "#ffffff")
 
 ```
 
@@ -350,14 +351,23 @@ $$ln(d(s_1, s_2)) = \beta_0 + \beta_1ln(\min(n_{s_1}, n_{s_2})) + \beta_2ln(\max
 Que se presenta para datos normales:
 
 ```{r}
-dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.normal) ~ log(min_12) + log(max_12), data = .) %>% summary
+dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.normal) ~ log(min_12) + log(max_12), data = .) -> modelo_1
+
+stargazer(modelo_1, summary = TRUE)
+
+modelo_1 %>% summary
 
 ```
 
 Y para datos uniformes:
 
 ```{r}
-dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.uniforme) ~ log(min_12) + log(max_12), data = .) %>% summary
+dis_frame %>% filter(Var1 != Var2) %>% mutate(min_12 = apply(cbind(Var1, Var2), 1, min), max_12 = apply(cbind(Var1, Var2), 1, max)) %>% lm(log(D0.uniforme) ~ log(min_12) + log(max_12), data = .) -> modelo_2
+
+stargazer(modelo_2, summary = TRUE)
+
+modelo_2 %>% summary
+
 ```
 
 Ambos modelos ratifican la cercanía de $\beta_1$ a $\frac{-1}{2}$ además de la posibilidad de pasar por alto una corrección con respecto al máximo. En este sentido la distancia a usar queda definida así:^[Bueno, acá es donde toca explicar la cosa]

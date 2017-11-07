@@ -594,6 +594,19 @@ general_density_plot +
 
 ```
 
+```{r ecdf_plot2, fig.width = 8, fig.height = 2.5}
+dff_to_plot_2 %>% 
+    ggplot +
+    aes(x = TOTAL, colour = grupo) +
+    geom_step(stat = "ecdf") +
+    xlab("") +
+    ylab("") + theme_minimal() +
+    theme(legend.position = "bottom") -> general_ecdf_plot
+
+general_ecdf_plot
+
+```
+
 ### Visualización
 
 Como se menciona en el capítulo anterior, las funciones de probabilidad empírica, a pesar de ser estimaciones de parámetros infinitodimensionales, se encuentran en un espacio finitodimensional. Conforme a esto, se presenta un análisis de componentes principales de las funciones de probabilidad empírica. En la figura PRP se pued observar la dispersión de los municipios y sus diferentes grupos. Los municipios de alto rendimiento en las pruebas Saber 11 se encuentran en el flanco derecho, mientras que aquellos en el flanco izquierdo presentan los puntajes más bajos.
@@ -619,10 +632,10 @@ Analizar la dispersión de los grupos resulta importante para entender el compor
 
 Al respecto resulta pertinente realizar una visualización geográfica. La figura PQQ muestra la estratificación realizada. Esta concuerda con la versión descriptiva mostrada al principio del capítulo (figura PJF), donde los municipios de la región central presentan de manera persistente mejores desempeños en la prueba Saber 11.
 
-```{r Colmaps_todo, fig.width=9, fig.height=11}
-RESULTADO %<>% mutate(gr = as.ordered(grupo))
+```{r Colmaps_todo, fig.width=11, fig.height=13}
+RESULTADO %<>% mutate(Grupo = as.ordered(grupo))
 
-colmaps::colmap(map = municipios, data = RESULTADO, var = "gr", map_id = "id", data_id = "id", autocomplete = TRUE)
+colmaps::colmap(map = municipios, data = RESULTADO, var = "Grupo", map_id = "id", data_id = "id", autocomplete = TRUE)
 
 ```
 
