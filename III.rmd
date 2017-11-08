@@ -452,7 +452,7 @@ ep_means <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
     
   }
   
-  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  data.frame(trt = names(lista_nubes), Grupo = grupos, stringsAsFactors = FALSE)
   
 }
 
@@ -485,7 +485,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL){
     
   }
   
-  data.frame(trt = names(lista_nubes), Grupo = grupos)
+  data.frame(trt = names(lista_nubes), Grupo = grupos, stringsAsFactors = FALSE)
   
 }
 
@@ -537,7 +537,8 @@ Simul_tabla <- function(sigma){
     X = rep(
       LETTERS[1:20], 
       each=10),
-    grupo = rep(letters[1:5], each = 40)
+    grupo = rep(letters[1:5], each = 40),
+    stringsAsFactors = FALSE
   ) -> datos
   
   datos %>% ggplot + aes(x = Y, colour = grupo, group = X) + geom_step(stat = "ecdf") + theme_minimal() -> gr
@@ -546,10 +547,10 @@ Simul_tabla <- function(sigma){
   Media_trt <- datos %$% aggregate(Y, list(X), mean) %>% setNames(c("trt", "Media"))
   
   #Duncan
-  DUNCAN <- aov(Y~X, data = datos) %>% duncan.test("X")
+  aov(Y~X, data = datos) %>% duncan.test("X") %$% groups %>% mutate(trt = rownames(.), grupos = groups) %>% select(-Y, -groups) -> DUNCAN
   
   #LSD
-  LSD <- aov(Y~X, data = datos) %>% LSD.test("X")
+  aov(Y~X, data = datos) %>% LSD.test("X") %$% groups %>% mutate(trt = rownames(.)) %>% select(-Y) -> LSD
   
   #K nubes
   datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
@@ -565,11 +566,14 @@ Simul_tabla <- function(sigma){
     Media_trt,
     data.frame(
       trt = LETTERS[1:20],
-      Grupo = rep(letters[1:5], each = 4)
+      Grupo = rep(letters[1:5], each = 4),
+      stringsAsFactors = FALSE
     ),
     CC,
-    LSD$groups[-2], 
-    DUNCAN$groups[-2]
+    # LSD$groups[-2], 
+    # DUNCAN$groups[-2]
+    LSD,
+    DUNCAN
   ) -> tmp
   
   Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
@@ -583,6 +587,7 @@ ecdf_datos %>% PCA(graph = FALSE) %$% ind %$% coord %>% as.data.frame %>% cbind(
   
 }
 
+# sigma <- 2
 
 ```
 
