@@ -49,13 +49,13 @@ library("ggplot2")
 library("Rcpp")
 library("ggdendro")
 library("scales")
-
+library("stargazer")
 
 data("phytophthora")
 
 sourceCpp("distancia.cpp")
 
-opts_chunk$set(echo = FALSE, include = FALSE, eval = TRUE, cache = TRUE, fig.width = 5.5, fig.height = 5.1)
+opts_chunk$set(echo = TRUE, include = TRUE, eval = TRUE, cache = TRUE, fig.width = 5.5, fig.height = 5.1)
 
 ```
 
@@ -304,7 +304,7 @@ k_clouds <- function(lista_nubes, n_grupos = NULL, grupos_iniciales = NULL, cent
 
 ```{r}
 datos %$% split(value, gen_cond) %>% lapply(to_nubepuntos) -> nubes
-
+set.seed(1234534)
 nubes %>% length %>% sample(tamano) %>% "["(nubes, .) -> muestra_nubes
 
 ```
@@ -348,7 +348,10 @@ Figura XLS: Dendrograma de los genes arrojado por el algoritmo J-nubes.
 # time.taken <- end.time - start.time
 # time.taken
 
+
 muestra_nubes %>% split(grupos_genes) %>% lapply(collapsa_nubes) -> centros_ini
+
+nubes %>% split(grupos_genes) %>% lapply(collapsa_nubes) -> centros_ini
 
 # nubes %>% length %>% sample(500) %>% "["(nubes, .) -> muestra_nubes
 
@@ -511,7 +514,11 @@ Figura XMY: Scaterplot de pvalores de ambas técnicas. Es necesario agregar esti
 Resulta pertinente además realizar una tabla de contingencia de la expresión diferencial en ambos métodos.
 
 ```{r, include=TRUE}
-table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table() %>% as.data.frame() %>% mutate(Freq = percent(Freq)) %>% kable
+library("xtable")
+
+table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table() %>% xtable()
+
+# table(SAM = factor(sam_pvalues < 0.05, labels = c("No expresados", "Expresados")), Jnubes = factor(resultado < 0.5/parejas, labels = c("No expresados", "Expresados"))) %>% prop.table() %>% as.data.frame() %>% mutate(Freq = percent(Freq)) %>% kable
 
 ```
 
