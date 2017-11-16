@@ -152,13 +152,13 @@ Simul_Tabla <-function(Datos){
   Media_trt <- Datos %$% aggregate(Y, list(X), mean) %>% setNames(c("trt", "Media"))
   
   #Duncan
-  DUNCAN <- aov(Y~X, data = Datos) %>% duncan.test("X")
+  aov(Y~X, data = Datos) %>% duncan.test(trt = "X") %$% groups %>% mutate(trt = rownames(.), grupos = groups) %>% select(-Y, -groups) -> DUNCAN
   
   #LSD
-  LSD <- aov(Y~X, data = Datos) %>% LSD.test("X")
+  aov(Y~X, data = Datos) %>% LSD.test("X") %$% groups %>% mutate(trt = rownames(.)) %>% select(-Y) -> LSD
   
   #K nubes
-  Datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5, umbral = 0.01) -> CC
+  Datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% k_clouds(n_grupos = 5) -> CC
   
   #J nubes
   Datos %$% split(Y, X) %>% lapply(to_nubepuntos) %>% list_auto(D_def) %>% as.dist %>% hclust(method = "ward.D") %>% cutree(5) %>% "["(letters, .) -> CC$Ward
@@ -171,8 +171,10 @@ Simul_Tabla <-function(Datos){
     Media_trt,
     setNames(unique(Datos[c("X", "grupo")]), c("trt", "Grupo")),
     CC,
-    LSD$groups[-2], 
-    DUNCAN$groups[-2]
+    # LSD$groups[-2], 
+    # DUNCAN$groups[-2]
+    LSD,
+    DUNCAN
   ) -> tmp
   
   Reduce(function(dtf1,dtf2) left_join(dtf1,dtf2, by = "trt"), tmp) %>% 
